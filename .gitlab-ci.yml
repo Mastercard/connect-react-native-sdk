@@ -6,6 +6,7 @@ variables:
   SONAR_PROJECT_KEY: connect-react-native-sdk
   SONAR_TOKEN: $SONAR_LOGIN
   SONAR_URL: $SONAR_HOST_URL
+  CX_FLOW_FILTER_SEVERITY: Medium
 
 stages:
   - install
