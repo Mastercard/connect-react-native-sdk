@@ -11,6 +11,7 @@ import {
 import { ConnectReactNativeSdk, checkLink } from './nativeModule';
 import type { ConnectEventHandlers, ConnectProps } from './types';
 
+
 const defaultEventHandlers: any = {
   onLoad: () => {},
   onUser: () => {},
