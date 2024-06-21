@@ -12,9 +12,15 @@ import { ConnectReactNativeSdk, checkLink } from './nativeModule';
 import type { ConnectEventHandlers, ConnectProps } from './types';
 
 const defaultEventHandlers: any = {
-  onLoad: () => {},
-  onUser: () => {},
-  onRoute: () => {},
+  onLoad: () => {
+    // Intentionally empty function
+  },
+  onUser: () => {
+    // Intentionally empty function
+  },
+  onRoute: () => {
+    // Intentionally empty function
+  },
 };
 
 export class Connect extends Component<ConnectProps> {
