@@ -79,7 +79,7 @@ export class Connect extends Component<ConnectProps> {
   };
 
   stopPingingConnect = () => {
-    if (this.state.pingingConnect && this.state.pingIntervalId != 0) {
+    if (this.state.pingingConnect && this.state.pingIntervalId !== 0) {
       clearInterval(this.state.pingIntervalId);
       this.state.pingingConnect = false;
       this.state.pingIntervalId = 0;
