@@ -505,7 +505,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mastercard.openbanking.connectreactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mastercard.openbanking.connectreactnativedemoapp;
 				PRODUCT_NAME = ConnectReactNativeDemoApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "React Native SDK Distribution";
@@ -538,7 +538,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mastercard.openbanking.connectreactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mastercard.openbanking.connectreactnativedemoapp;
 				PRODUCT_NAME = ConnectReactNativeDemoApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "React Native SDK Distribution";
