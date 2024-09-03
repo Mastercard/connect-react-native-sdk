@@ -2,6 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
+      "react": [ "./node_modules/@types/react" ],
       "connect-react-native-sdk": ["./src/index"]
     },
     "allowUnreachableCode": false,
