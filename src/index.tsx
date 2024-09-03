@@ -12,9 +12,15 @@ import { ConnectReactNativeSdk, checkLink } from './nativeModule';
 import type { ConnectEventHandlers, ConnectProps } from './types';
 
 const defaultEventHandlers: any = {
-  onLoad: () => {},
-  onUser: () => {},
-  onRoute: () => {},
+  onLoad: () => {
+    // Intentionally empty function
+  },
+  onUser: () => {
+    // Intentionally empty function
+  },
+  onRoute: () => {
+    // Intentionally empty function
+  },
 };
 
 export class Connect extends Component<ConnectProps> {
@@ -122,37 +128,52 @@ export class Connect extends Component<ConnectProps> {
 
   handleEvent = (event: any) => {
     const eventData = parseEventData(event.nativeEvent.data);
-    const eventType = eventData.type;
-    if (eventType === ConnectEvents.URL && !this.state.browserDisplayed) {
-      const url = eventData.url;
-      if (Platform.OS === 'ios') {
-        checkLink(url).then((canOpen: boolean) => {
-          if (!canOpen) {
-            this.openBrowser(url);
-          }
-        });
-      } else {
-        this.openBrowser(url);
-      }
-    } else if (
-      eventType === ConnectEvents.CLOSE_POPUP &&
-      this.state.browserDisplayed
-    ) {
-      this.dismissBrowser();
-    } else if (eventType === ConnectEvents.ACK) {
-      this.state.pingedConnectSuccessfully = true;
-      this.stopPingingConnect();
-      this.state.eventHandlers.onLoad();
-    } else if (eventType === ConnectEvents.CANCEL) {
-      this.state.eventHandlers.onCancel(eventData.data);
-    } else if (eventType === ConnectEvents.DONE) {
-      this.state.eventHandlers.onDone(eventData.data);
-    } else if (eventType === ConnectEvents.ERROR) {
-      this.state.eventHandlers.onError(eventData.data);
-    } else if (eventType === ConnectEvents.ROUTE) {
-      this.state.eventHandlers.onRoute(eventData.data);
-    } else if (eventType === ConnectEvents.USER) {
-      this.state.eventHandlers.onUser(eventData.data);
+    const { type: eventType, url } = eventData;
+    let { browserDisplayed, eventHandlers } = this.state;
+
+    switch (eventType) {
+      case ConnectEvents.URL:
+        if (!browserDisplayed) {
+          Platform.OS === 'ios'
+            ? checkLink(url).then((canOpen: boolean) => {
+                !canOpen && this.openBrowser(url);
+              })
+            : this.openBrowser(url);
+        }
+        break;
+
+      case ConnectEvents.CLOSE_POPUP:
+        browserDisplayed && this.dismissBrowser();
+        break;
+
+      case ConnectEvents.ACK:
+        this.state.pingedConnectSuccessfully = true;
+        this.stopPingingConnect();
+        eventHandlers.onLoad();
+        break;
+
+      case ConnectEvents.CANCEL:
+        eventHandlers.onCancel(eventData.data);
+        break;
+
+      case ConnectEvents.DONE:
+        eventHandlers.onDone(eventData.data);
+        break;
+
+      case ConnectEvents.ERROR:
+        eventHandlers.onError(eventData.data);
+        break;
+
+      case ConnectEvents.ROUTE:
+        eventHandlers.onRoute(eventData.data);
+        break;
+
+      case ConnectEvents.USER:
+        eventHandlers.onUser(eventData.data);
+        break;
+
+      default:
+        break;
     }
   };
 

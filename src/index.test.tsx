@@ -521,4 +521,66 @@ describe('Connect', () => {
       type: 'default',
     });
   });
+
+  test('open Browser ios - checkLink resolves to true', async () => {
+    Platform.OS = 'ios';
+    const instanceOf = renderer
+      .create(
+        <Connect
+          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
+          eventHandlers={eventHandlerFns}
+        />
+      )
+      .getInstance() as unknown as Connect;
+
+    // create URL event
+    const event = {
+      nativeEvent: {
+        data: JSON.stringify({
+          type: ConnectEvents.URL,
+          url: 'https://b2b.mastercard.com',
+        }),
+      },
+    } as WebViewMessageEvent;
+
+    instanceOf.state.browserDisplayed = false;
+    const mockFn = jest.fn();
+    instanceOf.openBrowser = mockFn;
+
+    // Mock checkLink to resolve to true
+    (checkLink as jest.Mock).mockResolvedValueOnce(true);
+
+    await instanceOf.handleEvent(event);
+
+    expect(checkLink).toHaveBeenCalledTimes(1);
+    expect(checkLink).toHaveBeenLastCalledWith('https://b2b.mastercard.com');
+    expect(mockFn).not.toHaveBeenCalled();
+  });
+
+  test('close popup when browser not displayed', () => {
+    const instanceOf = renderer
+      .create(
+        <Connect
+          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
+          eventHandlers={eventHandlerFns}
+        />
+      )
+      .getInstance() as unknown as Connect;
+
+    const event = {
+      nativeEvent: {
+        data: JSON.stringify({
+          type: ConnectEvents.CLOSE_POPUP,
+        }),
+      },
+    } as WebViewMessageEvent;
+
+    const mockFn = jest.fn();
+    instanceOf.dismissBrowser = mockFn;
+
+    instanceOf.state.browserDisplayed = false;
+    instanceOf.handleEvent(event);
+
+    expect(mockFn).not.toHaveBeenCalled();
+  });
 });
