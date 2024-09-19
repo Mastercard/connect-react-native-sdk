@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.0.3 (September 25, 2024)
+
+### Changes
+
+- Improved code quality and simplified it.
+- Fixed some import issues.
+- Enhancement done for TestFlight distribution.
+
 ### 2.0.2 (July 3, 2024)
 
 ### Changes
