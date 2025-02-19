@@ -105,6 +105,8 @@ export class Connect extends Component<ConnectProps> {
   };
 
   openBrowser = async (url: string) => {
+    if (!url) return;
+
     this.state.browserDisplayed = true;
     await InAppBrowser.isAvailable();
     // NOTE: solves bug in InAppBrowser if an object with non-iOS options is passed
@@ -135,7 +137,8 @@ export class Connect extends Component<ConnectProps> {
       case ConnectEvents.URL:
         if (!browserDisplayed) {
           Platform.OS === 'ios'
-            ? checkLink(url).then((canOpen: boolean) => {
+            ? url &&
+              checkLink(url).then((canOpen: boolean) => {
                 !canOpen && this.openBrowser(url);
               })
             : this.openBrowser(url);
