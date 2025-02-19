@@ -4,7 +4,7 @@ import { Connect } from './index';
 import { render, screen } from '@testing-library/react-native';
 
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
-import { checkLink } from './nativeModule';
+import { checkLink, ConnectReactNativeSdk } from './nativeModule';
 import {
   ConnectEvents,
   CONNECT_SDK_VERSION,
@@ -582,5 +582,65 @@ describe('Connect', () => {
     instanceOf.handleEvent(event);
 
     expect(mockFn).not.toHaveBeenCalled();
+  });
+
+  test('should not call checkLink or open browser when URL is null or empty', () => {
+    Platform.OS = 'ios';
+    const instanceOf = renderer
+      .create(
+        <Connect
+          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
+          eventHandlers={eventHandlerFns}
+        />
+      )
+      .getInstance() as unknown as Connect;
+
+    const event = {
+      nativeEvent: {
+        data: '',
+      },
+    } as WebViewMessageEvent;
+
+    instanceOf.state.browserDisplayed = false;
+    event.nativeEvent.data = JSON.stringify({
+      type: ConnectEvents.URL,
+      url: null,
+    });
+
+    const mockFn = jest.fn();
+    instanceOf.state.eventHandlers.onRoute = mockFn;
+    instanceOf.handleEvent(event);
+    expect(checkLink).toHaveBeenCalledTimes(0);
+  });
+
+  test('openBrowser should return early when URL is null or empty', async () => {
+    const instanceOf = renderer
+      .create(
+        <Connect
+          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
+          eventHandlers={eventHandlerFns}
+        />
+      )
+      .getInstance() as unknown as Connect;
+
+    // Spy on InAppBrowser and ConnectReactNativeSdk.open
+    const inAppBrowserSpy = jest.spyOn(InAppBrowser, 'open');
+    const sdkOpenSpy = jest.spyOn(ConnectReactNativeSdk, 'open');
+
+    // Test with null URL
+    await instanceOf.openBrowser(null as unknown as string);
+    expect(inAppBrowserSpy).not.toHaveBeenCalled();
+    expect(sdkOpenSpy).not.toHaveBeenCalled();
+    expect(instanceOf.state.browserDisplayed).toBeFalsy();
+
+    // Test with empty string URL
+    await instanceOf.openBrowser('');
+    expect(inAppBrowserSpy).not.toHaveBeenCalled();
+    expect(sdkOpenSpy).not.toHaveBeenCalled();
+    expect(instanceOf.state.browserDisplayed).toBeFalsy();
+
+    // Clean up spies
+    inAppBrowserSpy.mockRestore();
+    sdkOpenSpy.mockRestore();
   });
 });
