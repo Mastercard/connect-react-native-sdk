@@ -1,5 +1,11 @@
 # Changelog
 
+### 2.0.3 (March 24, 2025)
+
+### Changes
+
+- General Enhancements and Bug Fixes
+
 ### 2.0.2 (July 3, 2024)
 
 ### Changes
