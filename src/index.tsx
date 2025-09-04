@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { Modal, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
-
 import {
   ConnectEvents,
   SDK_PLATFORM,
   PING_TIMEOUT,
-  CONNECT_SDK_VERSION
+  CONNECT_SDK_VERSION,
 } from './constants';
 import { ConnectReactNativeSdk, checkLink } from './nativeModule';
 import type { ConnectEventHandlers, ConnectProps } from './types';
@@ -21,7 +20,7 @@ const defaultEventHandlers: any = {
   },
   onRoute: () => {
     // Intentionally empty function
-  }
+  },
 };
 
 export class Connect extends Component<ConnectProps> {
@@ -33,7 +32,6 @@ export class Connect extends Component<ConnectProps> {
     pingIntervalId: 0,
     eventHandlers: defaultEventHandlers,
     browserDisplayed: false,
-    modalVisible: false
   };
 
   constructor(props: ConnectProps) {
@@ -44,14 +42,12 @@ export class Connect extends Component<ConnectProps> {
   launch = (connectUrl: string, eventHandlers: ConnectEventHandlers) => {
     this.state.connectUrl = connectUrl;
     this.state.eventHandlers = { ...defaultEventHandlers, ...eventHandlers };
-    this.state.modalVisible = true;
   };
 
   close = () => {
-    this.dismissModal();
     this.state.eventHandlers.onCancel({
       code: 100,
-      reason: 'exit'
+      reason: 'exit',
     });
   };
 
@@ -66,7 +62,7 @@ export class Connect extends Component<ConnectProps> {
         type: ConnectEvents.PING,
         sdkVersion: CONNECT_SDK_VERSION,
         platform: SDK_PLATFORM,
-        redirectUrl: redirectUrl
+        redirectUrl: redirectUrl,
       });
     } else {
       this.stopPingingConnect();
@@ -122,7 +118,7 @@ export class Connect extends Component<ConnectProps> {
     if (Platform.OS === 'android') {
       const { type } = await ConnectReactNativeSdk.open({
         url,
-        ...(browserOptions || {})
+        ...(browserOptions || {}),
       });
 
       this.dismissBrowser(type);
@@ -160,17 +156,14 @@ export class Connect extends Component<ConnectProps> {
         break;
 
       case ConnectEvents.CANCEL:
-        this.dismissModal();
         eventHandlers.onCancel(eventData.data);
         break;
 
       case ConnectEvents.DONE:
-        this.dismissModal();
         eventHandlers.onDone(eventData.data);
         break;
 
       case ConnectEvents.ERROR:
-        this.dismissModal();
         eventHandlers.onError(eventData.data);
         break;
 
@@ -187,10 +180,6 @@ export class Connect extends Component<ConnectProps> {
     }
   };
 
-  dismissModal = () => {
-    this.setState({ modalVisible: false });
-  };
-
   render() {
     const injectedJavaScript = `
       (function() {
@@ -201,7 +190,6 @@ export class Connect extends Component<ConnectProps> {
 
     return (
       <Modal
-        visible={this.state.modalVisible}
         animationType={'slide'}
         presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
         transparent={false}
@@ -214,7 +202,7 @@ export class Connect extends Component<ConnectProps> {
           javaScriptEnabled
           injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
           testID="test-webview"
-          onMessage={event => this.handleEvent(event)}
+          onMessage={(event) => this.handleEvent(event)}
           onLoad={() => this.startPingingConnect()}
         />
       </Modal>
