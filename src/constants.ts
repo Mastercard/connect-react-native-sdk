@@ -18,5 +18,5 @@ export enum ConnectEvents {
   LOADED = 'loaded',
   ROUTE = 'route',
   SUCCESS = 'success',
-  USER = 'user',
+  USER = 'user'
 }
