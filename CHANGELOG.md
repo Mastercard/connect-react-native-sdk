@@ -1,18 +1,12 @@
 # Changelog
 
-### 2.0.4 (September 04, 2025)
-
-### Changes
-
-- Handled Connect modal auto-dismissal after Connect flow completion.
-
 ### 2.0.3 (March 24, 2025)
 
 ### Changes
 
 - General Enhancements and Bug Fixes
 
-### 2.0.2 (July 03, 2024)
+### 2.0.2 (July 3, 2024)
 
 ### Changes
 
@@ -22,25 +16,25 @@
 
 - Resolved the "cannot find module" type error that occurred during the import of the 'connect' module.
 
-### 2.0.0 (February 08, 2024)
+### 2.0.0 (February 8, 2024)
 
 - Enhanced the App to App OAuth Flow with the newly added `redirectUrl` parameter in the Connect React Native SDK. This enhancement supports universal links for iOS, app links for Android, and deep links for navigation between mobile apps. For more details on App to App, refer to the [documentation](https://developer.mastercard.com/open-banking-us/documentation/connect/mobile-sdks/).
 - The support for the `linkingUri` property in the Connect React Native SDK has been deprecated.
 
-### 1.0.0-rc10 (September 06, 2023)
+### 1.0.0-rc10 (September 6, 2023)
 
 - Fixed issue in iOS when OAuth popup is closed, dismissing Connect and making the application unresponsive
 
-### 1.0.0-rc9 (August 01, 2023)
+### 1.0.0-rc9 (August 1, 2023)
 
 - Fixed issue in Android with OAuth popup being dismissed on Android when navigating away from app
 
-### 1.0.0-rc8 (December 08, 2022)
+### 1.0.0-rc8 (December 8, 2022)
 
 - Fixed dependencies version mismatch
 - Remove any references to External sources
 
-### 1.0.0-rc7 (August 03, 2022)
+### 1.0.0-rc7 (August 3, 2022)
 
 - Mastercard rebranding
 - Updated dependencies
@@ -65,15 +59,15 @@
 - Fixed README example
 - Fixed payload in `onDone`, `onCancel` and `onExit` events
 
-### 1.0.0-rc.2 (April 08, 2021)
+### 1.0.0-rc.2 (April 8, 2021)
 
 - Send data object in user and route events
 - Added event interfaces
 
-### 1.0.0-rc.1 (April 08, 2021)
+### 1.0.0-rc.1 (April 8, 2021)
 
 - Include /dist for GitHub repo
 
-### 1.0.0-rc.0 (April 03, 2021)
+### 1.0.0-rc.0 (April 3, 2021)
 
 - Initial version

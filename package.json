@@ -1,7 +1,7 @@
 {
   "name": "connect-react-native-sdk",
-  "version": "2.0.4",
-  "description": "React Native SDK for Mastercard Open Finance Connect",
+  "version": "2.0.3",
+  "description": "React Native SDK for Mastercard Open Banking Connect",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
@@ -43,28 +43,28 @@
   },
   "keywords": [
     "Mastercard",
-    "Mastercard Open Finance Connect"
+    "Mastercard Open Banking Connect"
   ],
   "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
+    "@babel/core": "7.23.6",
+    "@babel/preset-env": "7.23.6",
     "@commitlint/config-conventional": "^17.0.2",
-    "@react-native/eslint-config": "0.73.2",
+    "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@testing-library/react-native": "^12.4.1",
     "@types/jest": "^28.1.2",
-    "@types/react": "^18.2.6",
+    "@types/react": "~17.0.21",
     "@types/react-native": "0.70.0",
     "@types/react-test-renderer": "^18.0.6",
     "commitlint": "^17.0.2",
     "del-cli": "^5.0.0",
-    "eslint": "^8.19.0",
+    "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^29.6.3",
+    "jest": "^28.1.1",
     "metro-react-native-babel-preset": "^0.77.0",
     "pod-install": "^0.1.0",
-    "prettier": "2.8.8",
+    "prettier": "^2.0.5",
     "react": "18.2.0",
     "react-native": "^0.73.1",
     "react-native-builder-bob": "^0.23.2",
@@ -72,7 +72,7 @@
     "release-it": "^17.0.1",
     "semver": ">=7.5.4",
     "turbo": "^1.10.7",
-    "typescript": "5.0.4",
+    "typescript": "^5.0.2",
     "yarn-audit-fix": "^10.0.7"
   },
   "resolutions": {
@@ -121,9 +121,8 @@
           "quoteProps": "consistent",
           "singleQuote": true,
           "tabWidth": 2,
-          "trailingComma": "none",
-          "useTabs": false,
-          "arrowParens": "avoid"
+          "trailingComma": "es5",
+          "useTabs": false
         }
       ]
     }
@@ -136,9 +135,8 @@
     "quoteProps": "consistent",
     "singleQuote": true,
     "tabWidth": 2,
-    "trailingComma": "none",
-    "useTabs": false,
-    "arrowParens": "avoid"
+    "trailingComma": "es5",
+    "useTabs": false
   },
   "react-native-builder-bob": {
     "source": "src",

@@ -2,9 +2,9 @@
 
 ## Overview
 
-Mastercard Open Finance Connect React Native SDK provides an easy way for developers to integrate Mastercard Open Finance Connect into their React Native application.
+Mastercard Open Banking Connect React Native SDK provides an easy way for developers to integrate Mastercard Open Banking Connect into their React Native application.
 
-The Connect React Native SDK can be used with Mastercard Open Finance in the United States and Australia only.
+The Connect React Native SDK can be used with Mastercard Open Banking in the United States and Australia only.
 
 The functionality available with Connect varies slightly between regions. For details of how to integrate Connect using the Connect SDKs see the following:
 
@@ -17,7 +17,7 @@ The functionality available with Connect varies slightly between regions. For de
   - [Integrating with Connect](https://developer.mastercard.com/open-banking-au/documentation/connect/integrating-with-connect/)
     - [Using the Connect React Native SDK (Australia)](https://developer.mastercard.com/open-banking-au/documentation/connect/integrating-with-connect/react-sdk/)
 
-Note that this Connect SDK is not suitable for Mastercard Open Finance Europe. 
+Note that this Connect SDK is not suitable for Mastercard Open Banking Europe. 
 
 ## Compatibility
 

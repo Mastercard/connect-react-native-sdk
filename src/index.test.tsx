@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { Connect } from './index';
-import { render, screen, act } from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react-native';
 
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
 import { checkLink, ConnectReactNativeSdk } from './nativeModule';
@@ -9,7 +9,7 @@ import {
   ConnectEvents,
   CONNECT_SDK_VERSION,
   SDK_PLATFORM,
-  PING_TIMEOUT
+  PING_TIMEOUT,
 } from './constants';
 import { Platform } from 'react-native';
 import type { WebViewMessageEvent } from 'react-native-webview';
@@ -34,7 +34,7 @@ describe('Connect', () => {
     },
     onUser: (event: any) => {
       console.log('user event received', event);
-    }
+    },
   };
 
   test('close', () => {
@@ -118,14 +118,14 @@ describe('Connect', () => {
     // create route event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
 
     instanceOf.state.browserDisplayed = false;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.URL,
-      url: 'https://b2b.mastercard.com'
+      url: 'https://b2b.mastercard.com',
     });
     // mock route event callback
     const mockFn = jest.fn();
@@ -148,13 +148,13 @@ describe('Connect', () => {
     // create route event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     instanceOf.state.browserDisplayed = false;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.URL,
-      url: 'https://b2b.mastercard.com'
+      url: 'https://b2b.mastercard.com',
     });
     // mock route event callback
     const mockFn = jest.fn();
@@ -183,7 +183,7 @@ describe('Connect', () => {
       type: ConnectEvents.PING,
       redirectUrl: '',
       sdkVersion: CONNECT_SDK_VERSION,
-      platform: SDK_PLATFORM
+      platform: SDK_PLATFORM,
     });
     // expect to call stopPingingConnect if webViewRef = null
     const mockFn2 = jest.fn();
@@ -223,11 +223,11 @@ describe('Connect', () => {
     // create close popup event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.CLOSE_POPUP
+      type: ConnectEvents.CLOSE_POPUP,
     });
     // mock dismiss browser to catch call to dismissBrowser, set state to browser displayed.
     const mockFn = jest.fn();
@@ -249,11 +249,11 @@ describe('Connect', () => {
     // create ack event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.ACK
+      type: ConnectEvents.ACK,
     });
     // mock stopPingingConnect, and eventHandler loaded to catch calls to these functions
     const mockStopPingFn = jest.fn();
@@ -278,8 +278,8 @@ describe('Connect', () => {
     // invalid JSON event
     const event: any = {
       nativeEvent: {
-        data: '{0}'
-      }
+        data: '{0}',
+      },
     };
 
     jest.spyOn(instanceOf, 'handleEvent');
@@ -290,8 +290,8 @@ describe('Connect', () => {
       type: ConnectEvents.CANCEL,
       data: {
         code: 100,
-        reason: 'exit'
-      }
+        reason: 'exit',
+      },
     };
 
     const mockFn = jest.fn();
@@ -299,7 +299,7 @@ describe('Connect', () => {
     instanceOf.handleEvent(event);
     expect(mockFn).toHaveBeenLastCalledWith({
       code: 100,
-      reason: 'exit'
+      reason: 'exit',
     });
 
     // valid JSON event
@@ -307,14 +307,14 @@ describe('Connect', () => {
       type: ConnectEvents.CANCEL,
       data: {
         code: 100,
-        reason: 'exit'
-      }
+        reason: 'exit',
+      },
     });
 
     instanceOf.handleEvent(event);
     expect(mockFn).toHaveBeenLastCalledWith({
       code: 100,
-      reason: 'exit'
+      reason: 'exit',
     });
   });
 
@@ -330,15 +330,15 @@ describe('Connect', () => {
     // create cancel event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.CANCEL,
       data: {
         code: 100,
-        reason: 'exit'
-      }
+        reason: 'exit',
+      },
     });
     // mock cancel event callback
     const mockFn = jest.fn();
@@ -347,7 +347,7 @@ describe('Connect', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(mockFn).toHaveBeenLastCalledWith({
       code: 100,
-      reason: 'exit'
+      reason: 'exit',
     });
   });
 
@@ -363,15 +363,15 @@ describe('Connect', () => {
     // create done event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.DONE,
       data: {
         code: 200,
-        reason: 'complete'
-      }
+        reason: 'complete',
+      },
     });
     // mock done event callback
     const mockFn = jest.fn();
@@ -380,7 +380,7 @@ describe('Connect', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(mockFn).toHaveBeenLastCalledWith({
       code: 200,
-      reason: 'complete'
+      reason: 'complete',
     });
   });
 
@@ -396,15 +396,15 @@ describe('Connect', () => {
     // create error event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.ERROR,
       data: {
         code: 500,
-        reason: 'error'
-      }
+        reason: 'error',
+      },
     });
     // mock error event callback
     const mockFn = jest.fn();
@@ -413,7 +413,7 @@ describe('Connect', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(mockFn).toHaveBeenLastCalledWith({
       code: 500,
-      reason: 'error'
+      reason: 'error',
     });
   });
 
@@ -429,15 +429,15 @@ describe('Connect', () => {
     // create route event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.ROUTE,
       data: {
         params: {},
-        screen: 'search'
-      }
+        screen: 'search',
+      },
     });
     // mock route event callback
     const mockFn = jest.fn();
@@ -446,7 +446,7 @@ describe('Connect', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(mockFn).toHaveBeenLastCalledWith({
       params: {},
-      screen: 'search'
+      screen: 'search',
     });
   });
 
@@ -487,8 +487,8 @@ describe('Connect', () => {
     // create user event
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.USER,
@@ -501,8 +501,8 @@ describe('Connect', () => {
           'c004a06ffc4cccd485df796fba74f1a4b647ab4fee3e691b227db2d6b2c5d9e3',
         timestamp: '1617009241542',
         ttl: '1617016441542',
-        type: 'default'
-      }
+        type: 'default',
+      },
     });
     // mock user event callback
     const mockFn = jest.fn();
@@ -518,7 +518,7 @@ describe('Connect', () => {
         'c004a06ffc4cccd485df796fba74f1a4b647ab4fee3e691b227db2d6b2c5d9e3',
       timestamp: '1617009241542',
       ttl: '1617016441542',
-      type: 'default'
+      type: 'default',
     });
   });
 
@@ -538,9 +538,9 @@ describe('Connect', () => {
       nativeEvent: {
         data: JSON.stringify({
           type: ConnectEvents.URL,
-          url: 'https://b2b.mastercard.com'
-        })
-      }
+          url: 'https://b2b.mastercard.com',
+        }),
+      },
     } as WebViewMessageEvent;
 
     instanceOf.state.browserDisplayed = false;
@@ -570,9 +570,9 @@ describe('Connect', () => {
     const event = {
       nativeEvent: {
         data: JSON.stringify({
-          type: ConnectEvents.CLOSE_POPUP
-        })
-      }
+          type: ConnectEvents.CLOSE_POPUP,
+        }),
+      },
     } as WebViewMessageEvent;
 
     const mockFn = jest.fn();
@@ -597,14 +597,14 @@ describe('Connect', () => {
 
     const event = {
       nativeEvent: {
-        data: ''
-      }
+        data: '',
+      },
     } as WebViewMessageEvent;
 
     instanceOf.state.browserDisplayed = false;
     event.nativeEvent.data = JSON.stringify({
       type: ConnectEvents.URL,
-      url: null
+      url: null,
     });
 
     const mockFn = jest.fn();
@@ -642,75 +642,5 @@ describe('Connect', () => {
     // Clean up spies
     inAppBrowserSpy.mockRestore();
     sdkOpenSpy.mockRestore();
-  });
-
-  test('renders modal when modalVisible is true', () => {
-    const { getByTestId } = render(
-      <Connect
-        connectUrl="https://example.com"
-        eventHandlers={eventHandlerFns}
-      />
-    );
-    expect(getByTestId('test-modal')).toBeTruthy();
-  });
-
-  test('calls default handlers', () => {
-    const { getByTestId } = render(
-      <Connect
-        connectUrl="https://example.com"
-        eventHandlers={eventHandlerFns}
-      />
-    );
-
-    const instance = getByTestId('test-webview').props.onMessage;
-
-    act(() => {
-      instance({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: 'ack',
-            data: 'test-ack'
-          })
-        }
-      });
-
-      instance({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: 'route',
-            data: 'test-route'
-          })
-        }
-      });
-
-      instance({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: 'user',
-            data: 'test-user'
-          })
-        }
-      });
-    });
-
-    expect(true).toBe(true);
-  });
-
-  test('dismissModal sets modalVisible to false', () => {
-    const ref = React.createRef<any>();
-
-    render(
-      <Connect
-        ref={ref}
-        connectUrl="https://example.com"
-        eventHandlers={eventHandlerFns}
-      />
-    );
-
-    act(() => {
-      ref.current.dismissModal();
-    });
-
-    expect(ref.current.state.modalVisible).toBe(false);
   });
 });
