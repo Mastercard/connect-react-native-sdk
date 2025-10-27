@@ -3,6 +3,7 @@ import { SDK_VERSION } from './version';
 export const CONNECT_SDK_VERSION = SDK_VERSION;
 export const SDK_PLATFORM = 'reactNative';
 export const PING_TIMEOUT = 1000;
+export const DEFAULT_REDIRECT_URL = 'connect://maob/redirect';
 
 export enum ConnectEvents {
   // Internal events used by Connect
