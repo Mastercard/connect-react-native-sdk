@@ -7,7 +7,8 @@ import {
   ConnectEvents,
   SDK_PLATFORM,
   PING_TIMEOUT,
-  CONNECT_SDK_VERSION
+  CONNECT_SDK_VERSION,
+  DEFAULT_REDIRECT_URL
 } from './constants';
 import { ConnectReactNativeSdk, checkLink } from './nativeModule';
 import type { ConnectEventHandlers, ConnectProps } from './types';
@@ -28,6 +29,7 @@ export class Connect extends Component<ConnectProps> {
   webViewRef: WebView | null = null;
   state = {
     connectUrl: '',
+    redirectUrl: DEFAULT_REDIRECT_URL,
     pingingConnect: false,
     pingedConnectSuccessfully: false,
     pingIntervalId: 0,
@@ -45,6 +47,7 @@ export class Connect extends Component<ConnectProps> {
     this.state.connectUrl = connectUrl;
     this.state.eventHandlers = { ...defaultEventHandlers, ...eventHandlers };
     this.state.modalVisible = true;
+    this.state.redirectUrl = this.props.redirectUrl || DEFAULT_REDIRECT_URL;
   };
 
   close = () => {
@@ -60,13 +63,12 @@ export class Connect extends Component<ConnectProps> {
   }
 
   pingConnect = () => {
-    const { redirectUrl = '' } = this.props;
     if (this.webViewRef !== null) {
       this.postMessage({
         type: ConnectEvents.PING,
         sdkVersion: CONNECT_SDK_VERSION,
         platform: SDK_PLATFORM,
-        redirectUrl: redirectUrl
+        redirectUrl: this.state.redirectUrl
       });
     } else {
       this.stopPingingConnect();

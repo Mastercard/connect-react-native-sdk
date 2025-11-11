@@ -181,7 +181,7 @@ describe('Connect', () => {
     expect(mockFn).toHaveBeenCalledTimes(1);
     expect(mockFn).toHaveBeenLastCalledWith({
       type: ConnectEvents.PING,
-      redirectUrl: '',
+      redirectUrl: 'connect://maob/redirect',
       sdkVersion: CONNECT_SDK_VERSION,
       platform: SDK_PLATFORM
     });
