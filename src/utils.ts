@@ -2,14 +2,15 @@ import 'react-native-url-polyfill/auto';
 
 import { DEFAULT_REDIRECT_URL } from './constants';
 
-export const validateUrl = (url: string = '') => {
+export const validateUrl = (url: string = DEFAULT_REDIRECT_URL) => {
   try {
+    const urlPattern = /^https:\/\//i;
+
     if (!url) {
       console.warn('Invalid URL: URL is empty/null/undefined');
       return DEFAULT_REDIRECT_URL;
     }
 
-    const urlPattern = /^https:\/\//i;
     if (!urlPattern.test(url)) {
       console.warn('Invalid URL: Must start with https://');
       return DEFAULT_REDIRECT_URL;
