@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import {
-  ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
   Platform,

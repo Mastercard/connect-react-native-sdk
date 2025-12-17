@@ -64,7 +64,6 @@ export class Connect extends Component<ConnectProps> {
   }
 
   pingConnect = () => {
-    console.log('Pinging Connect... ' + this.state.redirectUrl);
     if (this.webViewRef !== null) {
       this.postMessage({
         type: ConnectEvents.PING,
