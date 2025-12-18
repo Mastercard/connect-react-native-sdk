@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "connect-react-native-sdk": "2.0.5",
+    "connect-react-native-sdk": "^2.0.5-test",
     "react": "18.3.1",
     "react-native": "0.77.2",
     "react-native-inappbrowser-reborn": "^3.7.0",
