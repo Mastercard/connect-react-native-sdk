@@ -1,23 +1,28 @@
 import React, { useState, useRef } from 'react';
 import {
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View
 } from 'react-native';
 import { Connect } from 'connect-react-native-sdk';
+
+const RADIO_OPTIONS: Record<string, string> = {
+  STG: 'https://acme.finicitystg.com',
+  Prod: 'https://acmelending.net',
+  'Enter Redirect URL': ''
+};
 
 const App = () => {
   const [url, setUrl] = useState('');
   const [pressable, setPressable] = useState(false);
   const [show, setShow] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('Prod'); // Prod selected by default
+  const [redirectUrl, setRedirectUrl] = useState(RADIO_OPTIONS['Prod']); // Default to Prod URL
   const urlInputRef = useRef<TextInput>(null);
 
   const handleUrl = (text: string) => {
@@ -67,67 +72,80 @@ const App = () => {
     }
   };
 
-  return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <SafeAreaView style={styles.safeAreaView}>
-            <KeyboardAvoidingView
-              style={styles.container}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  const renderRadioComponent = () => (
+    <>
+      <View style={styles.radioGroup}>
+        {Object.keys(RADIO_OPTIONS).map(option => (
+          <View key={option} style={styles.radioContainer}>
+            <TouchableOpacity
+              style={styles.radioButton}
+              onPress={() => {
+                setSelectedOption(option);
+                setRedirectUrl(RADIO_OPTIONS[option]);
+              }}
             >
-              <Text style={styles.textTitle}>Connect SDK demo app</Text>
+              <View style={[styles.radioOuter]}>
+                {selectedOption === option && <View style={styles.radioInner} />}
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.radioText}>{option}</Text>
+          </View>
+        ))}
+      </View>
+      {selectedOption === 'Enter Redirect URL' && (
+        <TextInput
+          style={[styles.textInput, { width: '75%' }]}
+          placeholder="Enter Redirect URL"
+          onChangeText={setRedirectUrl}
+          value={redirectUrl}
+        />
+      )}
+    </>
+  );
 
-              <Text style={styles.textInstructions}>
-                To get started, copy/paste a Generate URL value into the field below.
-              </Text>
+  return (
+    <SafeAreaView style={styles.safeAreaView}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <Text style={styles.textTitle}>Connect SDK demo app</Text>
 
-              <TextInput
-                ref={urlInputRef}
-                style={styles.textInput}
-                placeholder="Paste Generate URL here"
-                onChangeText={handleUrl}
-              />
+        <Text style={styles.textInstructions}>
+          To get started, copy/paste a Generate URL value into the field below.
+        </Text>
 
-              <TouchableOpacity
-                disabled={!pressable}
-                style={pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled}
-                onPress={onPressHandler}
-              >
-                <Text
-                  style={pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled}
-                >
-                  Launch Connect
-                </Text>
-              </TouchableOpacity>
-            </KeyboardAvoidingView>
-            {show === true && (
-              <Connect connectUrl={url} eventHandlers={eventHandlers} redirectUrl="xyz" />
-            )}
-          </SafeAreaView>
-        </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+        <TextInput
+          ref={urlInputRef}
+          style={styles.textInput}
+          placeholder="Paste Generate URL here"
+          onChangeText={handleUrl}
+        />
+        {renderRadioComponent()}
+        <TouchableOpacity
+          disabled={!pressable}
+          style={pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled}
+          onPress={onPressHandler}
+        >
+          <Text style={pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled}>
+            Launch Connect
+          </Text>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
+      {show === true && (
+        <Connect connectUrl={url} eventHandlers={eventHandlers} redirectUrl={redirectUrl} />
+      )}
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   safeAreaView: { flex: 1 },
-
-  scrollContainer: { flexGrow: 1 },
-  background: {
-    flex: 1,
-    resizeMode: 'cover'
-  },
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12
+    gap: 12,
+    marginTop: 100
   },
   textTitle: {
     color: 'black',
@@ -158,6 +176,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FEFEFE'
+  },
+  radioGroup: { width: '50%' },
+  radioContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+    paddingLeft: 20
+  },
+  radioButton: { marginRight: 10 },
+  radioOuter: {
+    height: 24,
+    width: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#C6CDD4',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  radioInner: {
+    height: 12,
+    width: 12,
+    borderRadius: 6,
+    backgroundColor: '#000'
+  },
+  radioText: {
+    fontSize: 16,
+    color: 'black'
   },
   buttonFrameStyleDisabled: {
     height: 48,
