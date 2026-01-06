@@ -2766,10 +2766,10 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
-"connect-react-native-sdk@file:connect-react-native-sdk-2.0.5-test1.tgz":
-  version "2.0.5-test1"
-  resolved "file:connect-react-native-sdk-2.0.5-test1.tgz"
-  integrity sha512-UrEc9ORJBGVI9Ozduflovy2Q+2cKDNRb5c2PNPaq6VcAZd1nRM9/KYHxjw2Z+KAhRuRwbYgUpoTvh2ICqA8hoQ==
+"connect-react-native-sdk@file:connect-react-native-sdk-2.0.5-test.tgz":
+  version "2.0.5-test"
+  resolved "file:connect-react-native-sdk-2.0.5-test.tgz"
+  integrity sha512-o5Kgrb3vplYQ5FrmedapHr6JSmHlXBJmAI4j8ZfSaZQVTClbV9TNYEt5wgfbCeiU9/c44L3mY8mqmBRgfZh1pw==
   dependencies:
     react-native-inappbrowser-reborn ">=3.6"
     react-native-url-polyfill "3.0.0"
