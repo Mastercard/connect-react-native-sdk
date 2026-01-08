@@ -2766,10 +2766,10 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
-"connect-react-native-sdk@file:connect-react-native-sdk-2.0.5-test.tgz":
+connect-react-native-sdk@^2.0.5-test:
   version "2.0.5-test"
-  resolved "file:connect-react-native-sdk-2.0.5-test.tgz"
-  integrity sha512-o5Kgrb3vplYQ5FrmedapHr6JSmHlXBJmAI4j8ZfSaZQVTClbV9TNYEt5wgfbCeiU9/c44L3mY8mqmBRgfZh1pw==
+  resolved "https://repo.fini.city/artifactory/api/npm/npm-group/connect-react-native-sdk/-/connect-react-native-sdk-2.0.5-test.tgz"
+  integrity sha512-yUPvqrdBJxdOB1yV6XSIqKRoAUEkVNrQZwqaqfWxvihhZkv0lXz9zqE+gUAt+jKF9cGVPvBXZ3evo4QAsyebjA==
   dependencies:
     react-native-inappbrowser-reborn ">=3.6"
     react-native-url-polyfill "3.0.0"
@@ -5577,7 +5577,7 @@ react-native-inappbrowser-reborn@^3.7.0, react-native-inappbrowser-reborn@>=3.6:
 
 react-native-url-polyfill@3.0.0:
   version "3.0.0"
-  resolved "https://registry.npmjs.org/react-native-url-polyfill/-/react-native-url-polyfill-3.0.0.tgz"
+  resolved "https://repo.fini.city/artifactory/api/npm/npm-group/react-native-url-polyfill/-/react-native-url-polyfill-3.0.0.tgz"
   integrity sha512-aA5CiuUCUb/lbrliVCJ6lZ17/RpNJzvTO/C7gC/YmDQhTUoRD5q5HlJfwLWcxz4VgAhHwXKzhxH+wUN24tAdqg==
   dependencies:
     whatwg-url-without-unicode "8.0.0-3"
@@ -6524,7 +6524,7 @@ wcwidth@^1.0.1:
 
 webidl-conversions@^5.0.0:
   version "5.0.0"
-  resolved "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-5.0.0.tgz"
+  resolved "https://repo.fini.city/artifactory/api/npm/npm-group/webidl-conversions/-/webidl-conversions-5.0.0.tgz"
   integrity sha512-VlZwKPCkYKxQgeSbH5EyngOmRp7Ww7I9rQLERETtf5ofd9pGeswWiOtogpEO850jziPRarreGxn5QIiTqpb2wA==
 
 whatwg-fetch@^3.0.0:
@@ -6534,7 +6534,7 @@ whatwg-fetch@^3.0.0:
 
 whatwg-url-without-unicode@8.0.0-3:
   version "8.0.0-3"
-  resolved "https://registry.npmjs.org/whatwg-url-without-unicode/-/whatwg-url-without-unicode-8.0.0-3.tgz"
+  resolved "https://repo.fini.city/artifactory/api/npm/npm-group/whatwg-url-without-unicode/-/whatwg-url-without-unicode-8.0.0-3.tgz"
   integrity sha512-HoKuzZrUlgpz35YO27XgD28uh/WJH4B0+3ttFqRo//lmq+9T/mIOJ6kqmINI9HpUpz1imRC/nR/lxKpJiv0uig==
   dependencies:
     buffer "^5.4.3"
