@@ -1,4 +1,4 @@
-package com.connectreactnativedemoapp
+package com.mastercard.openbanking.connect.demo
 
 import android.app.Application
 import com.facebook.react.PackageList
