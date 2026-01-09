@@ -214,7 +214,8 @@ export class Connect extends Component<ConnectProps> {
         <WebView
           ref={(ref: any) => (this.webViewRef = ref)}
           source={{ uri: this.state.connectUrl }}
-          javaScriptEnabled
+          javaScriptEnabled          
+          webviewDebuggingEnabled={true}
           injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
           testID="test-webview"
           onMessage={event => this.handleEvent(event)}
