@@ -2766,13 +2766,12 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
-connect-react-native-sdk@^2.0.5-test:
-  version "2.0.5-test"
-  resolved "https://repo.fini.city/artifactory/api/npm/npm-group/connect-react-native-sdk/-/connect-react-native-sdk-2.0.5-test.tgz"
-  integrity sha512-yUPvqrdBJxdOB1yV6XSIqKRoAUEkVNrQZwqaqfWxvihhZkv0lXz9zqE+gUAt+jKF9cGVPvBXZ3evo4QAsyebjA==
+connect-react-native-sdk@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.npmjs.org/connect-react-native-sdk/-/connect-react-native-sdk-2.0.4.tgz"
+  integrity sha512-y5Ygmf0Fzb91m8w0arcvB5a1alk8TWDCconEcS9nEqx4jZKykrppeloS/hSHFjYiaxO3td8LiMeprDNldKywag==
   dependencies:
     react-native-inappbrowser-reborn ">=3.6"
-    react-native-url-polyfill "3.0.0"
     react-native-webview ">=11"
 
 connect@^3.6.5:

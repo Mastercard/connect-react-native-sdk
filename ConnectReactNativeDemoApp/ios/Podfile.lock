@@ -1,6 +1,6 @@
 PODS:
   - boost (1.84.0)
-  - connect-react-native-sdk (2.0.5-test):
+  - connect-react-native-sdk (2.0.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1766,7 +1766,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
-  connect-react-native-sdk: 417758937b26f5348f81bcd2bb4020d49986697f
+  connect-react-native-sdk: ff9231937429666fa8d4a4c62eedc778b049f8d9
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 4c16dde959a9d6b24f2aa32cb87cb919a1ace3f3
