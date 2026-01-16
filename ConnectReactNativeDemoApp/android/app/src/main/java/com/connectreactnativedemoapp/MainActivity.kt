@@ -1,5 +1,7 @@
 package com.mastercard.openbanking.connect.demo
 
+import android.os.Bundle
+import android.webkit.WebView
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -12,6 +14,13 @@ class MainActivity : ReactActivity() {
    * rendering of the component.
    */
   override fun getMainComponentName(): String = "ConnectReactNativeDemoApp"
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    WebView.setWebContentsDebuggingEnabled(true)
+  }
+
+
 
   /**
   * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
