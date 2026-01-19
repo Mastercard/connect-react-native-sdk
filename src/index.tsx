@@ -10,6 +10,7 @@ import {
   CONNECT_SDK_VERSION,
   DEFAULT_REDIRECT_URL
 } from './constants';
+import { validateUrl } from './utils';
 import { ConnectReactNativeSdk, checkLink } from './nativeModule';
 import type { ConnectEventHandlers, ConnectProps } from './types';
 
@@ -47,7 +48,7 @@ export class Connect extends Component<ConnectProps> {
     this.state.connectUrl = connectUrl;
     this.state.eventHandlers = { ...defaultEventHandlers, ...eventHandlers };
     this.state.modalVisible = true;
-    this.state.redirectUrl = this.props.redirectUrl || DEFAULT_REDIRECT_URL;
+    this.state.redirectUrl = validateUrl(this.props.redirectUrl);
   };
 
   close = () => {

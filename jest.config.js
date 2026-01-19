@@ -12,7 +12,7 @@ module.exports = {
   preset: 'react-native',
   setupFilesAfterEnv: [
     '@testing-library/react-native/extend-expect',
-    './setup.test.js',
+    './setup.test.js'
   ],
   coverageReporters: ['cobertura', 'text', 'lcov', 'html'],
 
@@ -21,8 +21,8 @@ module.exports = {
       branches: 80,
       functions: 70,
       lines: 80,
-      statements: 80,
-    },
+      statements: 80
+    }
   },
   testPathIgnorePatterns: [
     '/node_modules/',
@@ -30,10 +30,10 @@ module.exports = {
     '/android/',
     '/ios/',
     '/lib/',
-    './setup.test.js',
+    './setup.test.js'
   ],
 
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native(-.*)?|@react-native(-community)?)/)',
-  ],
+    'node_modules/(?!((jest-)?react-native(-.*)?|@react-native(-community)?)/)'
+  ]
 };

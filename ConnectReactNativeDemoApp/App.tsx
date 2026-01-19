@@ -1,12 +1,16 @@
 import React, { useState, useRef } from 'react';
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 import { Connect } from 'connect-react-native-sdk';
 
@@ -64,41 +68,61 @@ const App = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeAreaView}>
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <Text style={styles.textTitle}>Connect SDK demo app</Text>
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
+          <SafeAreaView style={styles.safeAreaView}>
+            <KeyboardAvoidingView
+              style={styles.container}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+              <Text style={styles.textTitle}>Connect SDK demo app</Text>
 
-        <Text style={styles.textInstructions}>
-          To get started, copy/paste a Generate URL value into the field below.
-        </Text>
+              <Text style={styles.textInstructions}>
+                To get started, copy/paste a Generate URL value into the field below.
+              </Text>
 
-        <TextInput
-          ref={urlInputRef}
-          style={styles.textInput}
-          placeholder="Paste Generate URL here"
-          onChangeText={handleUrl}
-        />
+              <TextInput
+                ref={urlInputRef}
+                style={styles.textInput}
+                placeholder="Paste Generate URL here"
+                onChangeText={handleUrl}
+              />
 
-        <TouchableOpacity
-          disabled={!pressable}
-          style={pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled}
-          onPress={onPressHandler}
-        >
-          <Text style={pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled}>
-            Launch Connect
-          </Text>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
-      {show === true && <Connect connectUrl={url} eventHandlers={eventHandlers} />}
-    </SafeAreaView>
+              <TouchableOpacity
+                disabled={!pressable}
+                style={pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled}
+                onPress={onPressHandler}
+              >
+                <Text
+                  style={pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled}
+                >
+                  Launch Connect
+                </Text>
+              </TouchableOpacity>
+            </KeyboardAvoidingView>
+            {show === true && (
+              <Connect connectUrl={url} eventHandlers={eventHandlers} redirectUrl="xyz" />
+            )}
+          </SafeAreaView>
+        </View>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   safeAreaView: { flex: 1 },
+
+  scrollContainer: { flexGrow: 1 },
+  background: {
+    flex: 1,
+    resizeMode: 'cover'
+  },
   container: {
     flex: 1,
     alignItems: 'center',
