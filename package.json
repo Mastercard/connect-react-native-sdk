@@ -1,6 +1,6 @@
 {
   "name": "connect-react-native-sdk",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "React Native SDK for Mastercard Open Finance Connect",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -35,7 +35,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prebuild": "node scripts/generate-version.js",
-    "build": "bob build",
+    "build": "bob build && npm pack",
     "prettier-check": "prettier --check ./src/",
     "prettier-write": "prettier --write .",
     "release": "release-it",
@@ -156,6 +156,7 @@
   },
   "dependencies": {
     "react-native-inappbrowser-reborn": ">=3.6",
+    "react-native-url-polyfill": "3.0.0",
     "react-native-webview": ">=11"
   }
 }

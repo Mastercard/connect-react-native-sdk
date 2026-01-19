@@ -1,5 +1,12 @@
 # Changelog
 
+### 2.0.5 (January 19, 2026)
+
+### Changes
+
+- Fixed an issue where the OAuth popup did not automatically dismiss after the user completed the OAuth journey on Android 15+ when redirectUrl was not passed to the SDK or redirectUri was not provided during Connect link generation.
+- Updated Android build configurations (AGP, SDK versions, EventBus)
+
 ### 2.0.4 (September 17, 2025)
 
 ### Changes
