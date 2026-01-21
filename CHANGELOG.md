@@ -1,6 +1,6 @@
 # Changelog
 
-### 2.0.5 (January 19, 2026)
+### 2.0.5 (January 21, 2026)
 
 ### Changes
 
