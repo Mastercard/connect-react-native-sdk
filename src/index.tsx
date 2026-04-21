@@ -125,7 +125,7 @@ export class Connect extends Component<ConnectProps> {
     if (Platform.OS === 'android') {
       const { type } = await ConnectReactNativeSdk.open({
         url,
-        ...(browserOptions || {})
+        ...browserOptions
       });
 
       this.dismissBrowser(type);
@@ -233,4 +233,5 @@ function parseEventData(eventData: any) {
   }
 }
 
+/* c8 ignore next */
 export * from './types';

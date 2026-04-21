@@ -1,716 +1,555 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
-import { Connect } from './index';
-import { render, screen, act } from '@testing-library/react-native';
-
-import { InAppBrowser } from 'react-native-inappbrowser-reborn';
-import { checkLink, ConnectReactNativeSdk } from './nativeModule';
-import {
-  ConnectEvents,
-  CONNECT_SDK_VERSION,
-  SDK_PLATFORM,
-  PING_TIMEOUT
-} from './constants';
+import { act, render, screen } from '@testing-library/react-native';
 import { Platform } from 'react-native';
-import type { WebViewMessageEvent } from 'react-native-webview';
-import type { ConnectEventHandlers } from './types';
+import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+
+import {
+  Connect,
+  type ConnectCancelEvent,
+  type ConnectDoneEvent,
+  type ConnectErrorEvent,
+  type ConnectEventHandlers
+} from './index';
+import {
+  CONNECT_SDK_VERSION,
+  ConnectEvents,
+  PING_TIMEOUT,
+  SDK_PLATFORM
+} from './constants';
+import { checkLink, ConnectReactNativeSdk } from './nativeModule';
+
+type ConnectInstance = InstanceType<typeof Connect>;
+
+const baseHandlers = (): ConnectEventHandlers => ({
+  onCancel: jest.fn<(event: ConnectCancelEvent) => void>(),
+  onDone: jest.fn<(event: ConnectDoneEvent) => void>(),
+  onError: jest.fn<(event: ConnectErrorEvent) => void>(),
+  onLoad: jest.fn(),
+  onRoute: jest.fn(),
+  onUser: jest.fn()
+});
+
+const renderConnect = (
+  overrideProps: Partial<React.ComponentProps<typeof Connect>> = {}
+) => {
+  const ref = React.createRef<ConnectInstance>();
+  const eventHandlers = overrideProps.eventHandlers ?? baseHandlers();
+  const utils = render(
+    <Connect
+      ref={ref}
+      connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
+      eventHandlers={eventHandlers}
+      {...overrideProps}
+    />
+  );
+
+  if (!ref.current) {
+    throw new Error('Expected Connect ref to be set');
+  }
+
+  ref.current.webViewRef = { postMessage: jest.fn() } as any;
+
+  return {
+    ...utils,
+    eventHandlers,
+    instance: ref.current,
+    modal: screen.getByTestId('test-modal'),
+    webView: screen.getByTestId('test-webview')
+  };
+};
 
 describe('Connect', () => {
-  const eventHandlerFns: ConnectEventHandlers = {
-    onCancel: (event: any) => {
-      console.log('cancel event received', event);
-    },
-    onDone: (event: any) => {
-      console.log('done event received', event);
-    },
-    onError: (event: any) => {
-      console.log('error event received', event);
-    },
-    onLoad: () => {
-      console.log('loaded event received');
-    },
-    onRoute: (event: any) => {
-      console.log('route event received', event);
-    },
-    onUser: (event: any) => {
-      console.log('user event received', event);
-    }
-  };
-
-  test('close', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onCancel = mockFn;
-    instanceOf.close();
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenLastCalledWith({ code: 100, reason: 'exit' });
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useRealTimers();
+    Platform.OS = 'ios';
   });
 
-  test('render android', () => {
-    Platform.OS = 'android';
-    render(
-      <Connect
-        connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-        eventHandlers={eventHandlerFns}
-        redirectUrl="https://mastercard.com"
-      />
-    );
+  test('renders with the correct presentation style and injected javascript', () => {
+    const { modal, webView } = renderConnect({
+      redirectUrl: 'https://mastercard.com'
+    });
 
-    const modal = screen.getByTestId('test-modal');
-    const webview = screen.getByTestId('test-webview');
-    expect(webview).toBeDefined();
+    expect(modal.props.presentationStyle).toBe('pageSheet');
+    expect(webView.props.source).toEqual({
+      uri: 'https://b2b.mastercard.com/open-banking-solutions/'
+    });
+    expect(webView.props.injectedJavaScriptBeforeContentLoaded).toContain(
+      'window.maOBConnectReactNative'
+    );
+    expect(webView.props.injectedJavaScriptBeforeContentLoaded).toContain(
+      'window.ReactNativeWebView'
+    );
+  });
+
+  test('renders fullscreen on android', () => {
+    Platform.OS = 'android';
+    const { modal } = renderConnect();
+
     expect(modal.props.presentationStyle).toBe('fullScreen');
   });
 
-  test('render ios', () => {
-    Platform.OS = 'ios';
-    render(
-      <Connect
-        connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-        eventHandlers={eventHandlerFns}
-        redirectUrl="https://mastercard.com"
-      />
+  test('launch stores url handlers and validated redirect url', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const customHandlers = {
+      onCancel: jest.fn(),
+      onDone: jest.fn(),
+      onError: jest.fn()
+    };
+    const { instance } = renderConnect({
+      connectUrl: 'https://example.com/connect',
+      eventHandlers: customHandlers,
+      redirectUrl: 'invalid url'
+    });
+
+    expect(instance.state.connectUrl).toBe('https://example.com/connect');
+    expect(instance.state.modalVisible).toBe(true);
+    expect(instance.state.redirectUrl).toBe('connect://maob/redirect');
+    expect(instance.state.eventHandlers.onCancel).toBe(customHandlers.onCancel);
+    expect(typeof instance.state.eventHandlers.onLoad).toBe('function');
+    expect(typeof instance.state.eventHandlers.onRoute).toBe('function');
+    expect(typeof instance.state.eventHandlers.onUser).toBe('function');
+    expect(warn).toHaveBeenCalledWith('Invalid URL format');
+  });
+
+  test('close dismisses the modal and emits cancel', () => {
+    const eventHandlers = baseHandlers();
+    const { instance } = renderConnect({ eventHandlers });
+
+    act(() => {
+      instance.close();
+    });
+
+    expect(instance.state.modalVisible).toBe(false);
+    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
+      code: 100,
+      reason: 'exit'
+    });
+  });
+
+  test('postMessage serializes payloads and tolerates a missing webview ref', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.fn();
+
+    instance.webViewRef = { postMessage } as any;
+    instance.postMessage({ test: true });
+    expect(postMessage).toHaveBeenCalledWith(JSON.stringify({ test: true }));
+
+    instance.webViewRef = null;
+    expect(() => instance.postMessage({ test: false })).not.toThrow();
+  });
+
+  test('pingConnect posts sdk details when the webview exists', () => {
+    const { instance } = renderConnect({
+      redirectUrl: 'https://mastercard.com/redirect'
+    });
+    const postMessage = jest.fn();
+
+    instance.webViewRef = { postMessage } as any;
+    instance.pingConnect();
+
+    expect(postMessage).toHaveBeenCalledWith(
+      JSON.stringify({
+        type: ConnectEvents.PING,
+        sdkVersion: CONNECT_SDK_VERSION,
+        platform: SDK_PLATFORM,
+        redirectUrl: 'https://mastercard.com/redirect'
+      })
     );
-
-    const modal = screen.getByTestId('test-modal');
-    const webview = screen.getByTestId('test-webview');
-    expect(webview).toBeDefined();
-    expect(modal.props.presentationStyle).toBe('pageSheet');
   });
 
-  test('postMessage', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    const mockFn = jest.fn();
-    instanceOf.webViewRef = { postMessage: mockFn } as any;
-    instanceOf.postMessage({ test: true });
-    expect(mockFn).toHaveBeenCalledWith(JSON.stringify({ test: true }));
+  test('pingConnect stops pinging when the webview ref is missing', () => {
+    const { instance } = renderConnect();
+    const stopPingingConnect = jest.spyOn(instance, 'stopPingingConnect');
 
-    // handle null webView
-    instanceOf.webViewRef = null;
-    jest.spyOn(instanceOf, 'postMessage');
-    expect(instanceOf.postMessage).not.toThrow();
+    instance.webViewRef = null;
+    instance.pingConnect();
+
+    expect(stopPingingConnect).toHaveBeenCalled();
   });
 
-  test('open Browser ios', () => {
-    Platform.OS = 'ios';
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create route event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-
-    instanceOf.state.browserDisplayed = false;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.URL,
-      url: 'https://b2b.mastercard.com'
-    });
-    // mock route event callback
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onRoute = mockFn;
-    instanceOf.handleEvent(event);
-    expect(checkLink).toHaveBeenCalledTimes(1);
-    expect(checkLink).toHaveBeenLastCalledWith('https://b2b.mastercard.com');
-  });
-
-  test('open Browser android', () => {
-    Platform.OS = 'android';
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create route event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    instanceOf.state.browserDisplayed = false;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.URL,
-      url: 'https://b2b.mastercard.com'
-    });
-    // mock route event callback
-    const mockFn = jest.fn();
-    instanceOf.dismissBrowser = jest.fn();
-    instanceOf.state.eventHandlers.onRoute = mockFn;
-    instanceOf.handleEvent(event);
-    instanceOf.openBrowser('https://b2b.mastercard.com');
-    expect(instanceOf.dismissBrowser).not.toHaveBeenCalled();
-  });
-
-  test('pingConnect', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // expect postMessage to be called to inform Connect of SDK
-    const mockFn = jest.fn();
-    instanceOf.postMessage = mockFn;
-    instanceOf.pingConnect();
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      type: ConnectEvents.PING,
-      redirectUrl: 'connect://maob/redirect',
-      sdkVersion: CONNECT_SDK_VERSION,
-      platform: SDK_PLATFORM
-    });
-    // expect to call stopPingingConnect if webViewRef = null
-    const mockFn2 = jest.fn();
-    instanceOf.stopPingingConnect = mockFn2;
-    instanceOf.webViewRef = null;
-    instanceOf.pingConnect();
-    expect(mockFn2).toHaveBeenCalledTimes(1);
-  });
-
-  test('dismissBrowser (no-op)', async () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    const postMessageMockFn = jest.fn();
-    instanceOf.postMessage = postMessageMockFn;
-
-    instanceOf.state.browserDisplayed = false;
-    await instanceOf.dismissBrowser();
-    expect(InAppBrowser.close).toHaveBeenCalledTimes(0);
-    expect(postMessageMockFn).toHaveBeenCalledTimes(0);
-  });
-
-  test('close popup', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create close popup event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.CLOSE_POPUP
-    });
-    // mock dismiss browser to catch call to dismissBrowser, set state to browser displayed.
-    const mockFn = jest.fn();
-    instanceOf.state.browserDisplayed = true;
-    instanceOf.dismissBrowser = mockFn;
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-  });
-
-  test('ack', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create ack event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.ACK
-    });
-    // mock stopPingingConnect, and eventHandler loaded to catch calls to these functions
-    const mockStopPingFn = jest.fn();
-    instanceOf.stopPingingConnect = mockStopPingFn;
-    const mockLoadedEventFn = jest.fn();
-    instanceOf.state.eventHandlers.onLoad = mockLoadedEventFn;
-    instanceOf.handleEvent(event);
-    expect(mockStopPingFn).toHaveBeenCalledTimes(1);
-    expect(mockLoadedEventFn).toHaveBeenCalledTimes(1);
-  });
-
-  test('parseEventData', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-
-    // invalid JSON event
-    const event: any = {
-      nativeEvent: {
-        data: '{0}'
-      }
-    };
-
-    jest.spyOn(instanceOf, 'handleEvent');
-    expect(instanceOf.handleEvent.bind(instanceOf, event)).not.toThrow();
-
-    // valid event
-    event.nativeEvent.data = {
-      type: ConnectEvents.CANCEL,
-      data: {
-        code: 100,
-        reason: 'exit'
-      }
-    };
-
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onCancel = mockFn;
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      code: 100,
-      reason: 'exit'
-    });
-
-    // valid JSON event
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.CANCEL,
-      data: {
-        code: 100,
-        reason: 'exit'
-      }
-    });
-
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      code: 100,
-      reason: 'exit'
-    });
-  });
-
-  test('cancel Event', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create cancel event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.CANCEL,
-      data: {
-        code: 100,
-        reason: 'exit'
-      }
-    });
-    // mock cancel event callback
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onCancel = mockFn;
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      code: 100,
-      reason: 'exit'
-    });
-  });
-
-  test('done Event', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create done event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.DONE,
-      data: {
-        code: 200,
-        reason: 'complete'
-      }
-    });
-    // mock done event callback
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onDone = mockFn;
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      code: 200,
-      reason: 'complete'
-    });
-  });
-
-  test('error Event', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create error event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.ERROR,
-      data: {
-        code: 500,
-        reason: 'error'
-      }
-    });
-    // mock error event callback
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onError = mockFn;
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      code: 500,
-      reason: 'error'
-    });
-  });
-
-  test('route Event', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create route event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.ROUTE,
-      data: {
-        params: {},
-        screen: 'search'
-      }
-    });
-    // mock route event callback
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onRoute = mockFn;
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      params: {},
-      screen: 'search'
-    });
-  });
-
-  test('startPingingConnect/stopPingingConnect', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // expect to use set interval timer to post ping message to Connect
+  test('startPingingConnect starts exactly once and stopPingingConnect clears it', () => {
     jest.useFakeTimers();
-    const mockFn = jest.fn();
-    instanceOf.pingConnect = mockFn;
-    instanceOf.startPingingConnect();
+    const { instance } = renderConnect();
+    const pingConnect = jest.spyOn(instance, 'pingConnect');
+
+    instance.webViewRef = { postMessage: jest.fn() } as any;
+    instance.startPingingConnect();
+    instance.startPingingConnect();
 
     jest.advanceTimersByTime(PING_TIMEOUT + 1);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    // Stop pinging Connect
-    expect(instanceOf.state.pingingConnect).toEqual(true);
-    expect(instanceOf.state.pingIntervalId).not.toEqual(0);
-    instanceOf.stopPingingConnect();
-    expect(instanceOf.state.pingingConnect).toEqual(false);
-    expect(instanceOf.state.pingIntervalId).toEqual(0);
+
+    expect(pingConnect).toHaveBeenCalledTimes(1);
+    expect(instance.state.pingingConnect).toBe(true);
+    expect(instance.state.pingIntervalId).not.toBe(0);
+
+    instance.stopPingingConnect();
+
+    expect(instance.state.pingingConnect).toBe(false);
+    expect(instance.state.pingIntervalId).toBe(0);
   });
 
-  test('user Event', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-    // create user event
-    const event = {
-      nativeEvent: {
-        data: ''
-      }
-    } as WebViewMessageEvent;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.USER,
-      data: {
-        action: 'Initialize',
-        customerId: '5003205004',
-        experience: null,
-        partnerId: '2445582695152',
-        sessionId:
-          'c004a06ffc4cccd485df796fba74f1a4b647ab4fee3e691b227db2d6b2c5d9e3',
-        timestamp: '1617009241542',
-        ttl: '1617016441542',
-        type: 'default'
-      }
-    });
-    // mock user event callback
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onUser = mockFn;
-    instanceOf.handleEvent(event);
-    expect(mockFn).toHaveBeenCalledTimes(1);
-    expect(mockFn).toHaveBeenLastCalledWith({
-      action: 'Initialize',
-      customerId: '5003205004',
-      experience: null,
-      partnerId: '2445582695152',
-      sessionId:
-        'c004a06ffc4cccd485df796fba74f1a4b647ab4fee3e691b227db2d6b2c5d9e3',
-      timestamp: '1617009241542',
-      ttl: '1617016441542',
-      type: 'default'
-    });
+  test('startPingingConnect does nothing after connect has acknowledged', () => {
+    jest.useFakeTimers();
+    const { instance } = renderConnect();
+    const pingConnect = jest.spyOn(instance, 'pingConnect');
+
+    instance.webViewRef = {} as any;
+    instance.state.pingedConnectSuccessfully = true;
+    instance.startPingingConnect();
+    jest.advanceTimersByTime(PING_TIMEOUT + 1);
+
+    expect(pingConnect).not.toHaveBeenCalled();
+    expect(instance.state.pingingConnect).toBe(false);
+
+    instance.state.pingingConnect = false;
+    instance.state.pingIntervalId = 0;
+    instance.stopPingingConnect();
+    expect(instance.state.pingIntervalId).toBe(0);
   });
 
-  test('open Browser ios - checkLink resolves to true', async () => {
+  test('dismissBrowser no-ops when no popup is displayed', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.state.browserDisplayed = false;
+    instance.dismissBrowser();
+
+    expect(postMessage).not.toHaveBeenCalled();
+    expect(InAppBrowser.close).not.toHaveBeenCalled();
+    expect(ConnectReactNativeSdk.close).not.toHaveBeenCalled();
+  });
+
+  test('dismissBrowser closes iOS and android popups unless cancelled', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
     Platform.OS = 'ios';
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
+    instance.state.browserDisplayed = true;
+    instance.dismissBrowser();
+    expect(postMessage).toHaveBeenCalledWith({ type: 'window', closed: true });
+    expect(InAppBrowser.close).toHaveBeenCalledTimes(1);
+    expect(instance.state.browserDisplayed).toBe(false);
 
-    // create URL event
-    const event = {
+    Platform.OS = 'android';
+    instance.state.browserDisplayed = true;
+    instance.dismissBrowser('cancel');
+    expect(ConnectReactNativeSdk.close).not.toHaveBeenCalled();
+    expect(instance.state.browserDisplayed).toBe(false);
+
+    instance.state.browserDisplayed = true;
+    instance.dismissBrowser('close');
+    expect(ConnectReactNativeSdk.close).toHaveBeenCalledTimes(1);
+  });
+
+  test('openBrowser returns early for empty urls', async () => {
+    const { instance } = renderConnect();
+
+    await instance.openBrowser('');
+    await instance.openBrowser(null as unknown as string);
+
+    expect(InAppBrowser.isAvailable).not.toHaveBeenCalled();
+    expect(InAppBrowser.open).not.toHaveBeenCalled();
+    expect(ConnectReactNativeSdk.open).not.toHaveBeenCalled();
+    expect(instance.state.browserDisplayed).toBe(false);
+  });
+
+  test('openBrowser uses InAppBrowser on ios', async () => {
+    Platform.OS = 'ios';
+    const { instance } = renderConnect();
+    const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+
+    await instance.openBrowser('https://b2b.mastercard.com');
+
+    expect(InAppBrowser.isAvailable).toHaveBeenCalled();
+    expect(InAppBrowser.open).toHaveBeenCalledWith(
+      'https://b2b.mastercard.com',
+      undefined
+    );
+    expect(dismissBrowser).toHaveBeenCalledWith('close');
+  });
+
+  test('openBrowser uses the native sdk on android', async () => {
+    Platform.OS = 'android';
+    const { instance } = renderConnect();
+    const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+
+    await instance.openBrowser('https://b2b.mastercard.com');
+
+    expect(InAppBrowser.isAvailable).toHaveBeenCalled();
+    expect(ConnectReactNativeSdk.open).toHaveBeenCalledWith({
+      url: 'https://b2b.mastercard.com',
+      forceCloseOnRedirection: false,
+      showInRecents: true
+    });
+    expect(dismissBrowser).toHaveBeenCalledWith('close');
+  });
+
+  test('ios URL events check deep-link availability before opening a browser', async () => {
+    Platform.OS = 'ios';
+    const { instance } = renderConnect();
+    const openBrowser = jest.spyOn(instance, 'openBrowser');
+
+    (checkLink as jest.Mock).mockResolvedValueOnce(false);
+    instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
           type: ConnectEvents.URL,
           url: 'https://b2b.mastercard.com'
         })
       }
-    } as WebViewMessageEvent;
+    });
 
-    instanceOf.state.browserDisplayed = false;
-    const mockFn = jest.fn();
-    instanceOf.openBrowser = mockFn;
+    await act(async () => Promise.resolve());
 
-    // Mock checkLink to resolve to true
-    (checkLink as jest.Mock).mockResolvedValueOnce(true);
-
-    await instanceOf.handleEvent(event);
-
-    expect(checkLink).toHaveBeenCalledTimes(1);
-    expect(checkLink).toHaveBeenLastCalledWith('https://b2b.mastercard.com');
-    expect(mockFn).not.toHaveBeenCalled();
+    expect(checkLink).toHaveBeenCalledWith('https://b2b.mastercard.com');
+    expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com');
   });
 
-  test('close popup when browser not displayed', () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
+  test('ios URL events do not open a browser when checkLink resolves true or url is empty', async () => {
+    Platform.OS = 'ios';
+    const { instance } = renderConnect();
+    const openBrowser = jest.spyOn(instance, 'openBrowser');
 
-    const event = {
+    (checkLink as jest.Mock).mockResolvedValueOnce(true);
+    instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
-          type: ConnectEvents.CLOSE_POPUP
+          type: ConnectEvents.URL,
+          url: 'https://b2b.mastercard.com'
         })
       }
-    } as WebViewMessageEvent;
+    });
 
-    const mockFn = jest.fn();
-    instanceOf.dismissBrowser = mockFn;
+    await act(async () => Promise.resolve());
 
-    instanceOf.state.browserDisplayed = false;
-    instanceOf.handleEvent(event);
+    expect(openBrowser).not.toHaveBeenCalled();
 
-    expect(mockFn).not.toHaveBeenCalled();
-  });
-
-  test('should not call checkLink or open browser when URL is null or empty', () => {
-    Platform.OS = 'ios';
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
-
-    const event = {
+    instance.handleEvent({
       nativeEvent: {
-        data: ''
+        data: JSON.stringify({
+          type: ConnectEvents.URL,
+          url: null
+        })
       }
-    } as WebViewMessageEvent;
-
-    instanceOf.state.browserDisplayed = false;
-    event.nativeEvent.data = JSON.stringify({
-      type: ConnectEvents.URL,
-      url: null
     });
 
-    const mockFn = jest.fn();
-    instanceOf.state.eventHandlers.onRoute = mockFn;
-    instanceOf.handleEvent(event);
-    expect(checkLink).toHaveBeenCalledTimes(0);
+    expect(checkLink).toHaveBeenCalledTimes(1);
+
+    instance.state.browserDisplayed = true;
+    instance.handleEvent({
+      nativeEvent: {
+        data: JSON.stringify({
+          type: ConnectEvents.URL,
+          url: 'https://ignored.example.com'
+        })
+      }
+    });
+
+    expect(checkLink).toHaveBeenCalledTimes(1);
   });
 
-  test('openBrowser should return early when URL is null or empty', async () => {
-    const instanceOf = renderer
-      .create(
-        <Connect
-          connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
-          eventHandlers={eventHandlerFns}
-        />
-      )
-      .getInstance() as unknown as Connect;
+  test('android URL events open the browser directly', () => {
+    Platform.OS = 'android';
+    const { instance } = renderConnect();
+    const openBrowser = jest.spyOn(instance, 'openBrowser');
 
-    // Spy on InAppBrowser and ConnectReactNativeSdk.open
-    const inAppBrowserSpy = jest.spyOn(InAppBrowser, 'open');
-    const sdkOpenSpy = jest.spyOn(ConnectReactNativeSdk, 'open');
+    instance.handleEvent({
+      nativeEvent: {
+        data: JSON.stringify({
+          type: ConnectEvents.URL,
+          url: 'https://b2b.mastercard.com'
+        })
+      }
+    });
 
-    // Test with null URL
-    await instanceOf.openBrowser(null as unknown as string);
-    expect(inAppBrowserSpy).not.toHaveBeenCalled();
-    expect(sdkOpenSpy).not.toHaveBeenCalled();
-    expect(instanceOf.state.browserDisplayed).toBeFalsy();
-
-    // Test with empty string URL
-    await instanceOf.openBrowser('');
-    expect(inAppBrowserSpy).not.toHaveBeenCalled();
-    expect(sdkOpenSpy).not.toHaveBeenCalled();
-    expect(instanceOf.state.browserDisplayed).toBeFalsy();
-
-    // Clean up spies
-    inAppBrowserSpy.mockRestore();
-    sdkOpenSpy.mockRestore();
+    expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com');
   });
 
-  test('renders modal when modalVisible is true', () => {
-    const { getByTestId } = render(
-      <Connect
-        connectUrl="https://example.com"
-        eventHandlers={eventHandlerFns}
-      />
-    );
-    expect(getByTestId('test-modal')).toBeTruthy();
+  test('close popup only dismisses the browser when one is displayed', () => {
+    const { instance } = renderConnect();
+    const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+
+    instance.state.browserDisplayed = false;
+    instance.handleEvent({
+      nativeEvent: {
+        data: JSON.stringify({ type: ConnectEvents.CLOSE_POPUP })
+      }
+    });
+    expect(dismissBrowser).not.toHaveBeenCalled();
+
+    instance.state.browserDisplayed = true;
+    instance.handleEvent({
+      nativeEvent: {
+        data: JSON.stringify({ type: ConnectEvents.CLOSE_POPUP })
+      }
+    });
+    expect(dismissBrowser).toHaveBeenCalledTimes(1);
   });
 
-  test('calls default handlers', () => {
-    const { getByTestId } = render(
-      <Connect
-        connectUrl="https://example.com"
-        eventHandlers={eventHandlerFns}
-      />
-    );
+  test('ack events stop pinging, mark connect as ready, and use default optional handlers safely', () => {
+    const requiredHandlers = {
+      onCancel: jest.fn(),
+      onDone: jest.fn(),
+      onError: jest.fn()
+    };
+    const { instance } = renderConnect({ eventHandlers: requiredHandlers });
+    const stopPingingConnect = jest.spyOn(instance, 'stopPingingConnect');
 
-    const instance = getByTestId('test-webview').props.onMessage;
+    instance.handleEvent({
+      nativeEvent: {
+        data: JSON.stringify({ type: ConnectEvents.ACK })
+      }
+    });
+
+    expect(instance.state.pingedConnectSuccessfully).toBe(true);
+    expect(stopPingingConnect).toHaveBeenCalled();
+
+    expect(() =>
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({ type: ConnectEvents.ROUTE, data: 'route' })
+        }
+      })
+    ).not.toThrow();
+
+    expect(() =>
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({ type: ConnectEvents.USER, data: 'user' })
+        }
+      })
+    ).not.toThrow();
+  });
+
+  test('cancel, done, error, route and user events forward their payloads', () => {
+    const eventHandlers = baseHandlers();
+    const { instance } = renderConnect({ eventHandlers });
 
     act(() => {
-      instance({
+      instance.handleEvent({
         nativeEvent: {
           data: JSON.stringify({
-            type: 'ack',
-            data: 'test-ack'
-          })
-        }
-      });
-
-      instance({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: 'route',
-            data: 'test-route'
-          })
-        }
-      });
-
-      instance({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: 'user',
-            data: 'test-user'
+            type: ConnectEvents.CANCEL,
+            data: { code: 100, reason: 'exit' }
           })
         }
       });
     });
-
-    expect(true).toBe(true);
-  });
-
-  test('dismissModal sets modalVisible to false', () => {
-    const ref = React.createRef<any>();
-
-    render(
-      <Connect
-        ref={ref}
-        connectUrl="https://example.com"
-        eventHandlers={eventHandlerFns}
-      />
-    );
+    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
+      code: 100,
+      reason: 'exit'
+    });
 
     act(() => {
-      ref.current.dismissModal();
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({
+            type: ConnectEvents.DONE,
+            data: { code: 200, reason: 'complete' }
+          })
+        }
+      });
+    });
+    expect(eventHandlers.onDone).toHaveBeenCalledWith({
+      code: 200,
+      reason: 'complete'
     });
 
-    expect(ref.current.state.modalVisible).toBe(false);
+    act(() => {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({
+            type: ConnectEvents.ERROR,
+            data: { code: 500, reason: 'error' }
+          })
+        }
+      });
+    });
+    expect(eventHandlers.onError).toHaveBeenCalledWith({
+      code: 500,
+      reason: 'error'
+    });
+
+    act(() => {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({
+            type: ConnectEvents.ROUTE,
+            data: { screen: 'search', params: {} }
+          })
+        }
+      });
+    });
+    expect(eventHandlers.onRoute).toHaveBeenCalledWith({
+      screen: 'search',
+      params: {}
+    });
+
+    act(() => {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({
+            type: ConnectEvents.USER,
+            data: { customerId: '5003205004' }
+          })
+        }
+      });
+    });
+    expect(eventHandlers.onUser).toHaveBeenCalledWith({
+      customerId: '5003205004'
+    });
+    expect(instance.state.modalVisible).toBe(false);
+  });
+
+  test('handleEvent ignores invalid and unknown payloads', () => {
+    const { instance } = renderConnect();
+    const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+
+    expect(() =>
+      instance.handleEvent({
+        nativeEvent: {
+          data: '{0}'
+        }
+      })
+    ).not.toThrow();
+
+    instance.handleEvent({
+      nativeEvent: {
+        data: {
+          type: 'unknown',
+          data: 'ignored'
+        }
+      }
+    });
+
+    expect(dismissBrowser).not.toHaveBeenCalled();
+  });
+
+  test('render callbacks delegate to close, handleEvent, and startPingingConnect', () => {
+    const { instance, modal, webView } = renderConnect();
+    const close = jest.spyOn(instance, 'close');
+    const handleEvent = jest.spyOn(instance, 'handleEvent');
+    const startPingingConnect = jest.spyOn(instance, 'startPingingConnect');
+
+    act(() => {
+      modal.props.onRequestClose();
+      webView.props.onMessage({ nativeEvent: { data: '{}' } });
+      webView.props.onLoad();
+    });
+
+    expect(close).toHaveBeenCalled();
+    expect(handleEvent).toHaveBeenCalledWith({ nativeEvent: { data: '{}' } });
+    expect(startPingingConnect).toHaveBeenCalled();
+  });
+
+  test('dismissModal updates modalVisible through setState', () => {
+    const { instance } = renderConnect();
+
+    act(() => {
+      instance.dismissModal();
+    });
+
+    expect(instance.state.modalVisible).toBe(false);
   });
 });

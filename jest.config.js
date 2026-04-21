@@ -9,11 +9,8 @@ module.exports = {
 
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
-  preset: 'react-native',
-  setupFilesAfterEnv: [
-    '@testing-library/react-native/extend-expect',
-    './setup.test.js'
-  ],
+  preset: '@react-native/jest-preset',
+  setupFilesAfterEnv: ['./setup.test.js'],
   coverageReporters: ['cobertura', 'text', 'lcov', 'html'],
 
   coverageThreshold: {
