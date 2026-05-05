@@ -82,6 +82,14 @@
     "react-native-inappbrowser-reborn": "3.7.1",
     "react-native-webview": "13.16.1"
   },
+  "overrides": {
+    "flatted": "^3.4.2",
+    "minimatch": "^3.1.5"
+  },
+  "resolutions": {
+    "flatted": "^3.4.2",
+    "minimatch": "^3.1.5"
+  },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
