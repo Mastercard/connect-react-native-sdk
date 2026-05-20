@@ -2877,7 +2877,7 @@ concat-map@0.0.1:
 "connect-react-native-sdk@file:connect-react-native-sdk-2.0.5.tgz":
   version "2.0.5"
   resolved "file:connect-react-native-sdk-2.0.5.tgz"
-  integrity sha512-zSwEEx0/9i2BrFr1Fovrkj9TZ848w0BStMJgxVWRznHAaA1B2hMNzgg2Kgf/mkU30U8G3WSCrZ2JnzOJ/FPauA==
+  integrity sha512-Sj5N7Ky8kUYv0KgAUdHKN9GUUCdtad/t4oJp8YPanHoSTDwWrnQERjQx6humQOPC2bLKg2lpFAmGEmAWPGh3Xw==
   dependencies:
     react-native-inappbrowser-reborn "3.7.1"
     react-native-url-polyfill "3.0.0"

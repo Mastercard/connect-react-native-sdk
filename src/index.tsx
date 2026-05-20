@@ -123,15 +123,32 @@ export class Connect extends Component<ConnectProps> {
         : { forceCloseOnRedirection: false, showInRecents: true };
 
     if (Platform.OS === 'android') {
-      const { type } = await ConnectReactNativeSdk.open({
-        url,
-        ...browserOptions
-      });
-
-      this.dismissBrowser(type);
+      try {
+        const { type } = await ConnectReactNativeSdk.open({
+          url,
+          ...browserOptions
+        });
+        this.dismissBrowser(type);
+      } catch (error) {
+        this.postMessage({
+          type: 'window',
+          closed: true,
+          blocked: true
+        });
+        this.dismissBrowser('cancel');
+      }
     } else {
-      const { type } = await InAppBrowser.open(url, browserOptions);
-      this.dismissBrowser(type);
+      try {
+        const { type } = await InAppBrowser.open(url, browserOptions);
+        this.dismissBrowser(type);
+      } catch (error) {
+        this.postMessage({
+          type: 'window',
+          closed: true,
+          blocked: true
+        });
+        this.dismissBrowser('cancel');
+      }
     }
   };
 

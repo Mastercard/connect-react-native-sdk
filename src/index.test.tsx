@@ -269,6 +269,27 @@ describe('Connect', () => {
     expect(dismissBrowser).toHaveBeenCalledWith('close');
   });
 
+  test('openBrowser dismisses safely when InAppBrowser fails on ios', async () => {
+    Platform.OS = 'ios';
+    const { instance } = renderConnect();
+    const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+
+    (InAppBrowser.open as jest.Mock).mockRejectedValueOnce(
+      new Error('browser failed')
+    );
+
+    await expect(
+      instance.openBrowser('https://b2b.mastercard.com')
+    ).resolves.toBeUndefined();
+
+    expect(InAppBrowser.open).toHaveBeenCalledWith(
+      'https://b2b.mastercard.com',
+      undefined
+    );
+    expect(dismissBrowser).toHaveBeenCalledWith('cancel');
+    expect(instance.state.browserDisplayed).toBe(false);
+  });
+
   test('openBrowser uses the native sdk on android', async () => {
     Platform.OS = 'android';
     const { instance } = renderConnect();
