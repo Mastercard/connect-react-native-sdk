@@ -2877,9 +2877,8 @@ concat-map@0.0.1:
 "connect-react-native-sdk@file:connect-react-native-sdk-2.0.5.tgz":
   version "2.0.5"
   resolved "file:connect-react-native-sdk-2.0.5.tgz"
-  integrity sha512-Sj5N7Ky8kUYv0KgAUdHKN9GUUCdtad/t4oJp8YPanHoSTDwWrnQERjQx6humQOPC2bLKg2lpFAmGEmAWPGh3Xw==
+  integrity sha512-3sJITaZFC8me7hKDyeYGqHniV6k4Iq4JvvoZly5nJpF82MYAD7CRlLvohUv5LJslN0I5mBEPfLcEAur8p+lVsQ==
   dependencies:
-    react-native-inappbrowser-reborn "3.7.1"
     react-native-url-polyfill "3.0.0"
     react-native-webview "13.16.1"
 
@@ -5540,11 +5539,6 @@ open@^7.0.3:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
 
-opencollective-postinstall@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.npmjs.org/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz"
-  integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
-
 optionator@^0.9.3:
   version "0.9.3"
   resolved "https://registry.npmjs.org/optionator/-/optionator-0.9.3.tgz"
@@ -5825,14 +5819,6 @@ react-is@^18.0.0, react-is@^18.3.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.3.1.tgz"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
 
-react-native-inappbrowser-reborn@3.7.1:
-  version "3.7.1"
-  resolved "https://registry.npmjs.org/react-native-inappbrowser-reborn/-/react-native-inappbrowser-reborn-3.7.1.tgz"
-  integrity sha512-4HSomJzElAqzJs5ORQmYY79fBQ/33WRQ1tScyHaREfvpLpZfoMX1moopGaytXGmakmYmR9RaYWOYZaZr9bZoOw==
-  dependencies:
-    invariant "^2.2.4"
-    opencollective-postinstall "^2.0.3"
-
 react-native-url-polyfill@3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/react-native-url-polyfill/-/react-native-url-polyfill-3.0.0.tgz"
@@ -5848,7 +5834,7 @@ react-native-webview@13.16.1:
     escape-string-regexp "^4.0.0"
     invariant "2.2.4"
 
-react-native@*, react-native@>=0.56, react-native@>=0.85.2, react-native@0.85.2:
+react-native@*, react-native@>=0.85.2, react-native@0.85.2:
   version "0.85.2"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.85.2.tgz"
   integrity sha512-GFWEPwLYirfj5X8gMtXOWtqX0cqUEURRHETZfFk37VCa4++izrKvGvv24anvuyulXV87NAhVkfNw93rLg3HByw==

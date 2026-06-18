@@ -11,6 +11,7 @@ export enum ConnectEvents {
   CLOSE_POPUP = 'closePopup',
   PING = 'ping',
   URL = 'url',
+  TRACK_POPUP_BLOCKED_EVENT = 'trackPopupBlockedEvent',
 
   // App events exposed to developers
   CANCEL = 'cancel',

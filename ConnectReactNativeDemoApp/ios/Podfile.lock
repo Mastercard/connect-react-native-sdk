@@ -1791,8 +1791,6 @@ PODS:
     - React-utils (= 0.85.2)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.85.2)
-  - RNInAppBrowser (3.7.1):
-    - React-Core
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1871,7 +1869,6 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
-  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
@@ -2024,8 +2021,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeDependencies:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
-  RNInAppBrowser:
-    :path: "../node_modules/react-native-inappbrowser-reborn"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -2104,9 +2099,8 @@ SPEC CHECKSUMS:
   ReactCodegen: 97ed75bbf5f4a1113ba856658696d63d51289a22
   ReactCommon: 376f3a275bcf5e59a360e0b1762beb3bd41495ce
   ReactNativeDependencies: 6ead7f685193e2ce44ea3d0e791fbf4a206ef812
-  RNInAppBrowser: b53e6f6072c931115bc22ac9dc9510ac2cbea62d
   Yoga: df8920a8f8ca99996048f6aea23a529f44992eac
 
-PODFILE CHECKSUM: 03e418c36dce59110157db1b3dafd2a09184c07f
+PODFILE CHECKSUM: 5fc8d2a7d7d7536360de8dd48a100db193e96145
 
 COCOAPODS: 1.16.2
