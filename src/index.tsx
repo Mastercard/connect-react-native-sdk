@@ -11,7 +11,7 @@ import {
   DEFAULT_REDIRECT_URL
 } from './constants';
 import { validateUrl } from './utils';
-import { ConnectReactNativeSdk, checkLink } from './nativeModule';
+import { ConnectReactNativeSdk, resolveAndOpenHostedApp } from './nativeModule';
 import type { ConnectEventHandlers, ConnectProps } from './types';
 
 const defaultEventHandlers: any = {
@@ -142,14 +142,24 @@ export class Connect extends Component<ConnectProps> {
 
     switch (eventType) {
       case ConnectEvents.URL:
+        // if (!browserDisplayed) {
+        //   Platform.OS === 'ios'
+        //     ? url &&
+        //       checkLink(url).then((canOpen: boolean) => {
+        //         !canOpen && this.openBrowser(url);
+        //       })
+        //     : this.openBrowser(url);
+        // }
+
         if (!browserDisplayed) {
           Platform.OS === 'ios'
             ? url &&
-              checkLink(url).then((canOpen: boolean) => {
-                !canOpen && this.openBrowser(url);
+              resolveAndOpenHostedApp(url).catch(() => {
+                this.openBrowser(url);
               })
             : this.openBrowser(url);
         }
+
         break;
 
       case ConnectEvents.CLOSE_POPUP:

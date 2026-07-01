@@ -10,6 +10,6 @@ export const ConnectReactNativeSdk = NativeModules.ConnectReactNativeSdk
   ? NativeModules.ConnectReactNativeSdk
   : new Error(LINKING_ERROR);
 
-export function checkLink(url: string): Promise<boolean> {
-  return ConnectReactNativeSdk?.checklink(url);
+export function resolveAndOpenHostedApp(url: string): Promise<string> {
+  return ConnectReactNativeSdk?.resolveAndOpenHostedApp(url);
 }

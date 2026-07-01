@@ -31,5 +31,53 @@ target 'ConnectReactNativeDemoApp' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Xcode 26 workaround: fmt headers fail to compile with consteval checks.
+    fmt_base = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'base.h')
+    if File.exist?(fmt_base)
+      content = File.read(fmt_base)
+      patched = content
+
+      # Respect externally provided FMT_USE_CONSTEVAL from build settings.
+      unless patched.include?('#if defined(FMT_USE_CONSTEVAL)')
+        patched = patched.sub(
+          "// Detect consteval, C++20 constexpr extensions and std::is_constant_evaluated.\n#if !defined(__cpp_lib_is_constant_evaluated)",
+          "// Detect consteval, C++20 constexpr extensions and std::is_constant_evaluated.\n#if defined(FMT_USE_CONSTEVAL)\n// Use the provided definition.\n#elif !defined(__cpp_lib_is_constant_evaluated)"
+        )
+      end
+
+      if patched != content
+        File.chmod(0644, fmt_base)
+        File.write(fmt_base, patched)
+      end
+    end
+
+    fmt_format_inl = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'format-inl.h')
+    if File.exist?(fmt_format_inl)
+      content = File.read(fmt_format_inl)
+      patched = content
+      patched = patched.gsub('FMT_STRING("{}{}")', '"{}{}"')
+      patched = patched.gsub('FMT_STRING("cannot write to file")', '"cannot write to file"')
+      patched = patched.gsub('FMT_STRING("{:x}")', '"{:x}"')
+      patched = patched.gsub('FMT_STRING("{:08x}")', '"{:08x}"')
+      patched = patched.gsub('FMT_STRING("p{}")', '"p{}"')
+      patched = patched.gsub('FMT_STRING("getc failed")', '"getc failed"')
+      patched = patched.gsub('FMT_STRING("ungetc failed")', '"ungetc failed"')
+
+      if patched != content
+        File.chmod(0644, fmt_format_inl)
+        File.write(fmt_format_inl, patched)
+      end
+    end
+
+    # Work around fmt compile-time format checks failing on newer Xcode toolchains.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build_config|
+        defs = build_config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+        defs << 'FMT_USE_CONSTEVAL=0'
+        defs << 'FMT_USE_NONTYPE_TEMPLATE_ARGS=0'
+        build_config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs.uniq
+      end
+    end
   end
 end
