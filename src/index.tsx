@@ -27,9 +27,7 @@ const defaultEventHandlers: any = {
 
 type URLOpenedBy = 'secure-container' | 'fi-app';
 type OAuthClosedBy =
-  | 'connect-client-event'
-  | 'partner-redirection'
-  | 'user-closed';
+  'connect-client-event' | 'partner-redirection' | 'user-closed';
 type OAuthCloseAction = 'closed' | 'none';
 
 export class Connect extends Component<ConnectProps> {
