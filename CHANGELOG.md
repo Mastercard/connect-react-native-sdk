@@ -7,6 +7,7 @@
 - Added OAuth lifecycle events to enable tracking and monitoring throughout the OAuth journey.
 - Updated React Native support and consumer dependency versions:
   - `react-native` peer requirement to `>=0.86.0`.
+  - Added `react-native-safe-area-context` `5.8.0` as a peer dependency.
   - `react-native-webview` to `14.0.1`.
   - Removed `react-native-inappbrowser-reborn` and switched to the native browser implementation.
 

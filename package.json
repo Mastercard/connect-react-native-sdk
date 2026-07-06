@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "react-native-url-polyfill": "3.0.0",
+    "react-native-safe-area-context": "5.8.0",
     "react-native-webview": "14.0.1"
   },
   "devDependencies": {
@@ -78,6 +79,7 @@
   "peerDependencies": {
     "react": ">=19.2.3",
     "react-native": ">=0.86.0",
+    "react-native-safe-area-context": "5.8.0",
     "react-native-webview": "14.0.1"
   },
   "overrides": {

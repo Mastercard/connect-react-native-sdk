@@ -2200,7 +2200,7 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
-"connect-react-native-sdk@file:connect-react-native-sdk-2.1.0.tgz":
+connect-react-native-sdk@2.1.0:
   version "2.1.0"
   resolved "file:connect-react-native-sdk-2.1.0.tgz"
   integrity sha512-8Dz5cwPpMGBM5n5XIZ6dKE2nHw0VY7LA01d/OYnjy0MfbtpzQ4BjukXdk6nFsHACjqe5jpEN0U9I+JAGhUCjXw==
@@ -4442,6 +4442,11 @@ react-is@^18.0.0:
   version "18.3.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.3.1.tgz"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
+
+react-native-safe-area-context@5.8.0:
+  version "5.8.0"
+  resolved "https://registry.npmjs.org/react-native-safe-area-context/-/react-native-safe-area-context-5.8.0.tgz"
+  integrity sha512-t+ZsAVzY/wWzzx34vqGbo3/as9EEESJdbyZNL7Yg5EYX+toYMtMqFoDDCvqZUi35eeGVsXc6pAaEk4edMwbuCQ==
 
 react-native-url-polyfill@3.0.0:
   version "3.0.0"
