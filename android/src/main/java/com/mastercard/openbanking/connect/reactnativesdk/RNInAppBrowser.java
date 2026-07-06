@@ -76,6 +76,38 @@ public class RNInAppBrowser {
   @Nullable
   private CustomTabsClient customTabsClient;
 
+  @Nullable
+  private CustomTabsSession customTabsSession;
+
+  @Nullable
+  private CustomTabsServiceConnection customTabsServiceConnection;
+
+  private boolean mNavigationFailed = false;
+
+  private CustomTabsCallback mCustomTabsCallback = new CustomTabsCallback() {
+    @Override
+    public void onNavigationEvent(int navigationEvent, Bundle extras) {
+      super.onNavigationEvent(navigationEvent, extras);
+
+      switch (navigationEvent) {
+        case CustomTabsCallback.NAVIGATION_STARTED:
+          mNavigationFailed = false;
+          EventBus.getDefault().post(new NavigationEvent(NavigationEvent.NAVIGATION_STARTED, "Page loading started"));
+          break;
+
+        case CustomTabsCallback.NAVIGATION_FAILED:
+          mNavigationFailed = true;
+          EventBus.getDefault().post(new NavigationEvent(NavigationEvent.NAVIGATION_FAILED, "Page failed to load"));
+          break;
+
+        case CustomTabsCallback.NAVIGATION_FINISHED:
+          if (!mNavigationFailed) {
+            EventBus.getDefault().post(new NavigationEvent(NavigationEvent.NAVIGATION_FINISHED, "Page loaded successfully"));
+          }
+          break;
+      }
+    }
+  };
   private static RNInAppBrowser _inAppBrowser;
 
   public static RNInAppBrowser getInstance() {
@@ -123,7 +155,12 @@ public class RNInAppBrowser {
       return;
     }
 
-    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+    // Ensure we have (or are initializing) a session so navigation callbacks can be delivered.
+    bindCustomTabsService(context.getApplicationContext());
+    ensureCustomTabsSession();
+
+    // Attach session so CustomTabsCallback receives navigation events.
+    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder(customTabsSession);
     isLightTheme = false;
     final Integer toolbarColor = setColor(builder, options, KEY_TOOLBAR_COLOR, "setToolbarColor", "toolbar");
     if (toolbarColor != null) {
@@ -251,6 +288,13 @@ public class RNInAppBrowser {
     mOpenBrowserPromise = null;
   }
 
+  @Subscribe
+  public void onEvent(NavigationEvent event) {
+    // Forward this event to React Native module which will emit it to JavaScript
+    if (ConnectReactNativeSdkModule.hasInstance()) {
+      ConnectReactNativeSdkModule.getInstance().sendNavigationEvent(event);
+    }
+  }
   void applyAnimation(Context context, CustomTabsIntent.Builder builder, ReadableMap animations) {
     final int startEnterAnimationId = animations.hasKey(KEY_ANIMATION_START_ENTER)
       ? resolveAnimationIdentifierIfNeeded(context, animations.getString(KEY_ANIMATION_START_ENTER))
@@ -271,6 +315,53 @@ public class RNInAppBrowser {
 
     if (endEnterAnimationId != -1 && endExitAnimationId != -1) {
       builder.setExitAnimations(context, endEnterAnimationId, endExitAnimationId);
+    }
+  }
+
+  private void bindCustomTabsService(Context context) {
+    if (customTabsServiceConnection != null) {
+      return;
+    }
+
+    final String packageName = getDefaultBrowser(context);
+    if (packageName == null) {
+      Log.w("CustomTabs", "No browser supported to bind custom tab service");
+      return;
+    }
+
+    customTabsServiceConnection = new CustomTabsServiceConnection() {
+      @Override
+      public void onCustomTabsServiceConnected(@NonNull ComponentName name, @NonNull CustomTabsClient client) {
+        customTabsClient = client;
+        if (customTabsClient != null) {
+          customTabsClient.warmup(0L);
+          customTabsSession = customTabsClient.newSession(mCustomTabsCallback);
+        }
+      }
+
+      @Override
+      public void onServiceDisconnected(ComponentName name) {
+        customTabsClient = null;
+        customTabsSession = null;
+        customTabsServiceConnection = null;
+      }
+    };
+
+    try {
+      CustomTabsClient.bindCustomTabsService(context, packageName, customTabsServiceConnection);
+    } catch (Exception e) {
+      Log.e("CustomTabs", "Error binding CustomTabs service: " + e.getMessage());
+      customTabsServiceConnection = null;
+    }
+  }
+
+  private void ensureCustomTabsSession() {
+    if (customTabsClient == null) {
+      return;
+    }
+
+    if (customTabsSession == null) {
+      customTabsSession = customTabsClient.newSession(mCustomTabsCallback);
     }
   }
 
@@ -315,29 +406,7 @@ public class RNInAppBrowser {
   }
 
   public void onStart(Activity activity) {
-    Context applicationContext = activity.getApplicationContext();
-    CustomTabsServiceConnection connection = new CustomTabsServiceConnection() {
-      @Override
-      public void onCustomTabsServiceConnected(@NonNull ComponentName name, @NonNull CustomTabsClient client) {
-        customTabsClient = client;
-        if (!customTabsClient.warmup(0L)) {
-          System.err.println("Couldn't warmup custom tabs client");
-        }
-        applicationContext.unbindService(this);
-      }
-
-      @Override
-      public void onServiceDisconnected(ComponentName name) {
-        customTabsClient = null;
-      }
-    };
-
-    final String packageName = getDefaultBrowser(applicationContext);
-    if (packageName != null) {
-      CustomTabsClient.bindCustomTabsService(applicationContext, packageName, connection);
-    } else {
-      System.err.println("No browser supported to bind custom tab service");
-    }
+    bindCustomTabsService(activity.getApplicationContext());
   }
 
   public void warmup(final Promise promise) {

@@ -81,18 +81,15 @@ const App = () => {
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
               <Text style={styles.textTitle}>Connect SDK demo app</Text>
-
               <Text style={styles.textInstructions}>
                 To get started, copy/paste a Generate URL value into the field below.
               </Text>
-
               <TextInput
                 ref={urlInputRef}
                 style={styles.textInput}
                 placeholder="Paste Generate URL here"
                 onChangeText={handleUrl}
               />
-
               <TouchableOpacity
                 disabled={!pressable}
                 style={pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled}
@@ -146,7 +143,6 @@ const styles = StyleSheet.create({
     height: 70,
     marginTop: -50
   },
-
   textInput: {
     height: 56,
     width: '90%',

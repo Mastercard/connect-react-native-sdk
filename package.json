@@ -1,6 +1,6 @@
 {
   "name": "connect-react-native-sdk",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "description": "React Native SDK for Mastercard Open Finance Connect",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -47,40 +47,38 @@
     "test:version_bump": "test $npm_package_version != $(npm show $npm_package_name version) || (echo 'Failing... You must bump package.json and package-lock.json' && exit 1)"
   },
   "dependencies": {
-    "react-native-inappbrowser-reborn": "3.7.1",
     "react-native-url-polyfill": "3.0.0",
-    "react-native-webview": "13.16.1"
+    "react-native-webview": "14.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.3",
-    "@commitlint/config-conventional": "^20.5.3",
-    "@react-native/babel-preset": "0.85.2",
-    "@react-native/eslint-config": "0.85.2",
-    "@react-native/jest-preset": "0.85.2",
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@react-native/babel-preset": "0.86.0",
+    "@react-native/eslint-config": "0.86.0",
+    "@react-native/jest-preset": "0.86.0",
     "@testing-library/react-native": "^13.3.3",
-    "@types/jest": "^30.0.0",
+    "@types/jest": "^29.5.14",
     "@types/react": "^19.2.14",
     "@types/react-test-renderer": "^19.1.0",
-    "commitlint": "^20.5.3",
+    "commitlint": "^21.2.0",
     "del-cli": "^7.0.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
-    "jest": "^30.3.0",
+    "jest": "^29.7.0",
     "pod-install": "^1.0.15",
-    "prettier": "3.8.3",
-    "react": "19.2.3",
-    "react-native": "0.85.2",
-    "react-native-builder-bob": "0.41.0",
-    "react-test-renderer": "19.2.3",
+    "prettier": "3.9.4",
+    "react": "19.2.7",
+    "react-native": "0.86.0",
+    "react-native-builder-bob": "0.43.0",
+    "react-test-renderer": "19.2.7",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "react": ">=19.2.3",
-    "react-native": ">=0.85.2",
-    "react-native-inappbrowser-reborn": "3.7.1",
-    "react-native-webview": "13.16.1"
+    "react-native": ">=0.86.0",
+    "react-native-webview": "14.0.1"
   },
   "overrides": {
     "flatted": "^3.4.2",
@@ -142,6 +140,6 @@
     ]
   },
   "engines": {
-    "node": ">= 22.11.0"
+    "node": ">= 22.13.0"
   }
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react-native';
-import { Platform } from 'react-native';
-import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+import { DeviceEventEmitter, Platform } from 'react-native';
 
 import {
   Connect,
@@ -127,6 +126,43 @@ describe('Connect', () => {
     });
   });
 
+  test('browser navigation listener forwards events only while popup tracking is active', () => {
+    const { instance, unmount } = renderConnect();
+    const handleBrowserNavigationEvent = jest.spyOn(
+      instance,
+      'handleBrowserNavigationEvent'
+    );
+
+    instance.isTrackPopupBlockedEventActive = false;
+    DeviceEventEmitter.emit('onBrowserNavigationEvent', {
+      eventName: 'NAVIGATION_FINISHED'
+    });
+    expect(handleBrowserNavigationEvent).not.toHaveBeenCalled();
+
+    instance.isTrackPopupBlockedEventActive = true;
+    DeviceEventEmitter.emit('onBrowserNavigationEvent', {
+      eventName: 'NAVIGATION_FINISHED'
+    });
+    expect(handleBrowserNavigationEvent).toHaveBeenCalledWith({
+      eventName: 'NAVIGATION_FINISHED'
+    });
+
+    unmount();
+    handleBrowserNavigationEvent.mockClear();
+    DeviceEventEmitter.emit('onBrowserNavigationEvent', {
+      eventName: 'NAVIGATION_FINISHED'
+    });
+    expect(handleBrowserNavigationEvent).not.toHaveBeenCalled();
+  });
+
+  test('componentWillUnmount tolerates a missing navigation subscription', () => {
+    const { instance } = renderConnect();
+
+    instance.navigationEventSubscription = null;
+
+    expect(() => instance.componentWillUnmount()).not.toThrow();
+  });
+
   test('postMessage serializes payloads and tolerates a missing webview ref', () => {
     const { instance } = renderConnect();
     const postMessage = jest.fn();
@@ -208,7 +244,7 @@ describe('Connect', () => {
     expect(instance.state.pingIntervalId).toBe(0);
   });
 
-  test('dismissBrowser no-ops when no popup is displayed', () => {
+  test('dismissBrowser no-ops when popup tracking is inactive and no browser is displayed', () => {
     const { instance } = renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
@@ -216,30 +252,68 @@ describe('Connect', () => {
     instance.dismissBrowser();
 
     expect(postMessage).not.toHaveBeenCalled();
-    expect(InAppBrowser.close).not.toHaveBeenCalled();
     expect(ConnectReactNativeSdk.close).not.toHaveBeenCalled();
   });
 
-  test('dismissBrowser closes iOS and android popups unless cancelled', () => {
+  test('dismissBrowser emits closed event with close metadata', () => {
     const { instance } = renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
+    instance.isTrackPopupBlockedEventActive = true;
 
     Platform.OS = 'ios';
     instance.state.browserDisplayed = true;
     instance.dismissBrowser();
-    expect(postMessage).toHaveBeenCalledWith({ type: 'window', closed: true });
-    expect(InAppBrowser.close).toHaveBeenCalledTimes(1);
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      closed: true,
+      closed_by: 'partner-redirection',
+      action: 'none',
+      url: ''
+    });
+    expect(ConnectReactNativeSdk.close).not.toHaveBeenCalled();
     expect(instance.state.browserDisplayed).toBe(false);
 
     Platform.OS = 'android';
     instance.state.browserDisplayed = true;
     instance.dismissBrowser('cancel');
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      closed: true,
+      closed_by: 'partner-redirection',
+      action: 'none',
+      url: ''
+    });
     expect(ConnectReactNativeSdk.close).not.toHaveBeenCalled();
     expect(instance.state.browserDisplayed).toBe(false);
 
     instance.state.browserDisplayed = true;
-    instance.dismissBrowser('close');
+    instance.dismissBrowser(undefined, 'connect-client-event');
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      closed: true,
+      closed_by: 'connect-client-event',
+      action: 'none',
+      url: ''
+    });
     expect(ConnectReactNativeSdk.close).toHaveBeenCalledTimes(1);
+  });
+
+  test('dismissBrowser emits legacy close event when popup tracking is inactive and browser is displayed', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.isTrackPopupBlockedEventActive = false;
+    instance.state.browserDisplayed = true;
+    instance.OAuthUrl = 'https://b2b.mastercard.com/oauth';
+    instance.dismissBrowser('NAVIGATION_FAILED', 'connect-client-event');
+
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      closed: true
+    });
+    expect(ConnectReactNativeSdk.close).not.toHaveBeenCalled();
+    expect(instance.state.browserDisplayed).toBe(false);
+    expect(instance.OAuthUrl).toBe('');
   });
 
   test('openBrowser returns early for empty urls', async () => {
@@ -248,62 +322,123 @@ describe('Connect', () => {
     await instance.openBrowser('');
     await instance.openBrowser(null as unknown as string);
 
-    expect(InAppBrowser.isAvailable).not.toHaveBeenCalled();
-    expect(InAppBrowser.open).not.toHaveBeenCalled();
     expect(ConnectReactNativeSdk.open).not.toHaveBeenCalled();
     expect(instance.state.browserDisplayed).toBe(false);
   });
 
-  test('openBrowser uses InAppBrowser on ios', async () => {
+  test('openBrowser uses the native sdk on ios and dismisses with partner-redirection metadata', async () => {
     Platform.OS = 'ios';
     const { instance } = renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+    const postMessage = jest.spyOn(instance, 'postMessage');
+    instance.isTrackPopupBlockedEventActive = true;
 
     await instance.openBrowser('https://b2b.mastercard.com');
 
-    expect(InAppBrowser.isAvailable).toHaveBeenCalled();
-    expect(InAppBrowser.open).toHaveBeenCalledWith(
-      'https://b2b.mastercard.com',
-      undefined
-    );
-    expect(dismissBrowser).toHaveBeenCalledWith('close');
+    expect(ConnectReactNativeSdk.open).toHaveBeenCalledWith({
+      url: 'https://b2b.mastercard.com'
+    });
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      closed: true,
+      closed_by: 'partner-redirection',
+      action: 'none',
+      url: ''
+    });
+    expect(dismissBrowser).toHaveBeenCalledWith('close', 'partner-redirection');
   });
 
-  test('openBrowser dismisses safely when InAppBrowser fails on ios', async () => {
+  test('openBrowser sends blocked telemetry when native open fails on ios', async () => {
     Platform.OS = 'ios';
     const { instance } = renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+    const postMessage = jest.spyOn(instance, 'postMessage');
+    instance.isTrackPopupBlockedEventActive = true;
 
-    (InAppBrowser.open as jest.Mock).mockRejectedValueOnce(
+    (ConnectReactNativeSdk.open as jest.Mock).mockRejectedValueOnce(
       new Error('browser failed')
     );
 
     await expect(
       instance.openBrowser('https://b2b.mastercard.com')
-    ).resolves.toBeUndefined();
+    ).rejects.toThrow('browser failed');
 
-    expect(InAppBrowser.open).toHaveBeenCalledWith(
-      'https://b2b.mastercard.com',
-      undefined
-    );
-    expect(dismissBrowser).toHaveBeenCalledWith('cancel');
-    expect(instance.state.browserDisplayed).toBe(false);
+    expect(ConnectReactNativeSdk.open).toHaveBeenCalledWith({
+      url: 'https://b2b.mastercard.com'
+    });
+    expect(postMessage).not.toHaveBeenCalled();
+    expect(dismissBrowser).not.toHaveBeenCalled();
   });
 
-  test('openBrowser uses the native sdk on android', async () => {
+  test('openBrowser uses the native sdk on android and dismisses with partner-redirection metadata', async () => {
     Platform.OS = 'android';
     const { instance } = renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+    const postMessage = jest.spyOn(instance, 'postMessage');
+    instance.isTrackPopupBlockedEventActive = true;
 
     await instance.openBrowser('https://b2b.mastercard.com');
 
-    expect(InAppBrowser.isAvailable).toHaveBeenCalled();
     expect(ConnectReactNativeSdk.open).toHaveBeenCalledWith({
       url: 'https://b2b.mastercard.com',
       forceCloseOnRedirection: false,
       showInRecents: true
     });
-    expect(dismissBrowser).toHaveBeenCalledWith('close');
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      closed: true,
+      closed_by: 'partner-redirection',
+      action: 'none',
+      url: ''
+    });
+    expect(dismissBrowser).toHaveBeenCalledWith('close', 'partner-redirection');
+  });
+
+  test('browser navigation failed event sends blocked event while browser is displayed', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+    instance.isTrackPopupBlockedEventActive = true;
+    instance.state.browserDisplayed = true;
+
+    instance.handleBrowserNavigationEvent({ eventName: 'NAVIGATION_FAILED' });
+
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      blocked: true,
+      url: ''
+    });
+  });
+
+  test('openBrowser handles cancel and dismiss result types', async () => {
+    const { instance } = renderConnect();
+    const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
+    instance.isTrackPopupBlockedEventActive = true;
+
+    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
+      type: 'cancel'
+    });
+    await instance.openBrowser('https://cancel.example.com');
+    expect(dismissBrowser).toHaveBeenCalledWith('cancel', 'user-closed');
+
+    Platform.OS = 'ios';
+    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
+      type: 'dismiss'
+    });
+    await instance.openBrowser('https://dismiss-ios.example.com');
+    expect(dismissBrowser).toHaveBeenCalledWith(
+      'dismiss',
+      'connect-client-event'
+    );
+
+    Platform.OS = 'android';
+    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
+      type: 'dismiss'
+    });
+    await instance.openBrowser('https://dismiss-android.example.com');
+    expect(dismissBrowser).toHaveBeenCalledWith(
+      'dismiss',
+      'partner-redirection'
+    );
   });
 
   test('ios URL events check deep-link availability before opening a browser', async () => {
@@ -331,6 +466,8 @@ describe('Connect', () => {
     Platform.OS = 'ios';
     const { instance } = renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
+    const postMessage = jest.spyOn(instance, 'postMessage');
+    instance.isTrackPopupBlockedEventActive = true;
 
     (checkLink as jest.Mock).mockResolvedValueOnce(true);
     instance.handleEvent({
@@ -345,6 +482,12 @@ describe('Connect', () => {
     await act(async () => Promise.resolve());
 
     expect(openBrowser).not.toHaveBeenCalled();
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      opened: true,
+      open_type: 'fi-app',
+      url: 'https://b2b.mastercard.com'
+    });
 
     instance.handleEvent({
       nativeEvent: {
@@ -370,11 +513,12 @@ describe('Connect', () => {
     expect(checkLink).toHaveBeenCalledTimes(1);
   });
 
-  test('android URL events open the browser directly', () => {
+  test('URL events fall back to secure container when app-to-app check rejects', async () => {
     Platform.OS = 'android';
     const { instance } = renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
 
+    (checkLink as jest.Mock).mockRejectedValueOnce(new Error('launch failed'));
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -384,10 +528,44 @@ describe('Connect', () => {
       }
     });
 
+    await act(async () => Promise.resolve());
+
     expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com');
   });
 
-  test('close popup only dismisses the browser when one is displayed', () => {
+  test('track popup blocked events enable popup tracking before URL handling', async () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.isTrackPopupBlockedEventActive = false;
+    instance.handleEvent({
+      nativeEvent: {
+        data: JSON.stringify({ type: ConnectEvents.TRACK_POPUP_BLOCKED_EVENT })
+      }
+    });
+    expect(instance.isTrackPopupBlockedEventActive).toBe(true);
+
+    (checkLink as jest.Mock).mockResolvedValueOnce(true);
+    instance.handleEvent({
+      nativeEvent: {
+        data: JSON.stringify({
+          type: ConnectEvents.URL,
+          url: 'https://b2b.mastercard.com'
+        })
+      }
+    });
+
+    await act(async () => Promise.resolve());
+
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      opened: true,
+      open_type: 'fi-app',
+      url: 'https://b2b.mastercard.com'
+    });
+  });
+
+  test('close popup forwards dismiss request as connect client event', () => {
     const { instance } = renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
 
@@ -397,7 +575,10 @@ describe('Connect', () => {
         data: JSON.stringify({ type: ConnectEvents.CLOSE_POPUP })
       }
     });
-    expect(dismissBrowser).not.toHaveBeenCalled();
+    expect(dismissBrowser).toHaveBeenCalledWith(
+      undefined,
+      'connect-client-event'
+    );
 
     instance.state.browserDisplayed = true;
     instance.handleEvent({
@@ -405,7 +586,92 @@ describe('Connect', () => {
         data: JSON.stringify({ type: ConnectEvents.CLOSE_POPUP })
       }
     });
-    expect(dismissBrowser).toHaveBeenCalledTimes(1);
+    expect(dismissBrowser).toHaveBeenCalledWith(
+      undefined,
+      'connect-client-event'
+    );
+    expect(dismissBrowser).toHaveBeenCalledTimes(2);
+  });
+
+  test('android navigation failures emit blocked telemetry', () => {
+    Platform.OS = 'android';
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.isTrackPopupBlockedEventActive = true;
+    instance.state.browserDisplayed = true;
+
+    instance.handleBrowserNavigationEvent({ eventName: 'NAVIGATION_FAILED' });
+
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      blocked: true,
+      url: ''
+    });
+    expect(postMessage).toHaveBeenCalledTimes(1);
+  });
+
+  test('deep-link redirect events emit partner redirection close telemetry when oauth url exists', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.state.browserDisplayed = false;
+    instance.OAuthUrl = 'https://b2b.mastercard.com/oauth';
+
+    instance.handleBrowserNavigationEvent({
+      eventName: 'DEEP_LINK_REDIRECT',
+      message: 'connect://maob/redirect?code=123'
+    });
+
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      closed: true,
+      closed_by: 'partner-redirection',
+      action: 'closed',
+      url: 'connect://maob/redirect?code=123'
+    });
+    expect(instance.OAuthUrl).toBe('');
+  });
+
+  test('browser navigation ignores empty events and deep-link redirects without oauth url', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.OAuthUrl = 'https://b2b.mastercard.com/oauth';
+    instance.handleBrowserNavigationEvent(null);
+
+    instance.state.browserDisplayed = true;
+    instance.handleBrowserNavigationEvent(null);
+
+    instance.state.browserDisplayed = false;
+    instance.OAuthUrl = '';
+    instance.handleBrowserNavigationEvent({
+      eventName: 'DEEP_LINK_REDIRECT',
+      message: 'connect://maob/redirect?code=123'
+    });
+
+    expect(postMessage).not.toHaveBeenCalled();
+  });
+
+  test('secure-container opened telemetry is emitted once for repeated navigation finished events', () => {
+    const { instance } = renderConnect();
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.isTrackPopupBlockedEventActive = true;
+    instance.state.browserDisplayed = true;
+    instance.OAuthUrl = 'https://b2b.mastercard.com';
+
+    instance.handleBrowserNavigationEvent({ eventName: 'NAVIGATION_FINISHED' });
+    instance.handleBrowserNavigationEvent({ eventName: 'NAVIGATION_FINISHED' });
+    instance.handleBrowserNavigationEvent({ eventName: 'NAVIGATION_FINISHED' });
+
+    expect(postMessage).toHaveBeenCalledWith({
+      type: 'window',
+      opened: true,
+      open_type: 'secure-container',
+      url: 'https://b2b.mastercard.com'
+    });
+    expect(postMessage).toHaveBeenCalledTimes(1);
   });
 
   test('ack events stop pinging, mark connect as ready, and use default optional handlers safely', () => {
@@ -530,7 +796,7 @@ describe('Connect', () => {
     expect(() =>
       instance.handleEvent({
         nativeEvent: {
-          data: '{0}'
+          data: '{'
         }
       })
     ).not.toThrow();
