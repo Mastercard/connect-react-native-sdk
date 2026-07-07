@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, Platform, NativeEventEmitter } from 'react-native';
+import { Modal, Platform, NativeEventEmitter, StyleSheet } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 import {
@@ -331,19 +332,36 @@ export class Connect extends Component<ConnectProps> {
         testID="test-modal"
         onRequestClose={() => this.close()}
       >
-        <WebView
-          ref={(ref: any) => (this.webViewRef = ref)}
-          source={{ uri: this.state.connectUrl }}
-          javaScriptEnabled
-          injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
-          testID="test-webview"
-          onMessage={event => this.handleEvent(event)}
-          onLoad={() => this.startPingingConnect()}
-        />
+        <SafeAreaProvider style={styles.safeAreaProvider}>
+          <SafeAreaView style={styles.safeAreaView}>
+            <WebView
+              ref={(ref: any) => (this.webViewRef = ref)}
+              style={styles.webView}
+              source={{ uri: this.state.connectUrl }}
+              javaScriptEnabled
+              injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
+              testID="test-webview"
+              onMessage={event => this.handleEvent(event)}
+              onLoad={() => this.startPingingConnect()}
+            />
+          </SafeAreaView>
+        </SafeAreaProvider>
       </Modal>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  safeAreaProvider: {
+    flex: 1
+  },
+  safeAreaView: {
+    flex: 1
+  },
+  webView: {
+    flex: 1
+  }
+});
 
 function parseEventData(eventData: any) {
   try {

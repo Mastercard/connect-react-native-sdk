@@ -26,6 +26,27 @@ jest.mock('react-native-webview', () => {
   };
 });
 
+jest.mock('react-native-safe-area-context', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  const SafeAreaProvider = React.forwardRef(({ children, ...props }, ref) =>
+    React.createElement(View, { ...props, ref }, children)
+  );
+  const SafeAreaView = React.forwardRef(({ children, ...props }, ref) =>
+    React.createElement(View, { ...props, ref }, children)
+  );
+
+  SafeAreaProvider.displayName = 'SafeAreaProvider';
+  SafeAreaView.displayName = 'SafeAreaView';
+
+  return {
+    __esModule: true,
+    SafeAreaProvider,
+    SafeAreaView
+  };
+});
+
 jest.mock('react-native/Libraries/Modal/Modal', () => {
   const React = require('react');
   const { View } = require('react-native');

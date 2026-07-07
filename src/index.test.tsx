@@ -28,12 +28,12 @@ const baseHandlers = (): ConnectEventHandlers => ({
   onUser: jest.fn()
 });
 
-const renderConnect = (
+const renderConnect = async (
   overrideProps: Partial<React.ComponentProps<typeof Connect>> = {}
 ) => {
   const ref = React.createRef<ConnectInstance>();
   const eventHandlers = overrideProps.eventHandlers ?? baseHandlers();
-  const utils = render(
+  const utils = await render(
     <Connect
       ref={ref}
       connectUrl="https://b2b.mastercard.com/open-banking-solutions/"
@@ -64,8 +64,8 @@ describe('Connect', () => {
     Platform.OS = 'ios';
   });
 
-  test('renders with the correct presentation style and injected javascript', () => {
-    const { modal, webView } = renderConnect({
+  test('renders with the correct presentation style and injected javascript', async () => {
+    const { modal, webView } = await renderConnect({
       redirectUrl: 'https://mastercard.com'
     });
 
@@ -81,21 +81,21 @@ describe('Connect', () => {
     );
   });
 
-  test('renders fullscreen on android', () => {
+  test('renders fullscreen on android', async () => {
     Platform.OS = 'android';
-    const { modal } = renderConnect();
+    const { modal } = await renderConnect();
 
     expect(modal.props.presentationStyle).toBe('fullScreen');
   });
 
-  test('launch stores url handlers and validated redirect url', () => {
+  test('launch stores url handlers and validated redirect url', async () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     const customHandlers = {
       onCancel: jest.fn(),
       onDone: jest.fn(),
       onError: jest.fn()
     };
-    const { instance } = renderConnect({
+    const { instance } = await renderConnect({
       connectUrl: 'https://example.com/connect',
       eventHandlers: customHandlers,
       redirectUrl: 'invalid url'
@@ -111,11 +111,11 @@ describe('Connect', () => {
     expect(warn).toHaveBeenCalledWith('Invalid URL format');
   });
 
-  test('close dismisses the modal and emits cancel', () => {
+  test('close dismisses the modal and emits cancel', async () => {
     const eventHandlers = baseHandlers();
-    const { instance } = renderConnect({ eventHandlers });
+    const { instance } = await renderConnect({ eventHandlers });
 
-    act(() => {
+    await act(async () => {
       instance.close();
     });
 
@@ -126,8 +126,8 @@ describe('Connect', () => {
     });
   });
 
-  test('browser navigation listener forwards events only while popup tracking is active', () => {
-    const { instance, unmount } = renderConnect();
+  test('browser navigation listener forwards events only while popup tracking is active', async () => {
+    const { instance, unmount } = await renderConnect();
     const handleBrowserNavigationEvent = jest.spyOn(
       instance,
       'handleBrowserNavigationEvent'
@@ -147,7 +147,7 @@ describe('Connect', () => {
       eventName: 'NAVIGATION_FINISHED'
     });
 
-    unmount();
+    await unmount();
     handleBrowserNavigationEvent.mockClear();
     DeviceEventEmitter.emit('onBrowserNavigationEvent', {
       eventName: 'NAVIGATION_FINISHED'
@@ -155,16 +155,16 @@ describe('Connect', () => {
     expect(handleBrowserNavigationEvent).not.toHaveBeenCalled();
   });
 
-  test('componentWillUnmount tolerates a missing navigation subscription', () => {
-    const { instance } = renderConnect();
+  test('componentWillUnmount tolerates a missing navigation subscription', async () => {
+    const { instance } = await renderConnect();
 
     instance.navigationEventSubscription = null;
 
     expect(() => instance.componentWillUnmount()).not.toThrow();
   });
 
-  test('postMessage serializes payloads and tolerates a missing webview ref', () => {
-    const { instance } = renderConnect();
+  test('postMessage serializes payloads and tolerates a missing webview ref', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.fn();
 
     instance.webViewRef = { postMessage } as any;
@@ -175,8 +175,8 @@ describe('Connect', () => {
     expect(() => instance.postMessage({ test: false })).not.toThrow();
   });
 
-  test('pingConnect posts sdk details when the webview exists', () => {
-    const { instance } = renderConnect({
+  test('pingConnect posts sdk details when the webview exists', async () => {
+    const { instance } = await renderConnect({
       redirectUrl: 'https://mastercard.com/redirect'
     });
     const postMessage = jest.fn();
@@ -194,8 +194,8 @@ describe('Connect', () => {
     );
   });
 
-  test('pingConnect stops pinging when the webview ref is missing', () => {
-    const { instance } = renderConnect();
+  test('pingConnect stops pinging when the webview ref is missing', async () => {
+    const { instance } = await renderConnect();
     const stopPingingConnect = jest.spyOn(instance, 'stopPingingConnect');
 
     instance.webViewRef = null;
@@ -204,9 +204,9 @@ describe('Connect', () => {
     expect(stopPingingConnect).toHaveBeenCalled();
   });
 
-  test('startPingingConnect starts exactly once and stopPingingConnect clears it', () => {
+  test('startPingingConnect starts exactly once and stopPingingConnect clears it', async () => {
     jest.useFakeTimers();
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const pingConnect = jest.spyOn(instance, 'pingConnect');
 
     instance.webViewRef = { postMessage: jest.fn() } as any;
@@ -225,9 +225,9 @@ describe('Connect', () => {
     expect(instance.state.pingIntervalId).toBe(0);
   });
 
-  test('startPingingConnect does nothing after connect has acknowledged', () => {
+  test('startPingingConnect does nothing after connect has acknowledged', async () => {
     jest.useFakeTimers();
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const pingConnect = jest.spyOn(instance, 'pingConnect');
 
     instance.webViewRef = {} as any;
@@ -244,8 +244,8 @@ describe('Connect', () => {
     expect(instance.state.pingIntervalId).toBe(0);
   });
 
-  test('dismissBrowser no-ops when popup tracking is inactive and no browser is displayed', () => {
-    const { instance } = renderConnect();
+  test('dismissBrowser no-ops when popup tracking is inactive and no browser is displayed', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
     instance.state.browserDisplayed = false;
@@ -255,8 +255,8 @@ describe('Connect', () => {
     expect(ConnectReactNativeSdk.close).not.toHaveBeenCalled();
   });
 
-  test('dismissBrowser emits closed event with close metadata', () => {
-    const { instance } = renderConnect();
+  test('dismissBrowser emits closed event with close metadata', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
 
@@ -298,8 +298,8 @@ describe('Connect', () => {
     expect(ConnectReactNativeSdk.close).toHaveBeenCalledTimes(1);
   });
 
-  test('dismissBrowser emits legacy close event when popup tracking is inactive and browser is displayed', () => {
-    const { instance } = renderConnect();
+  test('dismissBrowser emits legacy close event when popup tracking is inactive and browser is displayed', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
     instance.isTrackPopupBlockedEventActive = false;
@@ -317,7 +317,7 @@ describe('Connect', () => {
   });
 
   test('openBrowser returns early for empty urls', async () => {
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
 
     await instance.openBrowser('');
     await instance.openBrowser(null as unknown as string);
@@ -328,7 +328,7 @@ describe('Connect', () => {
 
   test('openBrowser uses the native sdk on ios and dismisses with partner-redirection metadata', async () => {
     Platform.OS = 'ios';
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
@@ -350,7 +350,7 @@ describe('Connect', () => {
 
   test('openBrowser sends blocked telemetry when native open fails on ios', async () => {
     Platform.OS = 'ios';
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
@@ -372,7 +372,7 @@ describe('Connect', () => {
 
   test('openBrowser uses the native sdk on android and dismisses with partner-redirection metadata', async () => {
     Platform.OS = 'android';
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
@@ -394,8 +394,8 @@ describe('Connect', () => {
     expect(dismissBrowser).toHaveBeenCalledWith('close', 'partner-redirection');
   });
 
-  test('browser navigation failed event sends blocked event while browser is displayed', () => {
-    const { instance } = renderConnect();
+  test('browser navigation failed event sends blocked event while browser is displayed', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
     instance.state.browserDisplayed = true;
@@ -410,7 +410,7 @@ describe('Connect', () => {
   });
 
   test('openBrowser handles cancel and dismiss result types', async () => {
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
     instance.isTrackPopupBlockedEventActive = true;
 
@@ -443,7 +443,7 @@ describe('Connect', () => {
 
   test('ios URL events check deep-link availability before opening a browser', async () => {
     Platform.OS = 'ios';
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
 
     (checkLink as jest.Mock).mockResolvedValueOnce(false);
@@ -464,7 +464,7 @@ describe('Connect', () => {
 
   test('ios URL events do not open a browser when checkLink resolves true or url is empty', async () => {
     Platform.OS = 'ios';
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
@@ -515,7 +515,7 @@ describe('Connect', () => {
 
   test('URL events fall back to secure container when app-to-app check rejects', async () => {
     Platform.OS = 'android';
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
 
     (checkLink as jest.Mock).mockRejectedValueOnce(new Error('launch failed'));
@@ -534,7 +534,7 @@ describe('Connect', () => {
   });
 
   test('track popup blocked events enable popup tracking before URL handling', async () => {
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
     instance.isTrackPopupBlockedEventActive = false;
@@ -565,8 +565,8 @@ describe('Connect', () => {
     });
   });
 
-  test('close popup forwards dismiss request as connect client event', () => {
-    const { instance } = renderConnect();
+  test('close popup forwards dismiss request as connect client event', async () => {
+    const { instance } = await renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
 
     instance.state.browserDisplayed = false;
@@ -593,9 +593,9 @@ describe('Connect', () => {
     expect(dismissBrowser).toHaveBeenCalledTimes(2);
   });
 
-  test('android navigation failures emit blocked telemetry', () => {
+  test('android navigation failures emit blocked telemetry', async () => {
     Platform.OS = 'android';
-    const { instance } = renderConnect();
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
     instance.isTrackPopupBlockedEventActive = true;
@@ -611,8 +611,8 @@ describe('Connect', () => {
     expect(postMessage).toHaveBeenCalledTimes(1);
   });
 
-  test('deep-link redirect events emit partner redirection close telemetry when oauth url exists', () => {
-    const { instance } = renderConnect();
+  test('deep-link redirect events emit partner redirection close telemetry when oauth url exists', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
     instance.state.browserDisplayed = false;
@@ -633,8 +633,8 @@ describe('Connect', () => {
     expect(instance.OAuthUrl).toBe('');
   });
 
-  test('browser navigation ignores empty events and deep-link redirects without oauth url', () => {
-    const { instance } = renderConnect();
+  test('browser navigation ignores empty events and deep-link redirects without oauth url', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
     instance.OAuthUrl = 'https://b2b.mastercard.com/oauth';
@@ -653,8 +653,8 @@ describe('Connect', () => {
     expect(postMessage).not.toHaveBeenCalled();
   });
 
-  test('secure-container opened telemetry is emitted once for repeated navigation finished events', () => {
-    const { instance } = renderConnect();
+  test('secure-container opened telemetry is emitted once for repeated navigation finished events', async () => {
+    const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
 
     instance.isTrackPopupBlockedEventActive = true;
@@ -674,13 +674,15 @@ describe('Connect', () => {
     expect(postMessage).toHaveBeenCalledTimes(1);
   });
 
-  test('ack events stop pinging, mark connect as ready, and use default optional handlers safely', () => {
+  test('ack events stop pinging, mark connect as ready, and use default optional handlers safely', async () => {
     const requiredHandlers = {
       onCancel: jest.fn(),
       onDone: jest.fn(),
       onError: jest.fn()
     };
-    const { instance } = renderConnect({ eventHandlers: requiredHandlers });
+    const { instance } = await renderConnect({
+      eventHandlers: requiredHandlers
+    });
     const stopPingingConnect = jest.spyOn(instance, 'stopPingingConnect');
 
     instance.handleEvent({
@@ -709,11 +711,11 @@ describe('Connect', () => {
     ).not.toThrow();
   });
 
-  test('cancel, done, error, route and user events forward their payloads', () => {
+  test('cancel, done, error, route and user events forward their payloads', async () => {
     const eventHandlers = baseHandlers();
-    const { instance } = renderConnect({ eventHandlers });
+    const { instance } = await renderConnect({ eventHandlers });
 
-    act(() => {
+    await act(async () => {
       instance.handleEvent({
         nativeEvent: {
           data: JSON.stringify({
@@ -728,7 +730,7 @@ describe('Connect', () => {
       reason: 'exit'
     });
 
-    act(() => {
+    await act(async () => {
       instance.handleEvent({
         nativeEvent: {
           data: JSON.stringify({
@@ -743,7 +745,7 @@ describe('Connect', () => {
       reason: 'complete'
     });
 
-    act(() => {
+    await act(async () => {
       instance.handleEvent({
         nativeEvent: {
           data: JSON.stringify({
@@ -758,7 +760,7 @@ describe('Connect', () => {
       reason: 'error'
     });
 
-    act(() => {
+    await act(async () => {
       instance.handleEvent({
         nativeEvent: {
           data: JSON.stringify({
@@ -773,7 +775,7 @@ describe('Connect', () => {
       params: {}
     });
 
-    act(() => {
+    await act(async () => {
       instance.handleEvent({
         nativeEvent: {
           data: JSON.stringify({
@@ -789,8 +791,8 @@ describe('Connect', () => {
     expect(instance.state.modalVisible).toBe(false);
   });
 
-  test('handleEvent ignores invalid and unknown payloads', () => {
-    const { instance } = renderConnect();
+  test('handleEvent ignores invalid and unknown payloads', async () => {
+    const { instance } = await renderConnect();
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
 
     expect(() =>
@@ -813,13 +815,13 @@ describe('Connect', () => {
     expect(dismissBrowser).not.toHaveBeenCalled();
   });
 
-  test('render callbacks delegate to close, handleEvent, and startPingingConnect', () => {
-    const { instance, modal, webView } = renderConnect();
+  test('render callbacks delegate to close, handleEvent, and startPingingConnect', async () => {
+    const { instance, modal, webView } = await renderConnect();
     const close = jest.spyOn(instance, 'close');
     const handleEvent = jest.spyOn(instance, 'handleEvent');
     const startPingingConnect = jest.spyOn(instance, 'startPingingConnect');
 
-    act(() => {
+    await act(async () => {
       modal.props.onRequestClose();
       webView.props.onMessage({ nativeEvent: { data: '{}' } });
       webView.props.onLoad();
@@ -830,10 +832,10 @@ describe('Connect', () => {
     expect(startPingingConnect).toHaveBeenCalled();
   });
 
-  test('dismissModal updates modalVisible through setState', () => {
-    const { instance } = renderConnect();
+  test('dismissModal updates modalVisible through setState', async () => {
+    const { instance } = await renderConnect();
 
-    act(() => {
+    await act(async () => {
       instance.dismissModal();
     });
 
