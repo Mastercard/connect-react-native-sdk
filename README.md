@@ -23,17 +23,19 @@ Note that this Connect SDK is not suitable for Mastercard Open Finance Europe.
 
 The Connect React Native SDK supports following Android and iOS versions.
 * Android:
-  - Android 5.0 (Lollipop) or later
-  - inSdkVersion 21 or later
+  - Android 7.0 (Nougat) or later
+  - minSdkVersion 24 or later
 * iOS:
-  - iOS 11 or later
+  - iOS 15.1 or later
+
+React Native 0.86 requires Node.js 22.13.0 or later and Xcode 16.1 or later for iOS builds.
 
 The Connect React Native SDK has the following peerDependencies:
 
-* [react-native-inappbrowser-reborn >=3.6](https://www.npmjs.com/package/react-native-inappbrowser-reborn)
-* [react-native-webview >=11](https://www.npmjs.com/package/react-native-webview)
-* [react >=16.13](https://www.npmjs.com/package/react)
-* [react-native >=0.63](https://www.npmjs.com/package/react-native)
+* [react-native-webview](https://www.npmjs.com/package/react-native-webview) 14.0.1
+* [react-native-safe-area-context](https://www.npmjs.com/package/react-native-safe-area-context) 5.8.0
+* [react](https://www.npmjs.com/package/react) >=19.2.3
+* [react-native](https://www.npmjs.com/package/react-native) >=0.86.0
 
 ## Sample App
-[Github](https://github.com/Mastercard/connect-react-native-sdk/tree/master/ConnectReactNativeDemoApp) contains a sample React Native project that is integrated with the Connect React Native SDK. This sample project is named ConnectReactNativeDemoApp. Ensure that you have the necessary setup for React Native version 0.72 to successfully run and explore this demo application.
+[Github](https://github.com/Mastercard/connect-react-native-sdk/tree/master/ConnectReactNativeDemoApp) contains a sample React Native project that is integrated with the Connect React Native SDK. This sample project is named ConnectReactNativeDemoApp. Ensure that you have the necessary setup for React Native version 0.86 to successfully run and explore this demo application.

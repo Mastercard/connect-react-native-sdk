@@ -3,7 +3,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Connect } from 'connect-react-native-sdk';
 
 const App = () => {
@@ -68,50 +68,53 @@ const App = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContainer}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <SafeAreaView style={styles.safeAreaView}>
-            <KeyboardAvoidingView
-              style={styles.container}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            >
-              <Text style={styles.textTitle}>Connect SDK demo app</Text>
-
-              <Text style={styles.textInstructions}>
-                To get started, copy/paste a Generate URL value into the field below.
-              </Text>
-
-              <TextInput
-                ref={urlInputRef}
-                style={styles.textInput}
-                placeholder="Paste Generate URL here"
-                onChangeText={handleUrl}
-              />
-
-              <TouchableOpacity
-                disabled={!pressable}
-                style={pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled}
-                onPress={onPressHandler}
+    <SafeAreaProvider>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ flex: 1 }}>
+            <SafeAreaView style={styles.safeAreaView}>
+              <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
               >
-                <Text
-                  style={pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled}
-                >
-                  Launch Connect
+                <Text style={styles.textTitle}>Connect SDK demo app</Text>
+                <Text style={styles.textInstructions}>
+                  To get started, copy/paste a Generate URL value into the field below.
                 </Text>
-              </TouchableOpacity>
-            </KeyboardAvoidingView>
-            {show === true && (
-              <Connect connectUrl={url} eventHandlers={eventHandlers} redirectUrl="xyz" />
-            )}
-          </SafeAreaView>
-        </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+                <TextInput
+                  ref={urlInputRef}
+                  style={styles.textInput}
+                  placeholder="Paste Generate URL here"
+                  onChangeText={handleUrl}
+                />
+                <TouchableOpacity
+                  disabled={!pressable}
+                  style={
+                    pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled
+                  }
+                  onPress={onPressHandler}
+                >
+                  <Text
+                    style={
+                      pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled
+                    }
+                  >
+                    Launch Connect
+                  </Text>
+                </TouchableOpacity>
+              </KeyboardAvoidingView>
+              {show === true && (
+                <Connect connectUrl={url} eventHandlers={eventHandlers} redirectUrl="xyz" />
+              )}
+            </SafeAreaView>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </SafeAreaProvider>
   );
 };
 
@@ -146,7 +149,6 @@ const styles = StyleSheet.create({
     height: 70,
     marginTop: -50
   },
-
   textInput: {
     height: 56,
     width: '90%',

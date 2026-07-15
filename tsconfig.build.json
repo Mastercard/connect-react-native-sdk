@@ -1,5 +1,13 @@
-
 {
   "extends": "./tsconfig",
-  "exclude": ["example", "ConnectReactNativeDemoApp"]
+  "exclude": [
+    "example",
+    "ConnectReactNativeDemoApp",
+    "**/__tests__",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "setup.test.js"
+  ]
 }

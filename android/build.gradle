@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:7.2.1"
+    classpath "com.android.tools.build:gradle:8.13.2"
   }
 }
 
@@ -101,3 +101,26 @@ dependencies {
 
 }
 
+// Upgrade vulnerable Netty dependencies introduced via older grpc-netty.
+// grpc-netty transitively brings Netty versions blocked by Black Duck.
+// This updates grpc-netty to a newer version and forces all io.netty modules
+// to 4.2.16.Final as recommended by Black Duck.
+configurations.configureEach {
+  resolutionStrategy.eachDependency { details ->
+    if (details.requested.group == "com.android.tools.utp") {
+      details.useVersion "31.13.2"
+      details.because "Black Duck short-term fix for UTP dependency pulling Netty 4.1.110.Final"
+    }
+
+    if (details.requested.group == "io.grpc" &&
+        details.requested.name == "grpc-netty") {
+      details.useVersion "1.69.1"
+      details.because "Remove vulnerable Netty versions from grpc-netty transitive dependencies"
+    }
+
+    if (details.requested.group == "io.netty") {
+      details.useVersion "4.2.16.Final"
+      details.because "Netty 4.2.12.Final is blocked by Black Duck"
+    }
+  }
+}
