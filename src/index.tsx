@@ -49,6 +49,8 @@ const defaultEventHandlers: RequiredConnectEventHandlers = {
   onRoute: noop
 };
 
+const ENABLE_ANDROID_EXIT_PROMPT = false;
+
 type URLOpenedBy = 'secure-container' | 'fi-app';
 type OAuthClosedBy =
   'connect-client-event' | 'partner-redirection' | 'user-closed';
@@ -224,6 +226,11 @@ export class Connect extends Component<ConnectProps, ConnectState> {
       return;
     }
 
+    if (!ENABLE_ANDROID_EXIT_PROMPT) {
+      this.close();
+      return;
+    }
+
     if (this.isExitPromptVisible) {
       return;
     }
@@ -266,7 +273,7 @@ export class Connect extends Component<ConnectProps, ConnectState> {
       return false;
     }
 
-    return true;
+    return ENABLE_ANDROID_EXIT_PROMPT;
   };
 
   setupBrowserEventListener = () => {

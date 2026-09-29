@@ -854,7 +854,7 @@ describe('Connect', () => {
     expect(startPingingConnect).toHaveBeenCalled();
   });
 
-  test('android back request shows exit confirmation prompt and exits only when confirmed', async () => {
+  test('android back request closes connect immediately when exit prompt is disabled', async () => {
     Platform.OS = 'android';
     const { instance, modal } = await renderConnect();
     const close = jest.spyOn(instance, 'close');
@@ -864,33 +864,15 @@ describe('Connect', () => {
       modal.props.onRequestClose();
     });
 
-    expect(alertSpy).toHaveBeenCalledWith(
-      'Exit Connect',
-      'Are you sure you want to exit Connect?',
-      expect.any(Array),
-      expect.objectContaining({ cancelable: true })
-    );
-    expect(close).not.toHaveBeenCalled();
-
-    const promptButtons = alertSpy.mock.calls[0]![2] as Array<{
-      text?: string;
-      onPress?: () => void;
-    }>;
-    const exitButton = promptButtons.find(button => button.text === 'Exit');
-
-    expect(exitButton).toBeDefined();
-
-    await act(async () => {
-      exitButton?.onPress?.();
-    });
-
+    expect(alertSpy).not.toHaveBeenCalled();
     expect(close).toHaveBeenCalledTimes(1);
   });
 
-  test('android back request navigates webview history before showing exit prompt', async () => {
+  test('android back request navigates webview history before closing connect', async () => {
     Platform.OS = 'android';
     const { instance, modal, webView } = await renderConnect();
     const alertSpy = jest.spyOn(Alert, 'alert');
+    const close = jest.spyOn(instance, 'close');
     const goBack = jest.fn();
 
     instance.webViewRef = {
@@ -905,10 +887,11 @@ describe('Connect', () => {
 
     expect(goBack).toHaveBeenCalledTimes(1);
     expect(alertSpy).not.toHaveBeenCalled();
+    expect(close).not.toHaveBeenCalled();
     expect(instance.state.modalVisible).toBe(true);
   });
 
-  test('android hardware back press shows exit confirmation and consumes the event', async () => {
+  test('android hardware back press closes connect and consumes the event when prompt is disabled', async () => {
     Platform.OS = 'android';
     const remove = jest.fn();
     const addEventListenerSpy = jest
@@ -928,23 +911,19 @@ describe('Connect', () => {
     });
 
     expect(handled).toBe(true);
-    expect(alertSpy).toHaveBeenCalledWith(
-      'Exit Connect',
-      'Are you sure you want to exit Connect?',
-      expect.any(Array),
-      expect.objectContaining({ cancelable: true })
-    );
-    expect(close).not.toHaveBeenCalled();
+    expect(alertSpy).not.toHaveBeenCalled();
+    expect(close).toHaveBeenCalledTimes(1);
 
     await unmount();
     expect(remove).toHaveBeenCalledTimes(1);
   });
 
-  test('android hardware back press navigates webview history before exit confirmation', async () => {
+  test('android hardware back press navigates webview history before closing connect', async () => {
     Platform.OS = 'android';
     const addEventListenerSpy = jest.spyOn(BackHandler, 'addEventListener');
     const alertSpy = jest.spyOn(Alert, 'alert');
     const { instance, webView } = await renderConnect();
+    const close = jest.spyOn(instance, 'close');
     const goBack = jest.fn();
 
     instance.webViewRef = {
@@ -963,6 +942,7 @@ describe('Connect', () => {
     expect(handled).toBe(true);
     expect(goBack).toHaveBeenCalledTimes(1);
     expect(alertSpy).not.toHaveBeenCalled();
+    expect(close).not.toHaveBeenCalled();
   });
 
   test('android hardware back press bubbles when connect modal is hidden', async () => {
@@ -981,7 +961,7 @@ describe('Connect', () => {
     expect(alertSpy).not.toHaveBeenCalled();
   });
 
-  test('android cancel exit event shows confirmation and cancels only after user confirms', async () => {
+  test('android cancel exit event cancels immediately when exit prompt is disabled', async () => {
     Platform.OS = 'android';
     const eventHandlers = baseHandlers();
     const { instance } = await renderConnect({ eventHandlers });
@@ -998,25 +978,7 @@ describe('Connect', () => {
       });
     });
 
-    expect(alertSpy).toHaveBeenCalledWith(
-      'Exit Connect',
-      'Are you sure you want to exit Connect?',
-      expect.any(Array),
-      expect.objectContaining({ cancelable: true })
-    );
-    expect(eventHandlers.onCancel).not.toHaveBeenCalled();
-    expect(instance.state.modalVisible).toBe(true);
-
-    const promptButtons = alertSpy.mock.calls[0]![2] as Array<{
-      text?: string;
-      onPress?: () => void;
-    }>;
-    const exitButton = promptButtons.find(button => button.text === 'Exit');
-
-    await act(async () => {
-      exitButton?.onPress?.();
-    });
-
+    expect(alertSpy).not.toHaveBeenCalled();
     expect(eventHandlers.onCancel).toHaveBeenCalledWith({
       code: 100,
       reason: 'exit'
@@ -1024,7 +986,7 @@ describe('Connect', () => {
     expect(instance.state.modalVisible).toBe(false);
   });
 
-  test('android cancel user-closed event shows confirmation and cancels only after user confirms', async () => {
+  test('android cancel user-closed event cancels immediately when exit prompt is disabled', async () => {
     Platform.OS = 'android';
     const eventHandlers = baseHandlers();
     const { instance } = await renderConnect({ eventHandlers });
@@ -1041,33 +1003,15 @@ describe('Connect', () => {
       });
     });
 
-    expect(alertSpy).toHaveBeenCalledWith(
-      'Exit Connect',
-      'Are you sure you want to exit Connect?',
-      expect.any(Array),
-      expect.objectContaining({ cancelable: true })
-    );
-    expect(eventHandlers.onCancel).not.toHaveBeenCalled();
-    expect(instance.state.modalVisible).toBe(true);
-
-    const promptButtons = alertSpy.mock.calls[0]![2] as Array<{
-      text?: string;
-      onPress?: () => void;
-    }>;
-    const exitButton = promptButtons.find(button => button.text === 'Exit');
-
-    await act(async () => {
-      exitButton?.onPress?.();
-    });
-
+    expect(alertSpy).not.toHaveBeenCalled();
     expect(eventHandlers.onCancel).toHaveBeenCalledWith({
-      code: 100,
-      reason: 'exit'
+      code: 200,
+      reason: 'user-closed'
     });
     expect(instance.state.modalVisible).toBe(false);
   });
 
-  test('android cancel event with non-back reason still shows confirmation before exiting', async () => {
+  test('android cancel event with non-back reason still cancels immediately when prompt is disabled', async () => {
     Platform.OS = 'android';
     const eventHandlers = baseHandlers();
     const { instance } = await renderConnect({ eventHandlers });
@@ -1084,14 +1028,12 @@ describe('Connect', () => {
       });
     });
 
-    expect(alertSpy).toHaveBeenCalledWith(
-      'Exit Connect',
-      'Are you sure you want to exit Connect?',
-      expect.any(Array),
-      expect.objectContaining({ cancelable: true })
-    );
-    expect(eventHandlers.onCancel).not.toHaveBeenCalled();
-    expect(instance.state.modalVisible).toBe(true);
+    expect(alertSpy).not.toHaveBeenCalled();
+    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
+      code: 410,
+      reason: 'session-timeout'
+    });
+    expect(instance.state.modalVisible).toBe(false);
   });
 
   test('dismissModal updates modalVisible through setState', async () => {
