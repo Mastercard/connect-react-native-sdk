@@ -1,6 +1,7 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react-native';
-import { DeviceEventEmitter, Platform } from 'react-native';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { Alert, BackHandler, DeviceEventEmitter, Platform } from 'react-native';
 
 import {
   Connect,
@@ -16,6 +17,13 @@ import {
   SDK_PLATFORM
 } from './constants';
 import { checkLink, ConnectReactNativeSdk } from './nativeModule';
+
+const mockedOpen =
+  ConnectReactNativeSdk.open as jest.MockedFunction<
+    typeof ConnectReactNativeSdk.open
+  >;
+const mockedCheckLink =
+  checkLink as jest.MockedFunction<typeof checkLink>;
 
 type ConnectInstance = InstanceType<typeof Connect>;
 
@@ -86,6 +94,22 @@ describe('Connect', () => {
     const { modal } = await renderConnect();
 
     expect(modal.props.presentationStyle).toBe('fullScreen');
+  });
+
+  test('android uses safe-area edges by default for edge-to-edge support', async () => {
+    Platform.OS = 'android';
+    await renderConnect();
+
+    const safeAreaView = screen.getByTestId('test-safe-area-view');
+    expect(safeAreaView.props.edges).toEqual(['top', 'bottom']);
+  });
+
+  test('android before mode disables safe-area edge padding', async () => {
+    Platform.OS = 'android';
+    await renderConnect({ androidEdgeToEdgeMode: 'before' });
+
+    const safeAreaView = screen.getByTestId('test-safe-area-view');
+    expect(safeAreaView.props.edges).toEqual([]);
   });
 
   test('launch stores url handlers and validated redirect url', async () => {
@@ -355,9 +379,7 @@ describe('Connect', () => {
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
 
-    (ConnectReactNativeSdk.open as jest.Mock).mockRejectedValueOnce(
-      new Error('browser failed')
-    );
+    mockedOpen.mockRejectedValueOnce(new Error('browser failed'));
 
     await expect(
       instance.openBrowser('https://b2b.mastercard.com')
@@ -414,14 +436,14 @@ describe('Connect', () => {
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
     instance.isTrackPopupBlockedEventActive = true;
 
-    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
+    mockedOpen.mockResolvedValueOnce({
       type: 'cancel'
     });
     await instance.openBrowser('https://cancel.example.com');
     expect(dismissBrowser).toHaveBeenCalledWith('cancel', 'user-closed');
 
     Platform.OS = 'ios';
-    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
+    mockedOpen.mockResolvedValueOnce({
       type: 'dismiss'
     });
     await instance.openBrowser('https://dismiss-ios.example.com');
@@ -431,7 +453,7 @@ describe('Connect', () => {
     );
 
     Platform.OS = 'android';
-    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
+    mockedOpen.mockResolvedValueOnce({
       type: 'dismiss'
     });
     await instance.openBrowser('https://dismiss-android.example.com');
@@ -446,7 +468,7 @@ describe('Connect', () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
 
-    (checkLink as jest.Mock).mockResolvedValueOnce(false);
+    mockedCheckLink.mockResolvedValueOnce(false);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -469,7 +491,7 @@ describe('Connect', () => {
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
 
-    (checkLink as jest.Mock).mockResolvedValueOnce(true);
+    mockedCheckLink.mockResolvedValueOnce(true);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -518,7 +540,7 @@ describe('Connect', () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
 
-    (checkLink as jest.Mock).mockRejectedValueOnce(new Error('launch failed'));
+    mockedCheckLink.mockRejectedValueOnce(new Error('launch failed'));
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -545,7 +567,7 @@ describe('Connect', () => {
     });
     expect(instance.isTrackPopupBlockedEventActive).toBe(true);
 
-    (checkLink as jest.Mock).mockResolvedValueOnce(true);
+    mockedCheckLink.mockResolvedValueOnce(true);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -815,7 +837,7 @@ describe('Connect', () => {
     expect(dismissBrowser).not.toHaveBeenCalled();
   });
 
-  test('render callbacks delegate to close, handleEvent, and startPingingConnect', async () => {
+  test('render callbacks delegate to close, handleEvent, and startPingingConnect on ios', async () => {
     const { instance, modal, webView } = await renderConnect();
     const close = jest.spyOn(instance, 'close');
     const handleEvent = jest.spyOn(instance, 'handleEvent');
@@ -830,6 +852,246 @@ describe('Connect', () => {
     expect(close).toHaveBeenCalled();
     expect(handleEvent).toHaveBeenCalledWith({ nativeEvent: { data: '{}' } });
     expect(startPingingConnect).toHaveBeenCalled();
+  });
+
+  test('android back request shows exit confirmation prompt and exits only when confirmed', async () => {
+    Platform.OS = 'android';
+    const { instance, modal } = await renderConnect();
+    const close = jest.spyOn(instance, 'close');
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
+    await act(async () => {
+      modal.props.onRequestClose();
+    });
+
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Exit Connect',
+      'Are you sure you want to exit Connect?',
+      expect.any(Array),
+      expect.objectContaining({ cancelable: true })
+    );
+    expect(close).not.toHaveBeenCalled();
+
+    const promptButtons = alertSpy.mock.calls[0]![2] as Array<{
+      text?: string;
+      onPress?: () => void;
+    }>;
+    const exitButton = promptButtons.find(button => button.text === 'Exit');
+
+    expect(exitButton).toBeDefined();
+
+    await act(async () => {
+      exitButton?.onPress?.();
+    });
+
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  test('android back request navigates webview history before showing exit prompt', async () => {
+    Platform.OS = 'android';
+    const { instance, modal, webView } = await renderConnect();
+    const alertSpy = jest.spyOn(Alert, 'alert');
+    const goBack = jest.fn();
+
+    instance.webViewRef = {
+      postMessage: jest.fn(),
+      goBack
+    } as any;
+
+    await act(async () => {
+      webView.props.onNavigationStateChange({ canGoBack: true });
+      modal.props.onRequestClose();
+    });
+
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(alertSpy).not.toHaveBeenCalled();
+    expect(instance.state.modalVisible).toBe(true);
+  });
+
+  test('android hardware back press shows exit confirmation and consumes the event', async () => {
+    Platform.OS = 'android';
+    const remove = jest.fn();
+    const addEventListenerSpy = jest
+      .spyOn(BackHandler, 'addEventListener')
+      .mockReturnValue({ remove } as any);
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
+    const { instance, unmount } = await renderConnect();
+    const close = jest.spyOn(instance, 'close');
+
+    const hardwareBackHandler = addEventListenerSpy.mock.calls[0]![1] as () =>
+      boolean;
+
+    let handled = false;
+    await act(async () => {
+      handled = hardwareBackHandler();
+    });
+
+    expect(handled).toBe(true);
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Exit Connect',
+      'Are you sure you want to exit Connect?',
+      expect.any(Array),
+      expect.objectContaining({ cancelable: true })
+    );
+    expect(close).not.toHaveBeenCalled();
+
+    await unmount();
+    expect(remove).toHaveBeenCalledTimes(1);
+  });
+
+  test('android hardware back press navigates webview history before exit confirmation', async () => {
+    Platform.OS = 'android';
+    const addEventListenerSpy = jest.spyOn(BackHandler, 'addEventListener');
+    const alertSpy = jest.spyOn(Alert, 'alert');
+    const { instance, webView } = await renderConnect();
+    const goBack = jest.fn();
+
+    instance.webViewRef = {
+      postMessage: jest.fn(),
+      goBack
+    } as any;
+
+    await act(async () => {
+      webView.props.onNavigationStateChange({ canGoBack: true });
+    });
+
+    const hardwareBackHandler = addEventListenerSpy.mock.calls[0]![1] as () =>
+      boolean;
+    const handled = hardwareBackHandler();
+
+    expect(handled).toBe(true);
+    expect(goBack).toHaveBeenCalledTimes(1);
+    expect(alertSpy).not.toHaveBeenCalled();
+  });
+
+  test('android hardware back press bubbles when connect modal is hidden', async () => {
+    Platform.OS = 'android';
+    const addEventListenerSpy = jest.spyOn(BackHandler, 'addEventListener');
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
+    const { instance } = await renderConnect();
+    instance.state.modalVisible = false;
+
+    const hardwareBackHandler = addEventListenerSpy.mock.calls[0]![1] as () =>
+      boolean;
+    const handled = hardwareBackHandler();
+
+    expect(handled).toBe(false);
+    expect(alertSpy).not.toHaveBeenCalled();
+  });
+
+  test('android cancel exit event shows confirmation and cancels only after user confirms', async () => {
+    Platform.OS = 'android';
+    const eventHandlers = baseHandlers();
+    const { instance } = await renderConnect({ eventHandlers });
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
+    await act(async () => {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({
+            type: ConnectEvents.CANCEL,
+            data: { code: 100, reason: 'exit' }
+          })
+        }
+      });
+    });
+
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Exit Connect',
+      'Are you sure you want to exit Connect?',
+      expect.any(Array),
+      expect.objectContaining({ cancelable: true })
+    );
+    expect(eventHandlers.onCancel).not.toHaveBeenCalled();
+    expect(instance.state.modalVisible).toBe(true);
+
+    const promptButtons = alertSpy.mock.calls[0]![2] as Array<{
+      text?: string;
+      onPress?: () => void;
+    }>;
+    const exitButton = promptButtons.find(button => button.text === 'Exit');
+
+    await act(async () => {
+      exitButton?.onPress?.();
+    });
+
+    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
+      code: 100,
+      reason: 'exit'
+    });
+    expect(instance.state.modalVisible).toBe(false);
+  });
+
+  test('android cancel user-closed event shows confirmation and cancels only after user confirms', async () => {
+    Platform.OS = 'android';
+    const eventHandlers = baseHandlers();
+    const { instance } = await renderConnect({ eventHandlers });
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
+    await act(async () => {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({
+            type: ConnectEvents.CANCEL,
+            data: { code: 200, reason: 'user-closed' }
+          })
+        }
+      });
+    });
+
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Exit Connect',
+      'Are you sure you want to exit Connect?',
+      expect.any(Array),
+      expect.objectContaining({ cancelable: true })
+    );
+    expect(eventHandlers.onCancel).not.toHaveBeenCalled();
+    expect(instance.state.modalVisible).toBe(true);
+
+    const promptButtons = alertSpy.mock.calls[0]![2] as Array<{
+      text?: string;
+      onPress?: () => void;
+    }>;
+    const exitButton = promptButtons.find(button => button.text === 'Exit');
+
+    await act(async () => {
+      exitButton?.onPress?.();
+    });
+
+    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
+      code: 100,
+      reason: 'exit'
+    });
+    expect(instance.state.modalVisible).toBe(false);
+  });
+
+  test('android cancel event with non-back reason still shows confirmation before exiting', async () => {
+    Platform.OS = 'android';
+    const eventHandlers = baseHandlers();
+    const { instance } = await renderConnect({ eventHandlers });
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
+    await act(async () => {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({
+            type: ConnectEvents.CANCEL,
+            data: { code: 410, reason: 'session-timeout' }
+          })
+        }
+      });
+    });
+
+    expect(alertSpy).toHaveBeenCalledWith(
+      'Exit Connect',
+      'Are you sure you want to exit Connect?',
+      expect.any(Array),
+      expect.objectContaining({ cancelable: true })
+    );
+    expect(eventHandlers.onCancel).not.toHaveBeenCalled();
+    expect(instance.state.modalVisible).toBe(true);
   });
 
   test('dismissModal updates modalVisible through setState', async () => {

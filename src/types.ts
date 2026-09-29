@@ -11,6 +11,7 @@ export interface ConnectProps {
   connectUrl: string;
   eventHandlers: ConnectEventHandlers;
   redirectUrl?: string;
+  androidEdgeToEdgeMode?: 'before' | 'after';
 }
 
 export interface ConnectCancelEvent {
