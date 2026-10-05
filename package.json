@@ -84,10 +84,14 @@
     "react-native-webview": "14.0.1"
   },
   "overrides": {
+    "braces": "file:patched-deps/braces",
+    "image-size": "2.0.4",
     "flatted": "^3.4.2",
     "minimatch": "^3.1.5"
   },
   "resolutions": {
+    "braces": "file:patched-deps/braces",
+    "image-size": "2.0.4",
     "flatted": "^3.4.2",
     "minimatch": "^3.1.5"
   },
