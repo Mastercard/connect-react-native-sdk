@@ -10,7 +10,10 @@ import {
   type EmitterSubscription,
   type NativeEventSubscription
 } from 'react-native';
-import { SafeAreaInsetsContext, SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaInsetsContext,
+  SafeAreaView
+} from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 import {
@@ -159,7 +162,7 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     }
 
     Object.assign(this.state, partialState);
-  }
+  };
 
   launch = (connectUrl: string, eventHandlers: ConnectEventHandlers) => {
     this.isTrackPopupBlockedEventActive = false;
@@ -547,7 +550,8 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     `;
 
     const useSafeAreaInsets =
-      Platform.OS !== 'android' || this.props.androidEdgeToEdgeMode !== 'before';
+      Platform.OS !== 'android' ||
+      this.props.androidEdgeToEdgeMode !== 'before';
 
     return (
       <Modal
@@ -564,7 +568,7 @@ export class Connect extends Component<ConnectProps, ConnectState> {
               Platform.OS === 'android' &&
               useSafeAreaInsets &&
               (insets?.top ?? 0) === 0
-                ? StatusBar.currentHeight ?? 0
+                ? (StatusBar.currentHeight ?? 0)
                 : 0;
 
             return (
@@ -585,8 +589,12 @@ export class Connect extends Component<ConnectProps, ConnectState> {
                   javaScriptEnabled
                   injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
                   testID="test-webview"
-                  onNavigationStateChange={this.handleWebViewNavigationStateChange}
-                  onMessage={event => this.handleEvent(event as WebViewMessagePayload)}
+                  onNavigationStateChange={
+                    this.handleWebViewNavigationStateChange
+                  }
+                  onMessage={event =>
+                    this.handleEvent(event as WebViewMessagePayload)
+                  }
                   onLoad={() => this.startPingingConnect()}
                 />
               </SafeAreaView>

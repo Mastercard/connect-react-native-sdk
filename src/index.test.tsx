@@ -18,12 +18,10 @@ import {
 } from './constants';
 import { checkLink, ConnectReactNativeSdk } from './nativeModule';
 
-const mockedOpen =
-  ConnectReactNativeSdk.open as jest.MockedFunction<
-    typeof ConnectReactNativeSdk.open
-  >;
-const mockedCheckLink =
-  checkLink as jest.MockedFunction<typeof checkLink>;
+const mockedOpen = ConnectReactNativeSdk.open as jest.MockedFunction<
+  typeof ConnectReactNativeSdk.open
+>;
+const mockedCheckLink = checkLink as jest.MockedFunction<typeof checkLink>;
 
 type ConnectInstance = InstanceType<typeof Connect>;
 
@@ -902,8 +900,8 @@ describe('Connect', () => {
     const { instance, unmount } = await renderConnect();
     const close = jest.spyOn(instance, 'close');
 
-    const hardwareBackHandler = addEventListenerSpy.mock.calls[0]![1] as () =>
-      boolean;
+    const hardwareBackHandler = addEventListenerSpy.mock
+      .calls[0]![1] as () => boolean;
 
     let handled = false;
     await act(async () => {
@@ -935,8 +933,8 @@ describe('Connect', () => {
       webView.props.onNavigationStateChange({ canGoBack: true });
     });
 
-    const hardwareBackHandler = addEventListenerSpy.mock.calls[0]![1] as () =>
-      boolean;
+    const hardwareBackHandler = addEventListenerSpy.mock
+      .calls[0]![1] as () => boolean;
     const handled = hardwareBackHandler();
 
     expect(handled).toBe(true);
@@ -953,8 +951,8 @@ describe('Connect', () => {
     const { instance } = await renderConnect();
     instance.state.modalVisible = false;
 
-    const hardwareBackHandler = addEventListenerSpy.mock.calls[0]![1] as () =>
-      boolean;
+    const hardwareBackHandler = addEventListenerSpy.mock
+      .calls[0]![1] as () => boolean;
     const handled = hardwareBackHandler();
 
     expect(handled).toBe(false);
