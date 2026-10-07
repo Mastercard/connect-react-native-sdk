@@ -28,14 +28,14 @@ The Connect React Native SDK supports following Android and iOS versions.
 * iOS:
   - iOS 15.1 or later
 
-React Native 0.86 requires Node.js 22.13.0 or later and Xcode 16.1 or later for iOS builds.
+React Native 0.87.1 requires Node.js 22.13.0 or later and Xcode 16.1 or later for iOS builds.
 
 The Connect React Native SDK has the following peerDependencies:
 
 * [react-native-webview](https://www.npmjs.com/package/react-native-webview) 14.0.1
-* [react-native-safe-area-context](https://www.npmjs.com/package/react-native-safe-area-context) 5.8.0
-* [react](https://www.npmjs.com/package/react) >=19.2.3
-* [react-native](https://www.npmjs.com/package/react-native) >=0.86.0
+* [react-native-safe-area-context](https://www.npmjs.com/package/react-native-safe-area-context) 5.10.1
+* [react](https://www.npmjs.com/package/react) >=19.3.0
+* [react-native](https://www.npmjs.com/package/react-native) >=0.87.1
 
 ## Sample App
-[Github](https://github.com/Mastercard/connect-react-native-sdk/tree/master/ConnectReactNativeDemoApp) contains a sample React Native project that is integrated with the Connect React Native SDK. This sample project is named ConnectReactNativeDemoApp. Ensure that you have the necessary setup for React Native version 0.86 to successfully run and explore this demo application.
+[Github](https://github.com/Mastercard/connect-react-native-sdk/tree/master/ConnectReactNativeDemoApp) contains a sample React Native project that is integrated with the Connect React Native SDK. This sample project is named ConnectReactNativeDemoApp. Ensure that you have the necessary setup for React Native version 0.87.1 to successfully run and explore this demo application.

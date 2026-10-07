@@ -1,5 +1,15 @@
 # Changelog
 
+### Unreleased
+
+### Changes
+
+- Upgraded React Native support to 0.87.1 for the SDK and demo app.
+- Updated peer dependency requirements:
+  - `react-native` to `>=0.87.1`.
+  - `react` to `>=19.3.0`.
+  - `react-native-safe-area-context` to `5.10.1`.
+
 ### 2.1.0 (July 15, 2026)
 
 ### Changes
