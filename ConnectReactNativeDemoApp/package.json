@@ -34,11 +34,15 @@
   },
   "overrides": {
     "braces": "file:../patched-deps/braces",
-    "image-size": "2.0.4"
+    "image-size": "2.0.4",
+    "shell-quote": "^1.11.0",
+    "compression": "^1.8.2"
   },
   "resolutions": {
     "braces": "file:../patched-deps/braces",
-    "image-size": "2.0.4"
+    "image-size": "2.0.4",
+    "shell-quote": "^1.11.0",
+    "compression": "^1.8.2"
   },
   "engines": {
     "node": ">= 22.13.0"
