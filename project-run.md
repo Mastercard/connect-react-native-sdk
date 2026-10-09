@@ -26,13 +26,33 @@ Non-interactive mode (captures logs immediately):
 ```
 
 ## Build release artifacts only (no install)
-Use this script when you only need packaged release artifacts and checksums:
+Use this script when you need release artifacts without running the emulator flow.
+
+1) Build both APK and AAB (default)
 
 ```bash
 ./scripts/build-android-release-bundle.sh
 ```
 
-Optional: open the generated artifacts folder in Finder when complete:
+2) Build APK only (skip AAB)
+
+```bash
+./scripts/build-android-release-bundle.sh --skip-aab
+```
+
+3) Build and install release APK on connected device/emulator
+
+```bash
+./scripts/build-android-release-bundle.sh --install
+```
+
+4) Build into a custom output directory
+
+```bash
+./scripts/build-android-release-bundle.sh --out-dir /tmp/sdk_release_artifacts
+```
+
+5) Open output in Finder after completion
 
 ```bash
 ./scripts/build-android-release-bundle.sh --open-finder
@@ -42,15 +62,22 @@ Output location:
 - `/Users/e113257/react-native-sdk/artifacts/release_bundle_<timestamp>/`
 
 Typical outputs:
-- `app-release.aab`
-- `app-release.aab.sha256`
-- `app-release.aab.info.txt`
+- `gradle_release_bundle.log`
 - `app-release.apk`
 - `app-release.apk.sha256`
 - `app-release.apk.info.txt`
+- `app-release.aab` (unless `--skip-aab`)
+- `app-release.aab.sha256` (unless `--skip-aab`)
+- `app-release.aab.info.txt` (unless `--skip-aab`)
 
-Optional (when script is run with `--install`):
+Optional output (when script is run with `--install`):
 - `installed_packages.txt`
+
+Quick verification:
+
+```bash
+ls -lah /Users/e113257/react-native-sdk/artifacts/release_bundle_*/ | tail -n 20
+```
 
 ## 1) Set local variables
 Run from any directory:
