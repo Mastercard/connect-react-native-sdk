@@ -25,6 +25,33 @@ Non-interactive mode (captures logs immediately):
 ./scripts/run-android-release-emulator.sh --non-interactive
 ```
 
+## Build release artifacts only (no install)
+Use this script when you only need packaged release artifacts and checksums:
+
+```bash
+./scripts/build-android-release-bundle.sh
+```
+
+Optional: open the generated artifacts folder in Finder when complete:
+
+```bash
+./scripts/build-android-release-bundle.sh --open-finder
+```
+
+Output location:
+- `/Users/e113257/react-native-sdk/artifacts/release_bundle_<timestamp>/`
+
+Typical outputs:
+- `app-release.aab`
+- `app-release.aab.sha256`
+- `app-release.aab.info.txt`
+- `app-release.apk`
+- `app-release.apk.sha256`
+- `app-release.apk.info.txt`
+
+Optional (when script is run with `--install`):
+- `installed_packages.txt`
+
 ## 1) Set local variables
 Run from any directory:
 

@@ -22,7 +22,7 @@ const App = () => {
   const [show, setShow] = useState(false);
   const [androidEdgeToEdgeMode, setAndroidEdgeToEdgeMode] =
     useState<AndroidEdgeToEdgeMode>('after');
-  const urlInputRef = useRef<TextInput>(null);
+  const urlInputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
 
   const handleUrl = (text: string) => {
     setUrl(text);
@@ -140,7 +140,7 @@ const App = () => {
                 <Connect
                   connectUrl={url}
                   eventHandlers={eventHandlers}
-                  redirectUrl="connect://maob/redirect"
+                  redirectUrl={'connect://maob/redirect'}
                   androidEdgeToEdgeMode={androidEdgeToEdgeMode}
                 />
               )}

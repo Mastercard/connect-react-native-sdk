@@ -43,6 +43,7 @@ public class ChromeTabsManagerActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     try {
       super.onCreate(savedInstanceState);
+      // Draw edge-to-edge and let SafeArea handling own the top/bottom insets.
       WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
       // This activity gets opened in 2 different ways. If the extra KEY_BROWSER_INTENT is present we

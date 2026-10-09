@@ -225,16 +225,16 @@ export class Connect extends Component<ConnectProps, ConnectState> {
       return;
     }
 
-    if (this.navigateBackInWebViewIfPossible()) {
-      return;
-    }
-
     if (!ENABLE_ANDROID_EXIT_PROMPT) {
+      if (this.navigateBackInWebViewIfPossible()) {
+        return;
+      }
+
       this.close();
       return;
     }
 
-    if (this.isExitPromptVisible) {
+    if (this.navigateBackInWebViewIfPossible() || this.isExitPromptVisible) {
       return;
     }
 
