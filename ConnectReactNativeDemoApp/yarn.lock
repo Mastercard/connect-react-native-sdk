@@ -2185,7 +2185,7 @@ concat-map@0.0.1:
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
 "connect-react-native-sdk@file:..":
-  version "2.1.0"
+  version "2.2.0"
   resolved "file:.."
   dependencies:
     react-native-safe-area-context "5.10.1"

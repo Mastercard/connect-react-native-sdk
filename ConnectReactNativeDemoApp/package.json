@@ -9,7 +9,7 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "connect-react-native-sdk": "2.2.0",
+    "connect-react-native-sdk": "file:..",
     "react": "19.3.0",
     "react-native": "0.87.1",
     "react-native-url-polyfill": "4.0.0",
