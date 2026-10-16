@@ -471,7 +471,10 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     try {
       const redirectUrl = new URL(this.state.redirectUrl);
       const protocol = redirectUrl.protocol.replace(':', '').toLowerCase();
-      if ((protocol === 'http' || protocol === 'https') && redirectUrl.hostname) {
+      if (
+        (protocol === 'http' || protocol === 'https') &&
+        redirectUrl.hostname
+      ) {
         trustedHosts.add(redirectUrl.hostname.trim().toLowerCase());
       }
     } catch {
@@ -484,7 +487,9 @@ export class Connect extends Component<ConnectProps, ConnectState> {
   getAllowedExternalUrlPrefixes = () => {
     const configuredPrefixes = this.props.allowedExternalUrlPrefixes ?? [];
     const trustedPrefixes = new Set(
-      configuredPrefixes.map(prefix => prefix.trim().toLowerCase()).filter(Boolean)
+      configuredPrefixes
+        .map(prefix => prefix.trim().toLowerCase())
+        .filter(Boolean)
     );
 
     try {

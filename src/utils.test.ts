@@ -82,9 +82,12 @@ describe('validateUrl', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       expect(
-        isSafeExternalNavigationUrl('bankapp://authorize@evil.example/callback', {
-          allowedCustomUrlPrefixes: ['bankapp://authorize']
-        })
+        isSafeExternalNavigationUrl(
+          'bankapp://authorize@evil.example/callback',
+          {
+            allowedCustomUrlPrefixes: ['bankapp://authorize']
+          }
+        )
       ).toBe(false);
       expect(warn).toHaveBeenCalledWith('Blocked external URL custom auth');
     });

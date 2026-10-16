@@ -55,7 +55,9 @@ const matchesAllowedCustomPrefix = (parsedUrl: URL, allowedPrefix: string) => {
       return false;
     }
 
-    if (parsedUrl.hostname.toLowerCase() !== allowedUrl.hostname.toLowerCase()) {
+    if (
+      parsedUrl.hostname.toLowerCase() !== allowedUrl.hostname.toLowerCase()
+    ) {
       return false;
     }
 
@@ -168,8 +170,8 @@ export const isSafeExternalNavigationUrl = (
       return false;
     }
 
-    const isSchemeTrusted = allowedCustomUrlPrefixes.some(
-      allowedPrefix => matchesAllowedCustomPrefix(parsedUrl, allowedPrefix)
+    const isSchemeTrusted = allowedCustomUrlPrefixes.some(allowedPrefix =>
+      matchesAllowedCustomPrefix(parsedUrl, allowedPrefix)
     );
 
     if (!isSchemeTrusted) {

@@ -672,7 +672,9 @@ describe('Connect', () => {
 
     await act(async () => Promise.resolve());
     expect(checkLink).toHaveBeenCalledWith('https://b2b.mastercard.com/oauth');
-    expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com/oauth');
+    expect(openBrowser).toHaveBeenCalledWith(
+      'https://b2b.mastercard.com/oauth'
+    );
 
     instance.isTrackPopupBlockedEventActive = true;
     instance.handleEvent({
