@@ -43,6 +43,17 @@ public class ChromeTabsManagerActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     try {
       super.onCreate(savedInstanceState);
+
+      if (RootDetectionUtils.isDeviceRooted()) {
+        isError = true;
+        resultType = "security_block";
+        EventBus.getDefault().post(
+          new ChromeTabsDismissedEvent("Blocked on rooted device.", resultType, isError)
+        );
+        finish();
+        return;
+      }
+
       // Draw edge-to-edge and let SafeArea handling own the top/bottom insets.
       WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 

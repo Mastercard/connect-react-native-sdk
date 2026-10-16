@@ -39,3 +39,24 @@ The Connect React Native SDK has the following peerDependencies:
 
 ## Sample App
 [Github](https://github.com/Mastercard/connect-react-native-sdk/tree/master/ConnectReactNativeDemoApp) contains a sample React Native project that is integrated with the Connect React Native SDK. This sample project is named ConnectReactNativeDemoApp. Ensure that you have the necessary setup for React Native version 0.87.1 to successfully run and explore this demo application.
+
+## Security configuration for external URL handling
+
+Connect URL events can request opening web links or app deep links. To reduce abuse risk from untrusted WebView content:
+
+- Dangerous schemes such as `intent:`, `javascript:`, `data:` and `file:` are blocked.
+- Custom app URLs are blocked unless they match trusted prefixes configured in `allowedExternalUrlPrefixes` (scheme + host + path boundary).
+- By default, only the `connectUrl` host is trusted for `http/https` links.
+- Use `allowedExternalUrlHosts` to add more trusted web hosts (subdomains are allowed).
+
+Example:
+
+```tsx
+<Connect
+  connectUrl={connectUrl}
+  redirectUrl="connect://maob/redirect"
+  allowedExternalUrlHosts={['b2b.mastercard.com', 'trusted.fi.example']}
+  allowedExternalUrlPrefixes={['bankapp://authorize', 'bankapp://oauth']}
+  eventHandlers={eventHandlers}
+/>
+```
