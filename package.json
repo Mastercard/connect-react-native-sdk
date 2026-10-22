@@ -1,6 +1,6 @@
 {
   "name": "connect-react-native-sdk",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "React Native SDK for Mastercard Open Finance Connect",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -47,49 +47,60 @@
     "test:version_bump": "test $npm_package_version != $(npm show $npm_package_name version) || (echo 'Failing... You must bump package.json and package-lock.json' && exit 1)"
   },
   "dependencies": {
-    "react-native-url-polyfill": "3.0.0",
-    "react-native-safe-area-context": "5.8.0",
+    "react-native-url-polyfill": "4.0.0",
+    "react-native-safe-area-context": "5.10.1",
     "react-native-webview": "14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@commitlint/config-conventional": "^21.2.0",
-    "@react-native/babel-preset": "0.86.0",
-    "@react-native/eslint-config": "0.86.0",
-    "@react-native/jest-preset": "0.86.0",
+    "@react-native/babel-preset": "0.87.1",
+    "@react-native/eslint-config": "0.87.1",
+    "@react-native/jest-preset": "0.87.1",
     "@testing-library/react-native": "^14.0.1",
     "@types/jest": "^29.5.14",
     "@types/react": "^19.2.14",
     "@types/react-test-renderer": "^19.1.0",
+    "braces": "file:patched-deps/braces-3.0.4.tgz",
     "commitlint": "^21.2.0",
     "del-cli": "^7.0.0",
-    "eslint": "^9.39.4",
+    "eslint": "8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "jest": "^29.7.0",
     "pod-install": "^1.0.15",
     "prettier": "3.9.4",
-    "react": "19.2.7",
-    "react-native": "0.86.0",
+    "react": "19.3.0",
+    "react-native": "0.87.1",
     "react-native-builder-bob": "0.43.0",
-    "react-test-renderer": "19.2.7",
+    "react-test-renderer": "19.3.0",
     "test-renderer": "^1.2.0",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "react": ">=19.2.3",
-    "react-native": ">=0.86.0",
-    "react-native-safe-area-context": "5.8.0",
+    "react": ">=19.3.0",
+    "react-native": ">=0.87.1",
+    "react-native-safe-area-context": "5.10.1",
     "react-native-webview": "14.0.1"
   },
   "overrides": {
+    "braces": "$braces",
+    "image-size": "2.0.4",
     "flatted": "^3.4.2",
-    "minimatch": "^3.1.5"
+    "minimatch": "^3.1.5",
+    "shell-quote": "^1.11.0",
+    "js-yaml": "^4.1.1",
+    "argparse": "^2.0.1"
   },
   "resolutions": {
+    "braces": "file:patched-deps/braces-3.0.4.tgz",
+    "image-size": "2.0.4",
     "flatted": "^3.4.2",
-    "minimatch": "^3.1.5"
+    "minimatch": "^3.1.5",
+    "shell-quote": "^1.11.0",
+    "js-yaml": "^4.1.1",
+    "argparse": "^2.0.1"
   },
   "commitlint": {
     "extends": [
@@ -144,5 +155,6 @@
   },
   "engines": {
     "node": ">= 22.13.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
