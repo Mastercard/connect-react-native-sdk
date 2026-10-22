@@ -36,13 +36,14 @@
   ],
   "scripts": {
     "example": "yarn workspace connect-react-native-sdk-example",
-    "test": "jest ./src",
+    "ci:ensure-dev-tools": "node -e \"const fs=require('fs'); const cp=require('child_process'); const tools=['jest','prettier']; const missing=tools.filter(tool=>!fs.existsSync('node_modules/.bin/'+tool)); if(missing.length===0){process.exit(0);} if(process.env.CI){console.log('[ci:ensure-dev-tools] Installing missing dev tools: '+missing.join(', ')); cp.execSync('yarn install --production=false --frozen-lockfile --non-interactive',{stdio:'inherit'});} else {console.warn('[ci:ensure-dev-tools] Missing dev tools locally: '+missing.join(', '));}\"",
+    "test": "yarn ci:ensure-dev-tools && jest ./src",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prebuild": "node scripts/generate-version.js",
     "build": "bob build && npm pack",
-    "prettier-check": "prettier --check ./src/",
+    "prettier-check": "yarn ci:ensure-dev-tools && prettier --check ./src/",
     "prettier-write": "prettier --write .",
     "test:version_bump": "test $npm_package_version != $(npm show $npm_package_name version) || (echo 'Failing... You must bump package.json and package-lock.json' && exit 1)"
   },
