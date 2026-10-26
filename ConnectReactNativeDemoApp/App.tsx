@@ -94,8 +94,7 @@ const App = () => {
                   To get started, copy/paste a Generate URL value into the field below.
                 </Text>
                 <Text style={styles.textInstructions}>
-                  Android 16 edge-to-edge demo: use Before to see the overlap risk, and After for
-                  the SDK safe-area fix.
+                  Android 16 edge-to-edge demo: this launch flow uses the SDK safe-area fix.
                 </Text>
                 <TextInput
                   ref={urlInputRef}
@@ -109,21 +108,6 @@ const App = () => {
                     style={
                       pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled
                     }
-                    onPress={() => onPressHandler('before')}
-                  >
-                    <Text
-                      style={
-                        pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled
-                      }
-                    >
-                      Launch Connect (Before)
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    disabled={!pressable}
-                    style={
-                      pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled
-                    }
                     onPress={() => onPressHandler('after')}
                   >
                     <Text
@@ -131,7 +115,7 @@ const App = () => {
                         pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled
                       }
                     >
-                      Launch Connect (After)
+                      Launch Connect
                     </Text>
                   </TouchableOpacity>
                 </View>
