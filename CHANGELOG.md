@@ -1,5 +1,20 @@
 # Changelog
 
+### 2.2.0 (October 26, 2026)
+
+### Changes
+
+- React Native support for the SDK and demo app has been upgraded to `0.87.1`.
+- The SDK's `package.json` dependencies now include:
+  - `react-native-url-polyfill` `4.0.0`
+  - `react-native-safe-area-context` `5.10.1`
+  - `react-native-webview` `14.0.1`
+- Peer dependency requirements have been updated to:
+  - `react-native` `>=0.87.1`
+  - `react` `>=19.3.0`
+  - `react-native-safe-area-context` `5.10.1`
+  - `react-native-webview` `14.0.1`
+
 ### 2.1.0 (July 15, 2026)
 
 ### Changes

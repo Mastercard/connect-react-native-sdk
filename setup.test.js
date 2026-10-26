@@ -30,18 +30,27 @@ jest.mock('react-native-safe-area-context', () => {
   const React = require('react');
   const { View } = require('react-native');
 
+  const defaultInsets = {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0
+  };
+
   const SafeAreaProvider = React.forwardRef(({ children, ...props }, ref) =>
     React.createElement(View, { ...props, ref }, children)
   );
   const SafeAreaView = React.forwardRef(({ children, ...props }, ref) =>
     React.createElement(View, { ...props, ref }, children)
   );
+  const SafeAreaInsetsContext = React.createContext(defaultInsets);
 
   SafeAreaProvider.displayName = 'SafeAreaProvider';
   SafeAreaView.displayName = 'SafeAreaView';
 
   return {
     __esModule: true,
+    SafeAreaInsetsContext,
     SafeAreaProvider,
     SafeAreaView
   };

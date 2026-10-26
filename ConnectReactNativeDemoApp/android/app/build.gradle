@@ -1,12 +1,77 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-apply plugin: "org.jetbrains.kotlin.android"
 
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
  */
+def parseNodeVersionParts = { String versionName ->
+    versionName
+        .replaceFirst('^v', '')
+        .tokenize('.')
+        .collect { part ->
+            try {
+                return part.toInteger()
+            } catch (ignored) {
+                return 0
+            }
+        }
+}
+
+def compareNodeVersionsDesc = { String left, String right ->
+    def leftParts = parseNodeVersionParts(left)
+    def rightParts = parseNodeVersionParts(right)
+    int maxParts = Math.max(leftParts.size(), rightParts.size())
+
+    for (int i = 0; i < maxParts; i++) {
+        int leftPart = i < leftParts.size() ? leftParts[i] : 0
+        int rightPart = i < rightParts.size() ? rightParts[i] : 0
+        if (leftPart != rightPart) {
+            return rightPart <=> leftPart
+        }
+    }
+
+    return 0
+}
+
+def resolveNodeBinary = {
+    def overriddenNode = project.findProperty("NODE_BINARY") ?: System.getenv("NODE_BINARY")
+    if (overriddenNode) {
+        return overriddenNode
+    }
+
+    def nvmNodeRoot = new File(System.getProperty('user.home'), '.nvm/versions/node')
+    if (nvmNodeRoot.exists() && nvmNodeRoot.isDirectory()) {
+        def candidates = nvmNodeRoot.listFiles()?.findAll { versionDir ->
+            if (!versionDir.isDirectory() || !versionDir.name.startsWith('v')) {
+                return false
+            }
+
+            def majorVersionParts = parseNodeVersionParts(versionDir.name)
+            def majorVersion = majorVersionParts.isEmpty() ? 0 : majorVersionParts[0]
+            if (majorVersion < 22) {
+                return false
+            }
+
+            return new File(versionDir, 'bin/node').exists()
+        }
+
+        if (candidates && !candidates.isEmpty()) {
+            def bestVersionDir = candidates.sort { a, b ->
+                compareNodeVersionsDesc(a.name, b.name)
+            }[0]
+            return new File(bestVersionDir, 'bin/node').absolutePath
+        }
+    }
+
+    return 'node'
+}
+
+def nodeBinary = resolveNodeBinary()
+
 react {
+    nodeExecutableAndArgs = [nodeBinary]
+
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
     // root = file("../../")
@@ -103,7 +168,7 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 }

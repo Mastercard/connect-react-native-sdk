@@ -23,13 +23,18 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @ReactModule(name = ConnectReactNativeSdkModule.NAME)
 public class ConnectReactNativeSdkModule extends ReactContextBaseJavaModule implements LifecycleEventListener, ActivityEventListener {
   public static final String NAME = "ConnectReactNativeSdk";
+  private static final Set<String> BLOCKED_EXTERNAL_SCHEMES = new HashSet<>(
+    Arrays.asList("about", "content", "data", "file", "intent", "javascript")
+  );
   private final ReactApplicationContext reactContext;
   private static ConnectReactNativeSdkModule instance;
 
@@ -74,9 +79,32 @@ public class ConnectReactNativeSdkModule extends ReactContextBaseJavaModule impl
     }
 
     final Uri uri = Uri.parse(url);
+    if (!isSafeExternalUri(uri)) {
+      promise.resolve(false);
+      return;
+    }
+
     final Activity activity = getCurrentActivity();
     boolean result = tryOpenInExternalApp(uri, activity);
     promise.resolve(result);
+  }
+
+  private boolean isSafeExternalUri(Uri uri) {
+    if (uri == null || uri.getScheme() == null) {
+      return false;
+    }
+
+    String scheme = uri.getScheme().toLowerCase(Locale.US);
+    if (BLOCKED_EXTERNAL_SCHEMES.contains(scheme)) {
+      return false;
+    }
+
+    if ("http".equals(scheme) || "https".equals(scheme)) {
+      String host = uri.getHost();
+      return host != null && !host.trim().isEmpty();
+    }
+
+    return true;
   }
 
   /**
