@@ -13,13 +13,10 @@ describe('validateUrl', () => {
       jest.restoreAllMocks();
     });
 
-    test('blocks web URLs when host allowlist is not configured', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
+    test('allows web URLs when host allowlist is not configured', () => {
       expect(isSafeExternalNavigationUrl('https://example.com/path')).toBe(
-        false
+        true
       );
-      expect(warn).toHaveBeenCalledWith('Blocked external URL host policy');
     });
 
     test('allows valid https URLs for trusted hosts', () => {
@@ -71,11 +68,8 @@ describe('validateUrl', () => {
       expect(warn).toHaveBeenCalledWith('Blocked external URL custom prefix');
     });
 
-    test('blocks custom URLs when no trusted prefix policy is configured', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-      expect(isSafeExternalNavigationUrl('bankapp://authorize')).toBe(false);
-      expect(warn).toHaveBeenCalledWith('Blocked external URL custom policy');
+    test('allows custom URLs when no trusted prefix policy is configured', () => {
+      expect(isSafeExternalNavigationUrl('bankapp://authorize')).toBe(true);
     });
 
     test('blocks custom URLs that try userinfo authority confusion', () => {

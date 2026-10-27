@@ -1,0 +1,162 @@
+include:
+  - jobs/by-stage/build/docker-build.yml
+  - jobs/by-stage/scan/black-duck-scan.yml
+  - jobs/by-stage/scan/checkmarx-scan.yml
+  - jobs/by-stage/scan/prisma-container-scan.yml
+
+before_script:
+  - |
+    if [ "${CI_JOB_NAME}" = "black-duck-scan" ]; then
+      mkdir -p "${HOME}/.gradle/init.d"
+      printf 'allprojects {\n  buildscript { repositories { maven { url "https://repo.fini.city/artifactory/maven-mirror-libs-release" } } }\n  repositories { maven { url "https://repo.fini.city/artifactory/maven-mirror-libs-release" } }\n}\n' > "${HOME}/.gradle/init.d/artifactory-mirror.gradle"
+    else
+      export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-17.0.12.jdk/Contents/Home"
+      export ANDROID_HOME="${HOME}/Library/Android/sdk"
+      export PATH="${PATH}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools"
+    fi
+
+image: node:22.13.0-alpine
+
+variables:
+  DEPLOY_IMAGE: "$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID"
+  SCAN_IMAGE: "$CI_REGISTRY_IMAGE:$CI_PIPELINE_ID-scan"
+  SONAR_PROJECT_KEY: connect-react-native-sdk
+  SONAR_TOKEN: $SONAR_LOGIN
+  SONAR_URL: $SONAR_HOST_URL
+
+stages:
+  - build
+  - test
+  - scan
+  - check-token
+  - publish
+
+dependencies:
+  stage: build
+  needs: []
+  script:
+    - yarn
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+
+yarn-build:
+  stage: build
+  needs: [dependencies]
+  before_script:
+    - sed -ri "s|'PACKAGE_VERSION'|'$(node -p -e \"require('./package.json').version\")'|" src/constants.ts # replace PACKAGE_VERSION with package.json version
+  script:
+    - node -v
+    - yarn install
+    - yarn build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    paths:
+      - lib/
+
+docker-build:
+  needs: [yarn-build]
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull # https://docs.gitlab.com/ee/ci/yaml/#cachepolicy
+
+test:
+  stage: test
+  needs: [yarn-build]
+  script:
+    - yarn test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    when: always
+    paths:
+      - coverage
+    expire_in: 1 days
+
+prettier:
+  stage: test
+  needs: [yarn-build]
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull # https://docs.gitlab.com/ee/ci/yaml/#cachepolicy
+  script:
+    - yarn prettier-check
+
+sonarqube:
+  stage: scan
+  needs: [test]
+  #image: ciricihq/gitlab-sonar-scanner
+  image: sonarsource/sonar-scanner-cli:latest
+  before_script: []
+  variables:
+    SONAR_ANALYSIS_MODE: publish
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^WIP.*/
+  script:
+    #- gitlab-sonar-scanner -X
+    - sonar-scanner -Dsonar.qualitygate.wait=true
+  allow_failure: true
+
+check-token:
+  stage: check-token
+  only:
+    - master
+  when: manual
+  script:
+    # https://www.npmjs.com/~mastercardapi
+    - echo -e "//registry.npmjs.org/:_authToken=${MASTERCARD_NPMJS_AUTOMATION_TOKEN}" > ./.npmrc
+    - npm whoami --registry=https://registry.npmjs.org/
+
+publish:
+  stage: publish
+  only:
+    - master
+  when: manual
+  script:
+    # https://www.npmjs.com/~mastercardapi
+    - echo -e "//registry.npmjs.org/:_authToken=${MASTERCARD_NPMJS_AUTOMATION_TOKEN}" > ./.npmrc
+    - npm whoami
+    - npm publish --access public
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    paths:
+      - lib/
+
+publish:internal:
+  stage: publish
+  when: manual
+  script:
+    - rm -rf ./.npmrc
+    - npm config set registry https://repo.fini.city/artifactory/api/npm/npm-group/
+    - npm config ls -l
+    - echo -e "registry=http://repo.fini.city/artifactory/api/npm/npm-private/\n//repo.fini.city/artifactory/api/npm/npm-private/:_authToken=${JFROG_NPM_AUTH_TOKEN}" > ./.npmrc
+    - npm publish --registry=https://repo.fini.city/artifactory/api/npm/npm-private/
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull
+  artifacts:
+    paths:
+      - lib/
+
+black-duck-scan:
+  variables:
+    GRADLE_VERSION: 8.13

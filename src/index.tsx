@@ -457,6 +457,10 @@ export class Connect extends Component<ConnectProps, ConnectState> {
       configuredHosts.map(host => host.trim().toLowerCase()).filter(Boolean)
     );
 
+    if (trustedHosts.size === 0) {
+      return [];
+    }
+
     try {
       const connectHost = new URL(this.state.connectUrl).hostname
         .trim()
@@ -491,6 +495,10 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         .map(prefix => prefix.trim().toLowerCase())
         .filter(Boolean)
     );
+
+    if (trustedPrefixes.size === 0) {
+      return [];
+    }
 
     try {
       const redirectUrl = new URL(this.state.redirectUrl);

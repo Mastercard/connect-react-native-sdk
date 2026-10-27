@@ -553,12 +553,11 @@ describe('Connect', () => {
     expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com');
   });
 
-  test('URL events block untrusted custom schemes by default', async () => {
+  test('URL events allow custom schemes by default', async () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
 
-    instance.isTrackPopupBlockedEventActive = true;
+    mockedCheckLink.mockResolvedValueOnce(false);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -570,17 +569,14 @@ describe('Connect', () => {
 
     await act(async () => Promise.resolve());
 
-    expect(checkLink).not.toHaveBeenCalled();
-    expect(openBrowser).not.toHaveBeenCalled();
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'bankapp://authorize'
-    });
+    expect(checkLink).toHaveBeenCalledWith('bankapp://authorize');
+    expect(openBrowser).toHaveBeenCalledWith('bankapp://authorize');
   });
 
-  test('URL events block custom URLs that do not match trusted redirect prefix', async () => {
-    const { instance } = await renderConnect();
+  test('URL events block custom URLs that do not match configured trusted redirect prefix', async () => {
+    const { instance } = await renderConnect({
+      allowedExternalUrlPrefixes: ['connect://maob/redirect']
+    });
     const openBrowser = jest.spyOn(instance, 'openBrowser');
     const postMessage = jest.spyOn(instance, 'postMessage');
 
@@ -655,10 +651,9 @@ describe('Connect', () => {
     });
   });
 
-  test('URL events allow connect host by default and block other hosts', async () => {
+  test('URL events allow web hosts by default when host allowlist is not configured', async () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
 
     mockedCheckLink.mockResolvedValueOnce(false);
     instance.handleEvent({
@@ -676,7 +671,7 @@ describe('Connect', () => {
       'https://b2b.mastercard.com/oauth'
     );
 
-    instance.isTrackPopupBlockedEventActive = true;
+    mockedCheckLink.mockResolvedValueOnce(false);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -687,11 +682,8 @@ describe('Connect', () => {
     });
 
     await act(async () => Promise.resolve());
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'https://attacker.example.com/oauth'
-    });
+    expect(checkLink).toHaveBeenCalledWith('https://attacker.example.com/oauth');
+    expect(openBrowser).toHaveBeenCalledWith('https://attacker.example.com/oauth');
   });
 
   test('track popup blocked events enable popup tracking before URL handling', async () => {

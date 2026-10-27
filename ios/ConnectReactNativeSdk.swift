@@ -19,14 +19,20 @@ class ConnectReactNativeSdk: RCTEventEmitter, SFSafariViewControllerDelegate {
 
   @objc(checklink:withResolver:withRejecter:)
   func checklink(url: String, resolve:  @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
-    let urlLink = URL(string: url)
+    guard let urlLink = URL(string: url) else {
+      resolve(false)
+      return
+    }
+
     if #available(iOS 10.0, *) {
-      UIApplication.shared.open(urlLink!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : true]) { (success) in
-          if success {
-              resolve(true)
-          } else {
-              resolve(false)
-          }
+      let scheme = (urlLink.scheme ?? "").lowercased()
+      let options: [UIApplication.OpenExternalURLOptionsKey: Any] =
+        (scheme == "http" || scheme == "https")
+        ? [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: true]
+        : [:]
+
+      UIApplication.shared.open(urlLink, options: options) { success in
+        resolve(success)
       }
     } else {
       resolve(false)

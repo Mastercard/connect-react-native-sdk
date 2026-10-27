@@ -141,8 +141,7 @@ export const isSafeExternalNavigationUrl = (
     if (WEB_URL_SCHEMES.has(scheme)) {
       const allowedHosts = normalizeItems(options.allowedHosts);
       if (allowedHosts.length === 0) {
-        console.warn('Blocked external URL host policy');
-        return false;
+        return true;
       }
 
       const host = parsedUrl.hostname.toLowerCase();
@@ -166,8 +165,7 @@ export const isSafeExternalNavigationUrl = (
       options.allowedCustomUrlPrefixes
     );
     if (allowedCustomUrlPrefixes.length === 0) {
-      console.warn('Blocked external URL custom policy');
-      return false;
+      return true;
     }
 
     const isSchemeTrusted = allowedCustomUrlPrefixes.some(allowedPrefix =>
