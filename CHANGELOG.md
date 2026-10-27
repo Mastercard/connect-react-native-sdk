@@ -1,5 +1,7 @@
 # Changelog
 
+### 2.3.0 (October 27, 2026)
+
 ### 2.1.0 (July 15, 2026)
 
 ### Changes
