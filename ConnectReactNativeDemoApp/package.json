@@ -9,10 +9,11 @@
     "start": "react-native start"
   },
   "dependencies": {
-    "connect-react-native-sdk": "2.1.0",
-    "react": "19.2.7",
-    "react-native": "0.86.0",
-    "react-native-safe-area-context": "5.8.0",
+    "connect-react-native-sdk": "2.2.0",
+    "react": "19.3.0",
+    "react-native": "0.87.1",
+    "react-native-url-polyfill": "4.0.0",
+    "react-native-safe-area-context": "5.10.1",
     "react-native-webview": "14.0.1"
   },
   "devDependencies": {
@@ -22,14 +23,27 @@
     "@react-native-community/cli": "20.2.0",
     "@react-native-community/cli-platform-android": "20.2.0",
     "@react-native-community/cli-platform-ios": "20.2.0",
-    "@react-native/babel-preset": "0.86.0",
-    "@react-native/eslint-config": "0.86.0",
-    "@react-native/metro-config": "0.86.0",
-    "@react-native/typescript-config": "0.86.0",
+    "@react-native/babel-preset": "0.87.1",
+    "@react-native/eslint-config": "0.87.1",
+    "@react-native/metro-config": "0.87.1",
+    "@react-native/typescript-config": "0.87.1",
     "@types/react": "^19.2.14",
-    "eslint": "^9.39.4",
+    "braces": "file:../patched-deps/braces-3.0.4.tgz",
+    "eslint": "8.57.1",
     "prettier": "3.9.4",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "braces": "$braces",
+    "image-size": "2.0.4",
+    "shell-quote": "^1.11.0",
+    "compression": "^1.8.2"
+  },
+  "resolutions": {
+    "braces": "file:../patched-deps/braces-3.0.4.tgz",
+    "image-size": "2.0.4",
+    "shell-quote": "^1.11.0",
+    "compression": "^1.8.2"
   },
   "engines": {
     "node": ">= 22.13.0"
