@@ -3,7 +3,7 @@ export interface ConnectEventHandlers {
   onCancel: (event: ConnectCancelEvent) => void;
   onError: (event: ConnectErrorEvent) => void;
   onRoute?: (event: ConnectRouteEvent) => void;
-  onUser?: (event: ConnectUserEvent) => void;
+  onUser?: (event: any) => void;
   onLoad?: () => void;
 }
 
@@ -11,9 +11,6 @@ export interface ConnectProps {
   connectUrl: string;
   eventHandlers: ConnectEventHandlers;
   redirectUrl?: string;
-  androidEdgeToEdgeMode?: 'before' | 'after';
-  allowedExternalUrlHosts?: string[];
-  allowedExternalUrlPrefixes?: string[];
 }
 
 export interface ConnectCancelEvent {
@@ -36,10 +33,6 @@ export interface ConnectDoneEvent {
       reportId: string;
     }
   ];
-}
-
-export interface ConnectUserEvent {
-  [key: string]: unknown;
 }
 
 export interface ConnectRouteEvent {

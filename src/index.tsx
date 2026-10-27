@@ -1,19 +1,6 @@
 import React, { Component } from 'react';
-import {
-  Alert,
-  BackHandler,
-  Modal,
-  NativeEventEmitter,
-  Platform,
-  StatusBar,
-  StyleSheet,
-  type EmitterSubscription,
-  type NativeEventSubscription
-} from 'react-native';
-import {
-  SafeAreaInsetsContext,
-  SafeAreaView
-} from 'react-native-safe-area-context';
+import { Modal, Platform, NativeEventEmitter, StyleSheet } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 import {
@@ -23,90 +10,37 @@ import {
   CONNECT_SDK_VERSION,
   DEFAULT_REDIRECT_URL
 } from './constants';
-import { isSafeExternalNavigationUrl, validateUrl } from './utils';
+import { validateUrl } from './utils';
 import { ConnectReactNativeSdk, checkLink } from './nativeModule';
-import type {
-  ConnectCancelEvent,
-  ConnectDoneEvent,
-  ConnectErrorEvent,
-  ConnectEventHandlers,
-  ConnectProps,
-  ConnectRouteEvent,
-  ConnectUserEvent
-} from './types';
+import type { ConnectEventHandlers, ConnectProps } from './types';
 
-const noop = () => {};
-
-type RequiredConnectEventHandlers = ConnectEventHandlers & {
-  onLoad: NonNullable<ConnectEventHandlers['onLoad']>;
-  onRoute: NonNullable<ConnectEventHandlers['onRoute']>;
-  onUser: NonNullable<ConnectEventHandlers['onUser']>;
+const defaultEventHandlers: any = {
+  onLoad: () => {
+    // Intentionally empty function
+  },
+  onUser: () => {
+    // Intentionally empty function
+  },
+  onRoute: () => {
+    // Intentionally empty function
+  }
 };
-
-const defaultEventHandlers: RequiredConnectEventHandlers = {
-  onCancel: noop,
-  onDone: noop,
-  onError: noop,
-  onLoad: noop,
-  onUser: noop,
-  onRoute: noop
-};
-
-const ENABLE_ANDROID_EXIT_PROMPT = false;
 
 type URLOpenedBy = 'secure-container' | 'fi-app';
 type OAuthClosedBy =
   'connect-client-event' | 'partner-redirection' | 'user-closed';
 type OAuthCloseAction = 'closed' | 'none';
 
-type NativeBrowserNavigationEvent = {
-  eventName?: string;
-  message?: string;
-};
-
-type ParsedEventData = {
-  type?: string;
-  url?: string | null;
-  data?: unknown;
-};
-
-type CancelReason = string | undefined;
-
-type WebViewMessagePayload = {
-  nativeEvent: {
-    data: unknown;
-  };
-};
-
-type WebViewNavigationState = {
-  canGoBack?: boolean;
-};
-
-type ConnectState = {
-  connectUrl: string;
-  redirectUrl: string;
-  pingingConnect: boolean;
-  pingedConnectSuccessfully: boolean;
-  pingIntervalId: ReturnType<typeof setInterval> | 0;
-  eventHandlers: RequiredConnectEventHandlers;
-  browserDisplayed: boolean;
-  modalVisible: boolean;
-};
-
-export class Connect extends Component<ConnectProps, ConnectState> {
-  webViewRef: React.ComponentRef<typeof WebView> | null = null;
+export class Connect extends Component<ConnectProps> {
+  webViewRef: WebView | null = null;
   navigationEventEmitter: NativeEventEmitter | null = null;
-  navigationEventSubscription: EmitterSubscription | null = null;
-  backPressSubscription: NativeEventSubscription | null = null;
-  isExitPromptVisible = false;
+  navigationEventSubscription: any = null;
   isTrackPopupBlockedEventActive = false;
   hasSentWindowOpenedEvent = false;
-  canGoBackInWebView = false;
   OAuthUrl: string = '';
-  private isMountedRef = false;
 
-  state: ConnectState = {
-    connectUrl: this.props.connectUrl,
+  state = {
+    connectUrl: '',
     redirectUrl: DEFAULT_REDIRECT_URL,
     pingingConnect: false,
     pingedConnectSuccessfully: false,
@@ -122,160 +56,28 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     this.setupBrowserEventListener();
   }
 
-  componentDidMount() {
-    this.isMountedRef = true;
-
-    if (Platform.OS === 'android') {
-      this.backPressSubscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        this.handleHardwareBackPress
-      );
-    }
-  }
-
   componentWillUnmount() {
     if (this.navigationEventSubscription) {
       this.navigationEventSubscription.remove();
     }
-
-    if (this.backPressSubscription) {
-      this.backPressSubscription.remove();
-    }
-
-    this.isMountedRef = false;
-    this.stopPingingConnect();
   }
-
-  mergeEventHandlers = (
-    eventHandlers: ConnectEventHandlers
-  ): RequiredConnectEventHandlers => {
-    return {
-      ...defaultEventHandlers,
-      ...eventHandlers
-    };
-  };
-
-  applyState = (partialState: Partial<ConnectState>) => {
-    if (this.isMountedRef) {
-      this.setState(previousState => ({ ...previousState, ...partialState }));
-      return;
-    }
-
-    Object.assign(this.state, partialState);
-  };
 
   launch = (connectUrl: string, eventHandlers: ConnectEventHandlers) => {
     this.isTrackPopupBlockedEventActive = false;
     this.hasSentWindowOpenedEvent = false;
-    this.canGoBackInWebView = false;
     this.OAuthUrl = '';
-
-    this.applyState({
-      connectUrl,
-      eventHandlers: this.mergeEventHandlers(eventHandlers),
-      modalVisible: true,
-      redirectUrl: validateUrl(this.props.redirectUrl),
-      pingedConnectSuccessfully: false
-    });
+    this.state.connectUrl = connectUrl;
+    this.state.eventHandlers = { ...defaultEventHandlers, ...eventHandlers };
+    this.state.modalVisible = true;
+    this.state.redirectUrl = validateUrl(this.props.redirectUrl);
   };
 
   close = () => {
-    this.canGoBackInWebView = false;
     this.dismissModal();
     this.state.eventHandlers.onCancel({
       code: 100,
       reason: 'exit'
     });
-  };
-
-  navigateBackInWebViewIfPossible = () => {
-    if (
-      !this.state.modalVisible ||
-      this.state.browserDisplayed ||
-      !this.canGoBackInWebView
-    ) {
-      return false;
-    }
-
-    const webView = this.webViewRef as { goBack?: () => void } | null;
-    if (!webView || typeof webView.goBack !== 'function') {
-      return false;
-    }
-
-    webView.goBack();
-    return true;
-  };
-
-  handleHardwareBackPress = () => {
-    if (Platform.OS !== 'android' || !this.state.modalVisible) {
-      return false;
-    }
-
-    if (this.navigateBackInWebViewIfPossible()) {
-      return true;
-    }
-
-    this.handleRequestClose();
-    return true;
-  };
-
-  handleRequestClose = () => {
-    if (Platform.OS !== 'android') {
-      this.close();
-      return;
-    }
-
-    if (this.navigateBackInWebViewIfPossible()) {
-      return;
-    }
-
-    if (!ENABLE_ANDROID_EXIT_PROMPT || this.isExitPromptVisible) {
-      if (!ENABLE_ANDROID_EXIT_PROMPT) {
-        this.close();
-      }
-
-      return;
-    }
-
-    this.isExitPromptVisible = true;
-
-    Alert.alert(
-      'Exit Connect',
-      'Are you sure you want to exit Connect?',
-      [
-        {
-          text: 'Stay',
-          style: 'cancel',
-          onPress: () => {
-            this.isExitPromptVisible = false;
-          }
-        },
-        {
-          text: 'Exit',
-          style: 'destructive',
-          onPress: () => {
-            this.isExitPromptVisible = false;
-            this.close();
-          }
-        }
-      ],
-      {
-        cancelable: true,
-        onDismiss: () => {
-          this.isExitPromptVisible = false;
-        }
-      }
-    );
-  };
-
-  shouldConfirmAndroidExit = (reason: CancelReason) => {
-    void reason;
-
-    if (Platform.OS !== 'android' || !this.state.modalVisible) {
-      return false;
-    }
-
-    return ENABLE_ANDROID_EXIT_PROMPT;
   };
 
   setupBrowserEventListener = () => {
@@ -290,13 +92,7 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     );
   };
 
-  handleWebViewNavigationStateChange = (state: WebViewNavigationState) => {
-    this.canGoBackInWebView = Boolean(state.canGoBack);
-  };
-
-  handleBrowserNavigationEvent = (
-    event: NativeBrowserNavigationEvent | null | undefined
-  ) => {
+  handleBrowserNavigationEvent = (event: any) => {
     if (!event) return;
 
     if (this.state.browserDisplayed) {
@@ -357,7 +153,7 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     });
   };
 
-  postMessage(eventData: Record<string, unknown>) {
+  postMessage(eventData: any) {
     this?.webViewRef?.postMessage(JSON.stringify(eventData));
   }
 
@@ -369,11 +165,9 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         platform: SDK_PLATFORM,
         redirectUrl: this.state.redirectUrl
       });
-
-      return;
+    } else {
+      this.stopPingingConnect();
     }
-
-    this.stopPingingConnect();
   };
 
   startPingingConnect = () => {
@@ -384,7 +178,10 @@ export class Connect extends Component<ConnectProps, ConnectState> {
       this.state.pingIntervalId === 0
     ) {
       this.state.pingingConnect = true;
-      this.state.pingIntervalId = setInterval(this.pingConnect, PING_TIMEOUT);
+      (this.state.pingIntervalId as any) = setInterval(
+        this.pingConnect,
+        PING_TIMEOUT
+      );
     }
   };
 
@@ -400,16 +197,14 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     type?: string,
     closedBy: OAuthClosedBy = 'partner-redirection'
   ) => {
-    const action: OAuthCloseAction = this.OAuthUrl ? 'closed' : 'none';
-
-    if (this.isTrackPopupBlockedEventActive) {
-      this.sendOauthClosedEvent(closedBy, action);
-    } else if (this.state.browserDisplayed) {
-      this.postMessage({
-        type: 'window',
-        closed: true
-      });
-    }
+    const action = this.OAuthUrl ? 'closed' : 'none';
+    this.isTrackPopupBlockedEventActive
+      ? this.sendOauthClosedEvent(closedBy, action)
+      : this.state.browserDisplayed &&
+        this.postMessage({
+          type: 'window',
+          closed: true
+        });
 
     this.state.browserDisplayed = false;
     this.hasSentWindowOpenedEvent = false;
@@ -436,7 +231,6 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         : { forceCloseOnRedirection: false, showInRecents: true };
     const openOptions =
       Platform.OS === 'android' ? { url, ...browserOptions } : { url };
-
     let closedBy: OAuthClosedBy = 'partner-redirection';
     const { type } = await ConnectReactNativeSdk.open(openOptions);
 
@@ -451,69 +245,10 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     this.dismissBrowser(type, closedBy);
   };
 
-  getAllowedExternalUrlHosts = () => {
-    const configuredHosts = this.props.allowedExternalUrlHosts ?? [];
-    const trustedHosts = new Set(
-      configuredHosts.map(host => host.trim().toLowerCase()).filter(Boolean)
-    );
-
-    try {
-      const connectHost = new URL(this.state.connectUrl).hostname
-        .trim()
-        .toLowerCase();
-      if (connectHost) {
-        trustedHosts.add(connectHost);
-      }
-    } catch {
-      // Connect URL is expected to be valid; this is a safety fallback.
-    }
-
-    try {
-      const redirectUrl = new URL(this.state.redirectUrl);
-      const protocol = redirectUrl.protocol.replace(':', '').toLowerCase();
-      if (
-        (protocol === 'http' || protocol === 'https') &&
-        redirectUrl.hostname
-      ) {
-        trustedHosts.add(redirectUrl.hostname.trim().toLowerCase());
-      }
-    } catch {
-      // Redirect URL is validated on launch; this is a safety fallback.
-    }
-
-    return Array.from(trustedHosts);
-  };
-
-  getAllowedExternalUrlPrefixes = () => {
-    const configuredPrefixes = this.props.allowedExternalUrlPrefixes ?? [];
-    const trustedPrefixes = new Set(
-      configuredPrefixes
-        .map(prefix => prefix.trim().toLowerCase())
-        .filter(Boolean)
-    );
-
-    try {
-      const redirectUrl = new URL(this.state.redirectUrl);
-      const protocol = redirectUrl.protocol.replace(':', '').toLowerCase();
-      if (protocol !== 'http' && protocol !== 'https') {
-        trustedPrefixes.add(this.state.redirectUrl.trim().toLowerCase());
-      }
-    } catch {
-      // Redirect URL is validated on launch; this is a safety fallback.
-    }
-
-    return Array.from(trustedPrefixes);
-  };
-
-  handleEvent = (event: WebViewMessagePayload) => {
+  handleEvent = (event: any) => {
     const eventData = parseEventData(event.nativeEvent.data);
     const { type: eventType, url } = eventData;
-
-    if (!eventType) {
-      return;
-    }
-
-    const { eventHandlers } = this.state;
+    let { browserDisplayed, eventHandlers } = this.state;
 
     switch (eventType) {
       case ConnectEvents.TRACK_POPUP_BLOCKED_EVENT:
@@ -521,37 +256,19 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         break;
 
       case ConnectEvents.URL:
-        if (!this.state.browserDisplayed && typeof url === 'string' && url) {
-          const isSafeUrl = isSafeExternalNavigationUrl(url, {
-            allowedHosts: this.getAllowedExternalUrlHosts(),
-            allowedCustomUrlPrefixes: this.getAllowedExternalUrlPrefixes()
-          });
-
-          if (!isSafeUrl) {
-            if (this.isTrackPopupBlockedEventActive) {
-              this.OAuthUrl = url;
-              this.sendURLBlockedEvent();
-              this.OAuthUrl = '';
-            }
-            return;
-          }
-
+        if (!browserDisplayed && url) {
           this.OAuthUrl = url;
-
-          void checkLink(url)
+          checkLink(url)
             .then((canOpen: boolean) => {
               if (canOpen) {
-                if (this.isTrackPopupBlockedEventActive) {
+                this.isTrackPopupBlockedEventActive &&
                   this.sendURLOpenedEvent('fi-app');
-                }
-
                 return;
               }
-
-              void this.openBrowser(url);
+              this.openBrowser(url);
             })
             .catch(() => {
-              void this.openBrowser(url);
+              this.openBrowser(url);
             });
         }
         break;
@@ -567,35 +284,26 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         break;
 
       case ConnectEvents.CANCEL:
-        if (
-          this.shouldConfirmAndroidExit(
-            (eventData.data as ConnectCancelEvent | undefined)?.reason
-          )
-        ) {
-          this.handleRequestClose();
-          break;
-        }
-
         this.dismissModal();
-        eventHandlers.onCancel(eventData.data as ConnectCancelEvent);
+        eventHandlers.onCancel(eventData.data);
         break;
 
       case ConnectEvents.DONE:
         this.dismissModal();
-        eventHandlers.onDone(eventData.data as ConnectDoneEvent);
+        eventHandlers.onDone(eventData.data);
         break;
 
       case ConnectEvents.ERROR:
         this.dismissModal();
-        eventHandlers.onError(eventData.data as ConnectErrorEvent);
+        eventHandlers.onError(eventData.data);
         break;
 
       case ConnectEvents.ROUTE:
-        eventHandlers.onRoute(eventData.data as ConnectRouteEvent);
+        eventHandlers.onRoute(eventData.data);
         break;
 
       case ConnectEvents.USER:
-        eventHandlers.onUser(eventData.data as ConnectUserEvent);
+        eventHandlers.onUser(eventData.data);
         break;
 
       default:
@@ -604,7 +312,6 @@ export class Connect extends Component<ConnectProps, ConnectState> {
   };
 
   dismissModal = () => {
-    this.canGoBackInWebView = false;
     this.setState({ modalVisible: false });
   };
 
@@ -616,10 +323,6 @@ export class Connect extends Component<ConnectProps, ConnectState> {
       })();
     `;
 
-    const useSafeAreaInsets =
-      Platform.OS !== 'android' ||
-      this.props.androidEdgeToEdgeMode !== 'before';
-
     return (
       <Modal
         visible={this.state.modalVisible}
@@ -627,53 +330,31 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'fullScreen'}
         transparent={false}
         testID="test-modal"
-        onRequestClose={this.handleRequestClose}
+        onRequestClose={() => this.close()}
       >
-        <SafeAreaInsetsContext.Consumer>
-          {insets => {
-            const fallbackTopInset =
-              Platform.OS === 'android' &&
-              useSafeAreaInsets &&
-              (insets?.top ?? 0) === 0
-                ? (StatusBar.currentHeight ?? 0)
-                : 0;
-
-            return (
-              <SafeAreaView
-                testID="test-safe-area-view"
-                style={[
-                  styles.safeAreaView,
-                  fallbackTopInset > 0 ? { paddingTop: fallbackTopInset } : null
-                ]}
-                edges={useSafeAreaInsets ? ['top', 'bottom'] : []}
-              >
-                <WebView
-                  ref={ref => {
-                    this.webViewRef = ref;
-                  }}
-                  style={styles.webView}
-                  source={{ uri: this.state.connectUrl }}
-                  javaScriptEnabled
-                  injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
-                  testID="test-webview"
-                  onNavigationStateChange={
-                    this.handleWebViewNavigationStateChange
-                  }
-                  onMessage={event =>
-                    this.handleEvent(event as WebViewMessagePayload)
-                  }
-                  onLoad={() => this.startPingingConnect()}
-                />
-              </SafeAreaView>
-            );
-          }}
-        </SafeAreaInsetsContext.Consumer>
+        <SafeAreaProvider style={styles.safeAreaProvider}>
+          <SafeAreaView style={styles.safeAreaView}>
+            <WebView
+              ref={(ref: any) => (this.webViewRef = ref)}
+              style={styles.webView}
+              source={{ uri: this.state.connectUrl }}
+              javaScriptEnabled
+              injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
+              testID="test-webview"
+              onMessage={event => this.handleEvent(event)}
+              onLoad={() => this.startPingingConnect()}
+            />
+          </SafeAreaView>
+        </SafeAreaProvider>
       </Modal>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  safeAreaProvider: {
+    flex: 1
+  },
   safeAreaView: {
     flex: 1
   },
@@ -683,20 +364,11 @@ const styles = StyleSheet.create({
 });
 
 function parseEventData(eventData: any) {
-  if (typeof eventData === 'string') {
-    try {
-      const parsed = JSON.parse(eventData);
-      return parsed && typeof parsed === 'object'
-        ? (parsed as ParsedEventData)
-        : {};
-    } catch {
-      return {};
-    }
+  try {
+    return typeof eventData === 'string' ? JSON.parse(eventData) : eventData;
+  } catch (e) {
+    return {};
   }
-
-  return eventData && typeof eventData === 'object'
-    ? (eventData as ParsedEventData)
-    : {};
 }
 
 export type * from './types';

@@ -14,36 +14,28 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Connect } from 'connect-react-native-sdk';
 
-type AndroidEdgeToEdgeMode = 'before' | 'after';
-
 const App = () => {
   const [url, setUrl] = useState('');
   const [pressable, setPressable] = useState(false);
   const [show, setShow] = useState(false);
-  const [androidEdgeToEdgeMode, setAndroidEdgeToEdgeMode] =
-    useState<AndroidEdgeToEdgeMode>('after');
-  const urlInputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
+  const urlInputRef = useRef<TextInput>(null);
 
   const handleUrl = (text: string) => {
     setUrl(text);
     setPressable(text.length > 0);
   };
 
-  const onConnectWithUrl = (mode: AndroidEdgeToEdgeMode) => {
-    let nextUrl = url;
-
-    if (Platform.OS === 'android' && nextUrl.includes('localhost')) {
-      nextUrl = nextUrl.replace('localhost', '10.0.2.2');
+  const onConnectWithUrl = () => {
+    if (Platform.OS === 'android' && url.includes('localhost')) {
+      let testurl = url.replace('localhost', '10.0.2.2');
+      setUrl(testurl);
     }
-
-    setUrl(nextUrl);
-    setAndroidEdgeToEdgeMode(mode);
     setShow(true);
   };
 
-  const onPressHandler = (mode: AndroidEdgeToEdgeMode) => {
+  const onPressHandler = () => {
     if (pressable) {
-      onConnectWithUrl(mode);
+      onConnectWithUrl();
     }
     urlInputRef.current?.clear();
   };
@@ -93,40 +85,30 @@ const App = () => {
                 <Text style={styles.textInstructions}>
                   To get started, copy/paste a Generate URL value into the field below.
                 </Text>
-                <Text style={styles.textInstructions}>
-                  Android 16 edge-to-edge demo: this launch flow uses the SDK safe-area fix.
-                </Text>
                 <TextInput
                   ref={urlInputRef}
                   style={styles.textInput}
                   placeholder="Paste Generate URL here"
                   onChangeText={handleUrl}
                 />
-                <View style={styles.buttonRow}>
-                  <TouchableOpacity
-                    disabled={!pressable}
+                <TouchableOpacity
+                  disabled={!pressable}
+                  style={
+                    pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled
+                  }
+                  onPress={onPressHandler}
+                >
+                  <Text
                     style={
-                      pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled
+                      pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled
                     }
-                    onPress={() => onPressHandler('after')}
                   >
-                    <Text
-                      style={
-                        pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled
-                      }
-                    >
-                      Launch Connect
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                    Launch Connect
+                  </Text>
+                </TouchableOpacity>
               </KeyboardAvoidingView>
               {show === true && (
-                <Connect
-                  connectUrl={url}
-                  eventHandlers={eventHandlers}
-                  redirectUrl={'connect://maob/redirect'}
-                  androidEdgeToEdgeMode={androidEdgeToEdgeMode}
-                />
+                <Connect connectUrl={url} eventHandlers={eventHandlers} redirectUrl="xyz" />
               )}
             </SafeAreaView>
           </View>
@@ -179,13 +161,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FEFEFE'
   },
-  buttonRow: {
-    width: '95%',
-    gap: 10
-  },
   buttonFrameStyleDisabled: {
     height: 48,
-    width: '100%',
+    width: '95%',
     borderRadius: 24,
     marginTop: 12,
     backgroundColor: '#bdc3c7',
@@ -193,7 +171,7 @@ const styles = StyleSheet.create({
   },
   buttonFrameStyleEnabled: {
     height: 48,
-    width: '100%',
+    width: '95%',
     borderRadius: 24,
     marginTop: 12,
     backgroundColor: '#d35400',
