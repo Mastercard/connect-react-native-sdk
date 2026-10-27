@@ -1,5 +1,5 @@
 PODS:
-  - connect-react-native-sdk (2.1.0):
+  - connect-react-native-sdk (2.3.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2179,9 +2179,9 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  connect-react-native-sdk: e75159ee8867c15c1d9b46f186148da957ee3796
+  connect-react-native-sdk: 312998068777497fdeffa23a30a095e5bcbee654
   FBLazyVector: b3e7ad108f0d882e30445c5527d774e3fd432f3d
-  hermes-engine: bee3b2083ac239326bf3ebeed3407073e2920329
+  hermes-engine: 0a6ce34dad1344ce024a8d681e5a8fdb877e29a8
   RCTDeprecation: 2a74a2c57675e64419bd89078efde81f7c1de90b
   RCTRequired: 30451112e6fef4e6f31b4e7eee0845156e35e4b0
   RCTSwiftUI: 5aaf0b07e747ba749dc6acc94d8bd41eea4b570f
@@ -2256,7 +2256,7 @@ SPEC CHECKSUMS:
   ReactCodegen: ee39bbc365b4791c9b5183b52c533ebf586e1d8d
   ReactCommon: 4d01bfb533b93a2103329dfefc74db6a9e272888
   ReactNativeDependencies: fa0a54b3f5319ae0e3b9aff32bfee7a424b88e66
-  Yoga: 94172d87dd5d83fc929bf1ee53121b5d4490b5f2
+  Yoga: fe50ab299e578f397fef753cf309c6703a4db29b
 
 PODFILE CHECKSUM: 5fc8d2a7d7d7536360de8dd48a100db193e96145
 

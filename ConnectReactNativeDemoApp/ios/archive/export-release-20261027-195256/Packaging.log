@@ -1,0 +1,380 @@
+2026-10-27 14:23:40 +0000 [MT] Initial pipeline context: <IDEDistributionProcessingPipelineContext: 0xcbadec000; archive(resolved)="<IDEArchive: 0xcbb0c8690>", distributionTask(resolved)="2", distributionDestination(resolved)="1", distributionMethod(resolved)="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team(resolved)="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	Chain (14, self inclusive):
+	<IDEDistributionProcessingPipelineContext: 0xcbadec000; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionProcessingPipelineContext: 0xcbb32f300; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe033480; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe032d00; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe032a80; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe032800; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe032080; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe032580; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe031e00; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="<IDEProvisioningBasicTeam: 0xcbb2cfb20; teamID='5R8RGDXM32', teamName='(null)'>">
+	<IDEDistributionContext: 0xcbe031b80; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="(null)">
+	<IDEDistributionContext: 0xcbe031900; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="(null)">
+	<IDEDistributionContext: 0xcbe031680; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="(null)">
+	<IDEDistributionContext: 0xcbe030500; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0xcbb264b80>", team="(null)">
+	<IDEDistributionContext: 0x10369eed0; archive = "<IDEArchive: 0xcbb0c8690>", distributionMethod="(null)", team="(null)">
+</IDEDistributionProcessingPipelineContext: 0xcbadec000>
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionCreateDestRootStep
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionCopyItemStep
+2026-10-27 14:23:40 +0000 [MT] Running /usr/bin/ditto '-V' '/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app' '/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app'
+2026-10-27 14:23:40 +0000  >>> Copying /Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app 
+2026-10-27 14:23:40 +0000  copying file ./React-timing_privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  553 bytes for ./React-timing_privacy.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./React-timing_privacy.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  792 bytes for ./React-timing_privacy.bundle/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./_CodeSignature/CodeResources ... 
+2026-10-27 14:23:40 +0000  10571 bytes for ./_CodeSignature/CodeResources
+2026-10-27 14:23:40 +0000  copying file ./AppIcon60x60@2x.png ... 
+2026-10-27 14:23:40 +0000  12286 bytes for ./AppIcon60x60@2x.png
+2026-10-27 14:23:40 +0000  copying file ./React-cxxreact_privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  552 bytes for ./React-cxxreact_privacy.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./React-cxxreact_privacy.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  796 bytes for ./React-cxxreact_privacy.bundle/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Assets.car ... 
+2026-10-27 14:23:40 +0000  416632 bytes for ./Assets.car
+2026-10-27 14:23:40 +0000  copying file ./AppIcon76x76@2x~ipad.png ... 
+2026-10-27 14:23:40 +0000  16265 bytes for ./AppIcon76x76@2x~ipad.png
+2026-10-27 14:23:40 +0000  copying file ./main.jsbundle ... 
+2026-10-27 14:23:40 +0000  1412548 bytes for ./main.jsbundle
+2026-10-27 14:23:40 +0000  copying file ./PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  986 bytes for ./PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib ... 
+2026-10-27 14:23:40 +0000  3862 bytes for ./LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib
+2026-10-27 14:23:40 +0000  copying file ./LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib ... 
+2026-10-27 14:23:40 +0000  924 bytes for ./LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib
+2026-10-27 14:23:40 +0000  copying file ./LaunchScreen.storyboardc/Info.plist ... 
+2026-10-27 14:23:40 +0000  258 bytes for ./LaunchScreen.storyboardc/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./ConnectReactNativeDemoApp ... 
+2026-10-27 14:23:40 +0000  496912 bytes for ./ConnectReactNativeDemoApp
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/hermesvm.framework/_CodeSignature/CodeResources ... 
+2026-10-27 14:23:40 +0000  1798 bytes for ./Frameworks/hermesvm.framework/_CodeSignature/CodeResources
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/hermesvm.framework/hermesvm ... 
+2026-10-27 14:23:40 +0000  5120000 bytes for ./Frameworks/hermesvm.framework/hermesvm
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/hermesvm.framework/Info.plist ... 
+2026-10-27 14:23:40 +0000  859 bytes for ./Frameworks/hermesvm.framework/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/React.framework/_CodeSignature/CodeResources ... 
+2026-10-27 14:23:40 +0000  1798 bytes for ./Frameworks/React.framework/_CodeSignature/CodeResources
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/React.framework/React ... 
+2026-10-27 14:23:40 +0000  12126528 bytes for ./Frameworks/React.framework/React
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/React.framework/Info.plist ... 
+2026-10-27 14:23:40 +0000  744 bytes for ./Frameworks/React.framework/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/_CodeSignature/CodeResources ... 
+2026-10-27 14:23:40 +0000  3548 bytes for ./Frameworks/ReactNativeDependencies.framework/_CodeSignature/CodeResources
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  552 bytes for ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  689 bytes for ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies ... 
+2026-10-27 14:23:40 +0000  1263760 bytes for ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  552 bytes for ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  687 bytes for ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  776 bytes for ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  689 bytes for ./Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Frameworks/ReactNativeDependencies.framework/Info.plist ... 
+2026-10-27 14:23:40 +0000  781 bytes for ./Frameworks/ReactNativeDependencies.framework/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./embedded.mobileprovision ... 
+2026-10-27 14:23:40 +0000  22237 bytes for ./embedded.mobileprovision
+2026-10-27 14:23:40 +0000  copying file ./Info.plist ... 
+2026-10-27 14:23:40 +0000  1624 bytes for ./Info.plist
+2026-10-27 14:23:40 +0000  copying file ./PkgInfo ... 
+2026-10-27 14:23:40 +0000  8 bytes for ./PkgInfo
+2026-10-27 14:23:40 +0000  copying file ./React-Core_privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  768 bytes for ./React-Core_privacy.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./React-Core_privacy.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  788 bytes for ./React-Core_privacy.bundle/Info.plist
+2026-10-27 14:23:40 +0000 [MT] /usr/bin/ditto exited with 0
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionEmbedProfileStep
+2026-10-27 14:23:40 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0xcbd47f240; bundleID='react-native.React', path='<DVTFilePath:0xcbdb1a460:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b3c0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbacbc2a0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='react-native.React', executablePath='<DVTFilePath:0xcbdb1a520:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework/React'>', hardenedRuntime='0'>'>
+2026-10-27 14:23:40 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0xcbdb1b2a0; bundleID='third-party.ReactNativeDependencies', path='<DVTFilePath:0xcbac60c80:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b300; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbacbc000; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='third-party.ReactNativeDependencies', executablePath='<DVTFilePath:0xcbc986e60:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies'>', hardenedRuntime='0'>'>
+2026-10-27 14:23:40 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0xcbdb1b240; bundleID='dev.hermesengine.iphoneos', path='<DVTFilePath:0xcbb0ca4c0:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b1e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbb29be20; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='dev.hermesengine.iphoneos', executablePath='<DVTFilePath:0xcbdb19920:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/hermesvm'>', hardenedRuntime='0'>'>
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionInfoPlistStep
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionAppThinningPlistStep
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionAppThinningPlistStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionSymbolsStep
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionSymbolsStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionAppThinningStep
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionAppThinningStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionArchThinningStep
+2026-10-27 14:23:40 +0000 [MT] Archs to thin for item /Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework are []
+2026-10-27 14:23:40 +0000 [MT] Archs to thin for item /Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework are []
+2026-10-27 14:23:40 +0000 [MT] Archs to thin for item /Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework are []
+2026-10-27 14:23:40 +0000 [MT] Archs to thin for item /Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app are []
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionODRStep
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionStripXattrsStep
+2026-10-27 14:23:40 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-10-27 14:23:40 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-10-27 14:23:40 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-10-27 14:23:40 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionCodesignStep
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbd47f240; bundleID='react-native.React', path='<DVTFilePath:0xcbdb1a460:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b3c0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe38e0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='react-native.React', executablePath='<DVTFilePath:0xcbdb1a520:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework/React'>', hardenedRuntime='0'>'>: {
+}
+2026-10-27 14:23:40 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbd47f240; bundleID='react-native.React', path='<DVTFilePath:0xcbdb1a460:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b3c0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe38e0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='react-native.React', executablePath='<DVTFilePath:0xcbdb1a520:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework/React'>', hardenedRuntime='0'>'> are: {
+}
+2026-10-27 14:23:40 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0xcbd47f240; bundleID='react-native.React', path='<DVTFilePath:0xcbdb1a460:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b3c0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe38e0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='react-native.React', executablePath='<DVTFilePath:0xcbdb1a520:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/React.framework/React'>', hardenedRuntime='0'>'> to: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~LiUBsV
+2026-10-27 14:23:40 +0000 [MT] invoking codesign: <NSConcreteTask: 0xcbadea120; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6,
+    "--entitlements",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~LiUBsV",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework"
+)'>
+2026-10-27 14:23:40 +0000 [MT] codesign output: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework: replacing existing signature
+/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework: signed bundle with Mach-O thin (arm64) [react-native.React]
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbdb1b2a0; bundleID='third-party.ReactNativeDependencies', path='<DVTFilePath:0xcbac60c80:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b300; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe31e0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='third-party.ReactNativeDependencies', executablePath='<DVTFilePath:0xcbc986e60:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies'>', hardenedRuntime='0'>'>: {
+}
+2026-10-27 14:23:40 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbdb1b2a0; bundleID='third-party.ReactNativeDependencies', path='<DVTFilePath:0xcbac60c80:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b300; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe31e0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='third-party.ReactNativeDependencies', executablePath='<DVTFilePath:0xcbc986e60:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies'>', hardenedRuntime='0'>'> are: {
+}
+2026-10-27 14:23:40 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0xcbdb1b2a0; bundleID='third-party.ReactNativeDependencies', path='<DVTFilePath:0xcbac60c80:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b300; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe31e0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='third-party.ReactNativeDependencies', executablePath='<DVTFilePath:0xcbc986e60:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies'>', hardenedRuntime='0'>'> to: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~OK3Mbx
+2026-10-27 14:23:40 +0000 [MT] invoking codesign: <NSConcreteTask: 0xcbadea030; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6,
+    "--entitlements",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~OK3Mbx",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework"
+)'>
+2026-10-27 14:23:40 +0000 [MT] codesign output: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework: replacing existing signature
+/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework: signed bundle with Mach-O thin (arm64) [third-party.ReactNativeDependencies]
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbdb1b240; bundleID='dev.hermesengine.iphoneos', path='<DVTFilePath:0xcbb0ca4c0:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b1e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe2f40; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='dev.hermesengine.iphoneos', executablePath='<DVTFilePath:0xcbdb19920:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/hermesvm'>', hardenedRuntime='0'>'>: {
+}
+2026-10-27 14:23:40 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbdb1b240; bundleID='dev.hermesengine.iphoneos', path='<DVTFilePath:0xcbb0ca4c0:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b1e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe2f40; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='dev.hermesengine.iphoneos', executablePath='<DVTFilePath:0xcbdb19920:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/hermesvm'>', hardenedRuntime='0'>'> are: {
+}
+2026-10-27 14:23:40 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0xcbdb1b240; bundleID='dev.hermesengine.iphoneos', path='<DVTFilePath:0xcbb0ca4c0:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b1e0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe2f40; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='(null)', teamID='5R8RGDXM32', identifier='dev.hermesengine.iphoneos', executablePath='<DVTFilePath:0xcbdb19920:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/hermesvm'>', hardenedRuntime='0'>'> to: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~JQHXOQ
+2026-10-27 14:23:40 +0000 [MT] invoking codesign: <NSConcreteTask: 0xcbadea260; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6,
+    "--entitlements",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~JQHXOQ",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework"
+)'>
+2026-10-27 14:23:40 +0000 [MT] codesign output: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework: replacing existing signature
+/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework: signed bundle with Mach-O thin (arm64) [dev.hermesengine.iphoneos]
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbdb1b480; bundleID='com.mastercard.openbanking.connectreactnative', path='<DVTFilePath:0xcbb0c8700:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b360; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe2ca0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='{
+    "application-identifier" = "5R8RGDXM32.com.mastercard.openbanking.connectreactnative";
+    "com.apple.developer.associated-appclip-app-identifiers" =     (
+        "5R8RGDXM32.com.mastercard.openbanking.connectreactnative.Clip"
+    );
+    "com.apple.developer.associated-domains" =     (
+        "applinks:*.acmelending.net",
+        "applinks:*.acme.finicitystg.com"
+    );
+    "com.apple.developer.team-identifier" = 5R8RGDXM32;
+    "get-task-allow" = 1;
+}', teamID='5R8RGDXM32', identifier='com.mastercard.openbanking.connectreactnative', executablePath='<DVTFilePath:0xcbb0ca300:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/ConnectReactNativeDemoApp'>', hardenedRuntime='0'>'>: {
+    "application-identifier" = "5R8RGDXM32.com.mastercard.openbanking.connectreactnative";
+    "com.apple.developer.associated-appclip-app-identifiers" =     (
+        "5R8RGDXM32.com.mastercard.openbanking.connectreactnative.Clip"
+    );
+    "com.apple.developer.associated-domains" =     (
+        "applinks:*.acmelending.net",
+        "applinks:*.acme.finicitystg.com"
+    );
+    "com.apple.developer.team-identifier" = 5R8RGDXM32;
+    "get-task-allow" = 1;
+}
+2026-10-27 14:23:40 +0000 [MT] Associated App Clip Identifiers Filter: Ignoring React.framework because it is not on demand install capable
+2026-10-27 14:23:40 +0000 [MT] Associated App Clip Identifiers Filter: Ignoring ReactNativeDependencies.framework because it is not on demand install capable
+2026-10-27 14:23:40 +0000 [MT] Associated App Clip Identifiers Filter: Ignoring hermesvm.framework because it is not on demand install capable
+2026-10-27 14:23:40 +0000 [MT] Associated App Clip Identifiers Filter: ConnectReactNativeDemoApp.app has 0 associated app clip identifiers
+2026-10-27 14:23:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0xcbdb1b480; bundleID='com.mastercard.openbanking.connectreactnative', path='<DVTFilePath:0xcbb0c8700:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b360; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe2ca0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='{
+    "application-identifier" = "5R8RGDXM32.com.mastercard.openbanking.connectreactnative";
+    "com.apple.developer.associated-appclip-app-identifiers" =     (
+        "5R8RGDXM32.com.mastercard.openbanking.connectreactnative.Clip"
+    );
+    "com.apple.developer.associated-domains" =     (
+        "applinks:*.acmelending.net",
+        "applinks:*.acme.finicitystg.com"
+    );
+    "com.apple.developer.team-identifier" = 5R8RGDXM32;
+    "get-task-allow" = 1;
+}', teamID='5R8RGDXM32', identifier='com.mastercard.openbanking.connectreactnative', executablePath='<DVTFilePath:0xcbb0ca300:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/ConnectReactNativeDemoApp'>', hardenedRuntime='0'>'> are: {
+    "application-identifier" = "5R8RGDXM32.com.mastercard.openbanking.connectreactnative";
+    "com.apple.developer.associated-domains" =     (
+        "applinks:*.acmelending.net",
+        "applinks:*.acme.finicitystg.com"
+    );
+    "com.apple.developer.team-identifier" = 5R8RGDXM32;
+    "get-task-allow" = 1;
+}
+2026-10-27 14:23:40 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0xcbdb1b480; bundleID='com.mastercard.openbanking.connectreactnative', path='<DVTFilePath:0xcbb0c8700:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xcbdb1b360; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xcbcbe2ca0; name='Apple Development: Prathamesh Salawkar (W34WQLVW79)', hash='3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6', serialNumber='59A345882244D2893D699B064BD8BC2C', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2026-01-07 08:27:21 +0000''>', entitlements='{
+    "application-identifier" = "5R8RGDXM32.com.mastercard.openbanking.connectreactnative";
+    "com.apple.developer.associated-appclip-app-identifiers" =     (
+        "5R8RGDXM32.com.mastercard.openbanking.connectreactnative.Clip"
+    );
+    "com.apple.developer.associated-domains" =     (
+        "applinks:*.acmelending.net",
+        "applinks:*.acme.finicitystg.com"
+    );
+    "com.apple.developer.team-identifier" = 5R8RGDXM32;
+    "get-task-allow" = 1;
+}', teamID='5R8RGDXM32', identifier='com.mastercard.openbanking.connectreactnative', executablePath='<DVTFilePath:0xcbb0ca300:'/Users/e113257/react-native-sdk/ConnectReactNativeDemoApp/ios/archive/ConnectReactNativeDemoApp-release-20261027-195256.xcarchive/Products/Applications/ConnectReactNativeDemoApp.app/ConnectReactNativeDemoApp'>', hardenedRuntime='0'>'> to: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~Pf6DoR
+2026-10-27 14:23:40 +0000 [MT] invoking codesign: <NSConcreteTask: 0xcbadea030; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    3DCDF44A7F84D0A1970D4115AE6AE4F56A2BF6E6,
+    "--entitlements",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/entitlements~~~Pf6DoR",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app"
+)'>
+2026-10-27 14:23:40 +0000 [MT] codesign output: /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app: replacing existing signature
+/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app: signed app bundle with Mach-O thin (arm64) [com.mastercard.openbanking.connectreactnative]
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionZipODRItemStep
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-10-27 14:23:40 +0000 [MT] Processing step: IDEDistributionCreateIPAStep
+2026-10-27 14:23:40 +0000 [MT] Running /usr/bin/ditto '-V' '-c' '-k' '--norsrc' '/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root' '/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Packages/ConnectReactNativeDemoApp.ipa'
+2026-10-27 14:23:40 +0000  >>> Copying /var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root 
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/React-timing_privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  553 bytes for ./Payload/ConnectReactNativeDemoApp.app/React-timing_privacy.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/React-timing_privacy.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  792 bytes for ./Payload/ConnectReactNativeDemoApp.app/React-timing_privacy.bundle/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/_CodeSignature/CodeResources ... 
+2026-10-27 14:23:40 +0000  10571 bytes for ./Payload/ConnectReactNativeDemoApp.app/_CodeSignature/CodeResources
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/AppIcon60x60@2x.png ... 
+2026-10-27 14:23:40 +0000  12286 bytes for ./Payload/ConnectReactNativeDemoApp.app/AppIcon60x60@2x.png
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/React-cxxreact_privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  552 bytes for ./Payload/ConnectReactNativeDemoApp.app/React-cxxreact_privacy.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/React-cxxreact_privacy.bundle/Info.plist ... 
+2026-10-27 14:23:40 +0000  796 bytes for ./Payload/ConnectReactNativeDemoApp.app/React-cxxreact_privacy.bundle/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Assets.car ... 
+2026-10-27 14:23:40 +0000  416632 bytes for ./Payload/ConnectReactNativeDemoApp.app/Assets.car
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/AppIcon76x76@2x~ipad.png ... 
+2026-10-27 14:23:40 +0000  16265 bytes for ./Payload/ConnectReactNativeDemoApp.app/AppIcon76x76@2x~ipad.png
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/main.jsbundle ... 
+2026-10-27 14:23:40 +0000  1412548 bytes for ./Payload/ConnectReactNativeDemoApp.app/main.jsbundle
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:40 +0000  986 bytes for ./Payload/ConnectReactNativeDemoApp.app/PrivacyInfo.xcprivacy
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib ... 
+2026-10-27 14:23:40 +0000  3862 bytes for ./Payload/ConnectReactNativeDemoApp.app/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib ... 
+2026-10-27 14:23:40 +0000  924 bytes for ./Payload/ConnectReactNativeDemoApp.app/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/LaunchScreen.storyboardc/Info.plist ... 
+2026-10-27 14:23:40 +0000  258 bytes for ./Payload/ConnectReactNativeDemoApp.app/LaunchScreen.storyboardc/Info.plist
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/ConnectReactNativeDemoApp ... 
+2026-10-27 14:23:40 +0000  496624 bytes for ./Payload/ConnectReactNativeDemoApp.app/ConnectReactNativeDemoApp
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/_CodeSignature/CodeResources ... 
+2026-10-27 14:23:40 +0000  1798 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/_CodeSignature/CodeResources
+2026-10-27 14:23:40 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/hermesvm ... 
+2026-10-27 14:23:41 +0000  5120000 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/hermesvm
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/Info.plist ... 
+2026-10-27 14:23:41 +0000  859 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework/Info.plist
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework/_CodeSignature/CodeResources ... 
+2026-10-27 14:23:41 +0000  1798 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework/_CodeSignature/CodeResources
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework/React ... 
+2026-10-27 14:23:41 +0000  12126528 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework/React
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework/Info.plist ... 
+2026-10-27 14:23:41 +0000  744 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework/Info.plist
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/_CodeSignature/CodeResources ... 
+2026-10-27 14:23:41 +0000  3548 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/_CodeSignature/CodeResources
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:41 +0000  552 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/Info.plist ... 
+2026-10-27 14:23:41 +0000  689 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_folly.bundle/Info.plist
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies ... 
+2026-10-27 14:23:41 +0000  1263760 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:41 +0000  552 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/Info.plist ... 
+2026-10-27 14:23:41 +0000  687 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_glog.bundle/Info.plist
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:41 +0000  776 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/Info.plist ... 
+2026-10-27 14:23:41 +0000  689 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/ReactNativeDependencies_boost.bundle/Info.plist
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/Info.plist ... 
+2026-10-27 14:23:41 +0000  781 bytes for ./Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework/Info.plist
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/embedded.mobileprovision ... 
+2026-10-27 14:23:41 +0000  22237 bytes for ./Payload/ConnectReactNativeDemoApp.app/embedded.mobileprovision
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/Info.plist ... 
+2026-10-27 14:23:41 +0000  1624 bytes for ./Payload/ConnectReactNativeDemoApp.app/Info.plist
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/PkgInfo ... 
+2026-10-27 14:23:41 +0000  8 bytes for ./Payload/ConnectReactNativeDemoApp.app/PkgInfo
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/React-Core_privacy.bundle/PrivacyInfo.xcprivacy ... 
+2026-10-27 14:23:41 +0000  768 bytes for ./Payload/ConnectReactNativeDemoApp.app/React-Core_privacy.bundle/PrivacyInfo.xcprivacy
+2026-10-27 14:23:41 +0000  copying file ./Payload/ConnectReactNativeDemoApp.app/React-Core_privacy.bundle/Info.plist ... 
+2026-10-27 14:23:41 +0000  788 bytes for ./Payload/ConnectReactNativeDemoApp.app/React-Core_privacy.bundle/Info.plist
+2026-10-27 14:23:41 +0000 [MT] /usr/bin/ditto exited with 0
+2026-10-27 14:23:41 +0000 [MT] Processing step: IDEDistributionAppStoreInformationStep
+2026-10-27 14:23:41 +0000 [MT] Skipping step: IDEDistributionAppStoreInformationStep because it said so
+2026-10-27 14:23:41 +0000 [MT] Processing step: IDEDistributionGenerateProcessedDistributionItems
+2026-10-27 14:23:41 +0000 [MT] IDEDistributionItem init <DVTFilePath:0xcbac3d300:'/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/ReactNativeDependencies.framework'>
+2026-10-27 14:23:41 +0000 [MT] IDEDistributionItem init <DVTFilePath:0xcbae93800:'/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/hermesvm.framework'>
+2026-10-27 14:23:41 +0000 [MT] IDEDistributionItem init <DVTFilePath:0xcbd47f960:'/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app/Frameworks/React.framework'>
+2026-10-27 14:23:41 +0000 [MT] IDEDistributionItem init <DVTFilePath:0xcbae92920:'/var/folders/nm/jl_g_k45107d0xllmjffdpjm0000m_/T/XcodeDistPipeline.~~~M8ePK2/Root/Payload/ConnectReactNativeDemoApp.app'>
+2026-10-27 14:23:41 +0000 [MT] Processing step: IDEDistributionCreateManifestStep
