@@ -451,68 +451,6 @@ export class Connect extends Component<ConnectProps, ConnectState> {
     this.dismissBrowser(type, closedBy);
   };
 
-  getAllowedExternalUrlHosts = () => {
-    const configuredHosts = this.props.allowedExternalUrlHosts ?? [];
-    const trustedHosts = new Set(
-      configuredHosts.map(host => host.trim().toLowerCase()).filter(Boolean)
-    );
-
-    if (trustedHosts.size === 0) {
-      return [];
-    }
-
-    try {
-      const connectHost = new URL(this.state.connectUrl).hostname
-        .trim()
-        .toLowerCase();
-      if (connectHost) {
-        trustedHosts.add(connectHost);
-      }
-    } catch {
-      // Connect URL is expected to be valid; this is a safety fallback.
-    }
-
-    try {
-      const redirectUrl = new URL(this.state.redirectUrl);
-      const protocol = redirectUrl.protocol.replace(':', '').toLowerCase();
-      if (
-        (protocol === 'http' || protocol === 'https') &&
-        redirectUrl.hostname
-      ) {
-        trustedHosts.add(redirectUrl.hostname.trim().toLowerCase());
-      }
-    } catch {
-      // Redirect URL is validated on launch; this is a safety fallback.
-    }
-
-    return Array.from(trustedHosts);
-  };
-
-  getAllowedExternalUrlPrefixes = () => {
-    const configuredPrefixes = this.props.allowedExternalUrlPrefixes ?? [];
-    const trustedPrefixes = new Set(
-      configuredPrefixes
-        .map(prefix => prefix.trim().toLowerCase())
-        .filter(Boolean)
-    );
-
-    if (trustedPrefixes.size === 0) {
-      return [];
-    }
-
-    try {
-      const redirectUrl = new URL(this.state.redirectUrl);
-      const protocol = redirectUrl.protocol.replace(':', '').toLowerCase();
-      if (protocol !== 'http' && protocol !== 'https') {
-        trustedPrefixes.add(this.state.redirectUrl.trim().toLowerCase());
-      }
-    } catch {
-      // Redirect URL is validated on launch; this is a safety fallback.
-    }
-
-    return Array.from(trustedPrefixes);
-  };
-
   handleEvent = (event: WebViewMessagePayload) => {
     const eventData = parseEventData(event.nativeEvent.data);
     const { type: eventType, url } = eventData;
@@ -530,10 +468,7 @@ export class Connect extends Component<ConnectProps, ConnectState> {
 
       case ConnectEvents.URL:
         if (!this.state.browserDisplayed && typeof url === 'string' && url) {
-          const isSafeUrl = isSafeExternalNavigationUrl(url, {
-            allowedHosts: this.getAllowedExternalUrlHosts(),
-            allowedCustomUrlPrefixes: this.getAllowedExternalUrlPrefixes()
-          });
+          const isSafeUrl = isSafeExternalNavigationUrl(url);
 
           if (!isSafeUrl) {
             if (this.isTrackPopupBlockedEventActive) {

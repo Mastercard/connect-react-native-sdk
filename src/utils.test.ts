@@ -13,18 +13,14 @@ describe('validateUrl', () => {
       jest.restoreAllMocks();
     });
 
-    test('allows web URLs when host allowlist is not configured', () => {
+    test('allows web URLs by default', () => {
       expect(isSafeExternalNavigationUrl('https://example.com/path')).toBe(
         true
       );
     });
 
-    test('allows valid https URLs for trusted hosts', () => {
-      expect(
-        isSafeExternalNavigationUrl('https://example.com/path', {
-          allowedHosts: ['example.com']
-        })
-      ).toBe(true);
+    test('allows custom app deep links by default', () => {
+      expect(isSafeExternalNavigationUrl('bankapp://authorize')).toBe(true);
     });
 
     test('blocks dangerous schemes', () => {
@@ -34,70 +30,28 @@ describe('validateUrl', () => {
       expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
     });
 
-    test('enforces allowed hosts when configured', () => {
+    test('blocks malformed URLs', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      expect(
-        isSafeExternalNavigationUrl('https://trusted.example.com/path', {
-          allowedHosts: ['trusted.example.com']
-        })
-      ).toBe(true);
-
-      expect(
-        isSafeExternalNavigationUrl('https://evil.example.com/path', {
-          allowedHosts: ['trusted.example.com']
-        })
-      ).toBe(false);
-      expect(warn).toHaveBeenCalledWith('Blocked external URL host');
-    });
-
-    test('allows only trusted custom URL prefixes', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-      expect(
-        isSafeExternalNavigationUrl('bankapp://authorize', {
-          allowedCustomUrlPrefixes: ['bankapp://authorize']
-        })
-      ).toBe(true);
-
-      expect(
-        isSafeExternalNavigationUrl('walletapp://authorize', {
-          allowedCustomUrlPrefixes: ['bankapp://authorize']
-        })
-      ).toBe(false);
-      expect(warn).toHaveBeenCalledWith('Blocked external URL custom prefix');
-    });
-
-    test('allows custom URLs when no trusted prefix policy is configured', () => {
-      expect(isSafeExternalNavigationUrl('bankapp://authorize')).toBe(true);
+      expect(isSafeExternalNavigationUrl('https://')).toBe(false);
+      expect(warn).toHaveBeenCalledWith('Invalid external URL format');
     });
 
     test('blocks custom URLs that try userinfo authority confusion', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       expect(
-        isSafeExternalNavigationUrl(
-          'bankapp://authorize@evil.example/callback',
-          {
-            allowedCustomUrlPrefixes: ['bankapp://authorize']
-          }
-        )
+        isSafeExternalNavigationUrl('bankapp://authorize@evil.example/callback')
       ).toBe(false);
       expect(warn).toHaveBeenCalledWith('Blocked external URL custom auth');
     });
 
-    test('allows custom URLs only when host, port, and path boundary match', () => {
+    test('allows Mastercard legal privacy URL', () => {
       expect(
-        isSafeExternalNavigationUrl('bankapp://fi.oauth/launch/callback', {
-          allowedCustomUrlPrefixes: ['bankapp://fi.oauth/launch']
-        })
+        isSafeExternalNavigationUrl(
+          'https://www.mastercard.com/us/en/mastercard-open-finance-legal-privacy.html'
+        )
       ).toBe(true);
-
-      expect(
-        isSafeExternalNavigationUrl('bankapp://fi.oauth-attacker/launch', {
-          allowedCustomUrlPrefixes: ['bankapp://fi.oauth/launch']
-        })
-      ).toBe(false);
     });
   });
 
