@@ -4,6 +4,7 @@
 
 ### Changes
 
+- Resolved an Android 16+ layout overlap issue that could cause Connect’s top content to appear beneath the system bars.
 - React Native support for the SDK and demo app has been upgraded to `0.87.1`.
 - The SDK's `package.json` dependencies now include:
   - `react-native-url-polyfill` `4.0.0`
