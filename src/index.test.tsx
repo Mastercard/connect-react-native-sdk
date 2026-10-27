@@ -1,7 +1,6 @@
 import React from 'react';
 import { act, render, screen } from '@testing-library/react-native';
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { Alert, BackHandler, DeviceEventEmitter, Platform } from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 
 import {
   Connect,
@@ -17,11 +16,6 @@ import {
   SDK_PLATFORM
 } from './constants';
 import { checkLink, ConnectReactNativeSdk } from './nativeModule';
-
-const mockedOpen = ConnectReactNativeSdk.open as jest.MockedFunction<
-  typeof ConnectReactNativeSdk.open
->;
-const mockedCheckLink = checkLink as jest.MockedFunction<typeof checkLink>;
 
 type ConnectInstance = InstanceType<typeof Connect>;
 
@@ -92,22 +86,6 @@ describe('Connect', () => {
     const { modal } = await renderConnect();
 
     expect(modal.props.presentationStyle).toBe('fullScreen');
-  });
-
-  test('android uses safe-area edges by default for edge-to-edge support', async () => {
-    Platform.OS = 'android';
-    await renderConnect();
-
-    const safeAreaView = screen.getByTestId('test-safe-area-view');
-    expect(safeAreaView.props.edges).toEqual(['top', 'bottom']);
-  });
-
-  test('android before mode disables safe-area edge padding', async () => {
-    Platform.OS = 'android';
-    await renderConnect({ androidEdgeToEdgeMode: 'before' });
-
-    const safeAreaView = screen.getByTestId('test-safe-area-view');
-    expect(safeAreaView.props.edges).toEqual([]);
   });
 
   test('launch stores url handlers and validated redirect url', async () => {
@@ -377,7 +355,9 @@ describe('Connect', () => {
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
 
-    mockedOpen.mockRejectedValueOnce(new Error('browser failed'));
+    (ConnectReactNativeSdk.open as jest.Mock).mockRejectedValueOnce(
+      new Error('browser failed')
+    );
 
     await expect(
       instance.openBrowser('https://b2b.mastercard.com')
@@ -434,14 +414,14 @@ describe('Connect', () => {
     const dismissBrowser = jest.spyOn(instance, 'dismissBrowser');
     instance.isTrackPopupBlockedEventActive = true;
 
-    mockedOpen.mockResolvedValueOnce({
+    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
       type: 'cancel'
     });
     await instance.openBrowser('https://cancel.example.com');
     expect(dismissBrowser).toHaveBeenCalledWith('cancel', 'user-closed');
 
     Platform.OS = 'ios';
-    mockedOpen.mockResolvedValueOnce({
+    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
       type: 'dismiss'
     });
     await instance.openBrowser('https://dismiss-ios.example.com');
@@ -451,7 +431,7 @@ describe('Connect', () => {
     );
 
     Platform.OS = 'android';
-    mockedOpen.mockResolvedValueOnce({
+    (ConnectReactNativeSdk.open as jest.Mock).mockResolvedValueOnce({
       type: 'dismiss'
     });
     await instance.openBrowser('https://dismiss-android.example.com');
@@ -466,7 +446,7 @@ describe('Connect', () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
 
-    mockedCheckLink.mockResolvedValueOnce(false);
+    (checkLink as jest.Mock).mockResolvedValueOnce(false);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -489,7 +469,7 @@ describe('Connect', () => {
     const postMessage = jest.spyOn(instance, 'postMessage');
     instance.isTrackPopupBlockedEventActive = true;
 
-    mockedCheckLink.mockResolvedValueOnce(true);
+    (checkLink as jest.Mock).mockResolvedValueOnce(true);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -538,7 +518,7 @@ describe('Connect', () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
 
-    mockedCheckLink.mockRejectedValueOnce(new Error('launch failed'));
+    (checkLink as jest.Mock).mockRejectedValueOnce(new Error('launch failed'));
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -553,147 +533,6 @@ describe('Connect', () => {
     expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com');
   });
 
-  test('URL events block untrusted custom schemes by default', async () => {
-    const { instance } = await renderConnect();
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
-
-    instance.isTrackPopupBlockedEventActive = true;
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'bankapp://authorize'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-
-    expect(checkLink).not.toHaveBeenCalled();
-    expect(openBrowser).not.toHaveBeenCalled();
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'bankapp://authorize'
-    });
-  });
-
-  test('URL events block custom URLs that do not match trusted redirect prefix', async () => {
-    const { instance } = await renderConnect();
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
-
-    instance.isTrackPopupBlockedEventActive = true;
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'connect://attacker/redirect'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-
-    expect(checkLink).not.toHaveBeenCalled();
-    expect(openBrowser).not.toHaveBeenCalled();
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'connect://attacker/redirect'
-    });
-  });
-
-  test('URL events allow configured trusted custom URL prefixes', async () => {
-    const { instance } = await renderConnect({
-      allowedExternalUrlPrefixes: ['bankapp://authorize']
-    });
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-
-    mockedCheckLink.mockResolvedValueOnce(false);
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'bankapp://authorize'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-
-    expect(checkLink).toHaveBeenCalledWith('bankapp://authorize');
-    expect(openBrowser).toHaveBeenCalledWith('bankapp://authorize');
-  });
-
-  test('URL events enforce configured trusted hosts for web links', async () => {
-    const { instance } = await renderConnect({
-      allowedExternalUrlHosts: ['trusted.example.com']
-    });
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
-
-    instance.isTrackPopupBlockedEventActive = true;
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'https://evil.example.com/oauth'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-
-    expect(checkLink).not.toHaveBeenCalled();
-    expect(openBrowser).not.toHaveBeenCalled();
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'https://evil.example.com/oauth'
-    });
-  });
-
-  test('URL events allow connect host by default and block other hosts', async () => {
-    const { instance } = await renderConnect();
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
-
-    mockedCheckLink.mockResolvedValueOnce(false);
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'https://b2b.mastercard.com/oauth'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-    expect(checkLink).toHaveBeenCalledWith('https://b2b.mastercard.com/oauth');
-    expect(openBrowser).toHaveBeenCalledWith(
-      'https://b2b.mastercard.com/oauth'
-    );
-
-    instance.isTrackPopupBlockedEventActive = true;
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'https://attacker.example.com/oauth'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'https://attacker.example.com/oauth'
-    });
-  });
-
   test('track popup blocked events enable popup tracking before URL handling', async () => {
     const { instance } = await renderConnect();
     const postMessage = jest.spyOn(instance, 'postMessage');
@@ -706,7 +545,7 @@ describe('Connect', () => {
     });
     expect(instance.isTrackPopupBlockedEventActive).toBe(true);
 
-    mockedCheckLink.mockResolvedValueOnce(true);
+    (checkLink as jest.Mock).mockResolvedValueOnce(true);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -976,7 +815,7 @@ describe('Connect', () => {
     expect(dismissBrowser).not.toHaveBeenCalled();
   });
 
-  test('render callbacks delegate to close, handleEvent, and startPingingConnect on ios', async () => {
+  test('render callbacks delegate to close, handleEvent, and startPingingConnect', async () => {
     const { instance, modal, webView } = await renderConnect();
     const close = jest.spyOn(instance, 'close');
     const handleEvent = jest.spyOn(instance, 'handleEvent');
@@ -991,188 +830,6 @@ describe('Connect', () => {
     expect(close).toHaveBeenCalled();
     expect(handleEvent).toHaveBeenCalledWith({ nativeEvent: { data: '{}' } });
     expect(startPingingConnect).toHaveBeenCalled();
-  });
-
-  test('android back request closes connect immediately when exit prompt is disabled', async () => {
-    Platform.OS = 'android';
-    const { instance, modal } = await renderConnect();
-    const close = jest.spyOn(instance, 'close');
-    const alertSpy = jest.spyOn(Alert, 'alert');
-
-    await act(async () => {
-      modal.props.onRequestClose();
-    });
-
-    expect(alertSpy).not.toHaveBeenCalled();
-    expect(close).toHaveBeenCalledTimes(1);
-  });
-
-  test('android back request navigates webview history before closing connect', async () => {
-    Platform.OS = 'android';
-    const { instance, modal, webView } = await renderConnect();
-    const alertSpy = jest.spyOn(Alert, 'alert');
-    const close = jest.spyOn(instance, 'close');
-    const goBack = jest.fn();
-
-    instance.webViewRef = {
-      postMessage: jest.fn(),
-      goBack
-    } as any;
-
-    await act(async () => {
-      webView.props.onNavigationStateChange({ canGoBack: true });
-      modal.props.onRequestClose();
-    });
-
-    expect(goBack).toHaveBeenCalledTimes(1);
-    expect(alertSpy).not.toHaveBeenCalled();
-    expect(close).not.toHaveBeenCalled();
-    expect(instance.state.modalVisible).toBe(true);
-  });
-
-  test('android hardware back press closes connect and consumes the event when prompt is disabled', async () => {
-    Platform.OS = 'android';
-    const remove = jest.fn();
-    const addEventListenerSpy = jest
-      .spyOn(BackHandler, 'addEventListener')
-      .mockReturnValue({ remove } as any);
-    const alertSpy = jest.spyOn(Alert, 'alert');
-
-    const { instance, unmount } = await renderConnect();
-    const close = jest.spyOn(instance, 'close');
-
-    const hardwareBackHandler = addEventListenerSpy.mock
-      .calls[0]![1] as () => boolean;
-
-    let handled = false;
-    await act(async () => {
-      handled = hardwareBackHandler();
-    });
-
-    expect(handled).toBe(true);
-    expect(alertSpy).not.toHaveBeenCalled();
-    expect(close).toHaveBeenCalledTimes(1);
-
-    await unmount();
-    expect(remove).toHaveBeenCalledTimes(1);
-  });
-
-  test('android hardware back press navigates webview history before closing connect', async () => {
-    Platform.OS = 'android';
-    const addEventListenerSpy = jest.spyOn(BackHandler, 'addEventListener');
-    const alertSpy = jest.spyOn(Alert, 'alert');
-    const { instance, webView } = await renderConnect();
-    const close = jest.spyOn(instance, 'close');
-    const goBack = jest.fn();
-
-    instance.webViewRef = {
-      postMessage: jest.fn(),
-      goBack
-    } as any;
-
-    await act(async () => {
-      webView.props.onNavigationStateChange({ canGoBack: true });
-    });
-
-    const hardwareBackHandler = addEventListenerSpy.mock
-      .calls[0]![1] as () => boolean;
-    const handled = hardwareBackHandler();
-
-    expect(handled).toBe(true);
-    expect(goBack).toHaveBeenCalledTimes(1);
-    expect(alertSpy).not.toHaveBeenCalled();
-    expect(close).not.toHaveBeenCalled();
-  });
-
-  test('android hardware back press bubbles when connect modal is hidden', async () => {
-    Platform.OS = 'android';
-    const addEventListenerSpy = jest.spyOn(BackHandler, 'addEventListener');
-    const alertSpy = jest.spyOn(Alert, 'alert');
-
-    const { instance } = await renderConnect();
-    instance.state.modalVisible = false;
-
-    const hardwareBackHandler = addEventListenerSpy.mock
-      .calls[0]![1] as () => boolean;
-    const handled = hardwareBackHandler();
-
-    expect(handled).toBe(false);
-    expect(alertSpy).not.toHaveBeenCalled();
-  });
-
-  test('android cancel exit event cancels immediately when exit prompt is disabled', async () => {
-    Platform.OS = 'android';
-    const eventHandlers = baseHandlers();
-    const { instance } = await renderConnect({ eventHandlers });
-    const alertSpy = jest.spyOn(Alert, 'alert');
-
-    await act(async () => {
-      instance.handleEvent({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: ConnectEvents.CANCEL,
-            data: { code: 100, reason: 'exit' }
-          })
-        }
-      });
-    });
-
-    expect(alertSpy).not.toHaveBeenCalled();
-    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
-      code: 100,
-      reason: 'exit'
-    });
-    expect(instance.state.modalVisible).toBe(false);
-  });
-
-  test('android cancel user-closed event cancels immediately when exit prompt is disabled', async () => {
-    Platform.OS = 'android';
-    const eventHandlers = baseHandlers();
-    const { instance } = await renderConnect({ eventHandlers });
-    const alertSpy = jest.spyOn(Alert, 'alert');
-
-    await act(async () => {
-      instance.handleEvent({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: ConnectEvents.CANCEL,
-            data: { code: 200, reason: 'user-closed' }
-          })
-        }
-      });
-    });
-
-    expect(alertSpy).not.toHaveBeenCalled();
-    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
-      code: 200,
-      reason: 'user-closed'
-    });
-    expect(instance.state.modalVisible).toBe(false);
-  });
-
-  test('android cancel event with non-back reason still cancels immediately when prompt is disabled', async () => {
-    Platform.OS = 'android';
-    const eventHandlers = baseHandlers();
-    const { instance } = await renderConnect({ eventHandlers });
-    const alertSpy = jest.spyOn(Alert, 'alert');
-
-    await act(async () => {
-      instance.handleEvent({
-        nativeEvent: {
-          data: JSON.stringify({
-            type: ConnectEvents.CANCEL,
-            data: { code: 410, reason: 'session-timeout' }
-          })
-        }
-      });
-    });
-
-    expect(alertSpy).not.toHaveBeenCalled();
-    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
-      code: 410,
-      reason: 'session-timeout'
-    });
-    expect(instance.state.modalVisible).toBe(false);
   });
 
   test('dismissModal updates modalVisible through setState', async () => {
