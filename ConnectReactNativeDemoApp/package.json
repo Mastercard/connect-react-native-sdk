@@ -10,7 +10,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "connect-react-native-sdk": "file:../connect-react-native-sdk-2.0.4.tgz",
+    "connect-react-native-sdk": "file:../connect-react-native-sdk-2.4.0.tgz",
     "react": "19.3.0",
     "react-native": "0.87.1",
     "react-native-safe-area-context": "5.10.1",

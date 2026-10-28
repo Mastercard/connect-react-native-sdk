@@ -224,7 +224,8 @@ const styles = StyleSheet.create({
   sdkVersionText: {
     color: 'black',
     fontSize: 14,
-    width: '85%'
+    width: '85%',
+    fontWeight: 'bold'
   },
   logoStyle: {
     width: 90,
