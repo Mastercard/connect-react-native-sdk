@@ -15,6 +15,9 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Connect } from 'connect-react-native-sdk';
 
 type AndroidEdgeToEdgeMode = 'before' | 'after';
+const CONNECT_SDK_VERSION = (
+  require('connect-react-native-sdk/package.json') as { version?: string }
+).version ?? 'unknown';
 
 const RADIO_OPTIONS: Record<string, string> = {
   STG: 'https://acme.finicitystg.com',
@@ -147,6 +150,9 @@ const App = () => {
                 <Text style={styles.textInstructions}>
                   Android 16 edge-to-edge demo: this launch flow uses the SDK safe-area fix.
                 </Text>
+                <Text testID="sdk-version-label" style={styles.sdkVersionText}>
+                  SDK Version: {CONNECT_SDK_VERSION}
+                </Text>
                 <TextInput
                   ref={urlInputRef}
                   style={styles.textInput}
@@ -213,6 +219,11 @@ const styles = StyleSheet.create({
   textInstructions: {
     color: 'black',
     fontSize: 16,
+    width: '85%'
+  },
+  sdkVersionText: {
+    color: 'black',
+    fontSize: 14,
     width: '85%'
   },
   logoStyle: {

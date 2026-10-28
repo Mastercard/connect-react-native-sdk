@@ -630,8 +630,12 @@ describe('Connect', () => {
     });
 
     await act(async () => Promise.resolve());
-    expect(checkLink).toHaveBeenCalledWith('https://attacker.example.com/oauth');
-    expect(openBrowser).toHaveBeenCalledWith('https://attacker.example.com/oauth');
+    expect(checkLink).toHaveBeenCalledWith(
+      'https://attacker.example.com/oauth'
+    );
+    expect(openBrowser).toHaveBeenCalledWith(
+      'https://attacker.example.com/oauth'
+    );
   });
 
   test('track popup blocked events enable popup tracking before URL handling', async () => {

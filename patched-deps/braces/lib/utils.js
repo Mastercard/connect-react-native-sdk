@@ -23,7 +23,7 @@ exports.find = (node, type) => node.nodes.find(node => node.type === type);
 exports.exceedsLimit = (min, max, step = 1, limit) => {
   if (limit === false) return false;
   if (!exports.isInteger(min) || !exports.isInteger(max)) return false;
-  return ((Number(max) - Number(min)) / Number(step)) >= limit;
+  return (Number(max) - Number(min)) / Number(step) >= limit;
 };
 
 /**
@@ -34,7 +34,11 @@ exports.escapeNode = (block, n = 0, type) => {
   const node = block.nodes[n];
   if (!node) return;
 
-  if ((type && node.type === type) || node.type === 'open' || node.type === 'close') {
+  if (
+    (type && node.type === type) ||
+    node.type === 'open' ||
+    node.type === 'close'
+  ) {
     if (node.escaped !== true) {
       node.value = '\\' + node.value;
       node.escaped = true;
@@ -48,7 +52,7 @@ exports.escapeNode = (block, n = 0, type) => {
 
 exports.encloseBrace = node => {
   if (node.type !== 'brace') return false;
-  if ((node.commas >> 0 + node.ranges >> 0) === 0) {
+  if ((node.commas >> (0 + node.ranges)) >> 0 === 0) {
     node.invalid = true;
     return true;
   }
@@ -62,7 +66,7 @@ exports.encloseBrace = node => {
 exports.isInvalidBrace = block => {
   if (block.type !== 'brace') return false;
   if (block.invalid === true || block.dollar) return true;
-  if ((block.commas >> 0 + block.ranges >> 0) === 0) {
+  if ((block.commas >> (0 + block.ranges)) >> 0 === 0) {
     block.invalid = true;
     return true;
   }
@@ -88,11 +92,12 @@ exports.isOpenOrClose = node => {
  * Reduce an array of text nodes.
  */
 
-exports.reduce = nodes => nodes.reduce((acc, node) => {
-  if (node.type === 'text') acc.push(node.value);
-  if (node.type === 'range') node.type = 'text';
-  return acc;
-}, []);
+exports.reduce = nodes =>
+  nodes.reduce((acc, node) => {
+    if (node.type === 'text') acc.push(node.value);
+    if (node.type === 'range') node.type = 'text';
+    return acc;
+  }, []);
 
 /**
  * Flatten an array
