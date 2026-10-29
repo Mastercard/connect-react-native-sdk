@@ -38,14 +38,24 @@
   "overrides": {
     "braces": "$braces",
     "image-size": "2.0.4",
+    "body-parser": "2.4.0",
+    "fast-uri": "3.1.9",
+    "launch-editor": "2.14.2",
+    "qs": "6.17.0",
     "shell-quote": "^1.11.0",
-    "compression": "^1.8.2"
+    "compression": "^1.8.2",
+    "zod": "4.6.6"
   },
   "resolutions": {
     "braces": "file:../patched-deps/braces-3.0.4.tgz",
     "image-size": "2.0.4",
+    "body-parser": "2.4.0",
+    "fast-uri": "3.1.9",
+    "launch-editor": "2.14.2",
+    "qs": "6.17.0",
     "shell-quote": "^1.11.0",
-    "compression": "^1.8.2"
+    "compression": "^1.8.2",
+    "zod": "4.6.6"
   },
   "engines": {
     "node": ">= 22.13.0"

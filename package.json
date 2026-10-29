@@ -88,20 +88,24 @@
   "overrides": {
     "braces": "$braces",
     "image-size": "2.0.4",
+    "fast-uri": "3.1.9",
     "flatted": "^3.4.2",
     "minimatch": "^3.1.5",
     "shell-quote": "^1.11.0",
     "js-yaml": "^4.1.1",
-    "argparse": "^2.0.1"
+    "argparse": "^2.0.1",
+    "zod": "4.6.6"
   },
   "resolutions": {
     "braces": "file:patched-deps/braces-3.0.4.tgz",
     "image-size": "2.0.4",
+    "fast-uri": "3.1.9",
     "flatted": "^3.4.2",
     "minimatch": "^3.1.5",
     "shell-quote": "^1.11.0",
     "js-yaml": "^4.1.1",
-    "argparse": "^2.0.1"
+    "argparse": "^2.0.1",
+    "zod": "4.6.6"
   },
   "commitlint": {
     "extends": [

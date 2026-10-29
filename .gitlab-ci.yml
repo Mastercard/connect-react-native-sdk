@@ -160,3 +160,13 @@ publish:internal:
 black-duck-scan:
   variables:
     GRADLE_VERSION: 8.13
+
+checkmarx-scan:
+  variables:
+    CX_ADDITIONAL_PARAMS: '--sca-resolver-params "--disable-delta-scan --log-level Debug --excludes */.m2/*,*/target/*,*package-lock.json,*.tgz,*/ConnectReactNativeDemoApp/*"'
+
+checkmarx-scan-demo:
+  extends: checkmarx-scan
+  allow_failure: true
+  variables:
+    CX_ADDITIONAL_PARAMS: '--sca-resolver-params "--disable-delta-scan --log-level Debug --excludes */.m2/*,*/target/*,*package-lock.json,*.tgz,yarn.lock,package.json,*/src/*,*/lib/*,*/cpp/*,*/ios/*,*/android/*,*/scripts/*,*/patched-deps/*,*/SuperConnectSDK/*,*/SuperConnectSDK_Demo/*,*/artifacts/*,*/coverage/*"'
