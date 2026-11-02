@@ -18,6 +18,22 @@ buildscript {
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
+
+    configurations.classpath {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == "org.bouncycastle" &&
+                    details.requested.name in ["bcprov-jdk18on", "bcpkix-jdk18on", "bcutil-jdk18on"]) {
+                details.useVersion("1.84")
+                details.because("CVE fix: bcprov GOSTCTR issue is fixed in Bouncy Castle 1.84+")
+            }
+
+            if (details.requested.group == "com.google.protobuf" &&
+                    details.requested.name in ["protobuf-java", "protobuf-java-util"]) {
+                details.useVersion("3.25.5")
+                details.because("CVE-2024-7254 fix: protobuf-java is patched in 3.25.5+")
+            }
+        }
+    }
 }
 
 apply plugin: "com.facebook.react.rootproject"
