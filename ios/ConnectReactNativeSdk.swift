@@ -69,6 +69,7 @@ class ConnectReactNativeSdk: RCTEventEmitter, SFSafariViewControllerDelegate {
 
       let safariViewController = SFSafariViewController(url: url)
       safariViewController.delegate = self
+      safariViewController.modalPresentationStyle = .overFullScreen
       self.safariViewController = safariViewController
       self.openPromiseResolve = resolve
       NSLog("[ConnectReactNativeSdk][iOS] Launching secure container for URL: %@", url.absoluteString)
