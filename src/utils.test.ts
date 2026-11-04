@@ -20,13 +20,17 @@ describe('validateUrl', () => {
     });
 
     test('allows custom app deep links by default', () => {
-      expect(isSafeOAuthExternalNavigationUrl('bankapp://authorize')).toBe(true);
+      expect(isSafeOAuthExternalNavigationUrl('bankapp://authorize')).toBe(
+        true
+      );
     });
 
     test('blocks dangerous schemes', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      expect(isSafeOAuthExternalNavigationUrl('intent://malicious')).toBe(false);
+      expect(isSafeOAuthExternalNavigationUrl('intent://malicious')).toBe(
+        false
+      );
       expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
     });
 
@@ -41,7 +45,9 @@ describe('validateUrl', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       expect(
-        isSafeOAuthExternalNavigationUrl('bankapp://authorize@evil.example/callback')
+        isSafeOAuthExternalNavigationUrl(
+          'bankapp://authorize@evil.example/callback'
+        )
       ).toBe(false);
       expect(warn).toHaveBeenCalledWith('Blocked external URL custom auth');
     });

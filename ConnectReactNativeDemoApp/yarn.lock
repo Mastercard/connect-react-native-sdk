@@ -2143,7 +2143,7 @@ concat-map@0.0.1:
 "connect-react-native-sdk@file:../connect-react-native-sdk-2.4.0.tgz":
   version "2.4.0"
   resolved "file:../connect-react-native-sdk-2.4.0.tgz"
-  integrity sha512-558W3uH9GmUTeLBNd10U9Q7oz4UrA0f26GI2byAv6LWGeTk1L+uyCdbe3WylWoly72JGSsPEjVlyldGheq7pSA==
+  integrity sha512-UPSrKfUSdIDwH4sWXbVMPiMt47EX5kbmid6CteyfOdRDlI7wJX560jy0PkhoaRzMA7983fPINKGWl+72ULSmtw==
   dependencies:
     react-native-safe-area-context "5.10.1"
     react-native-url-polyfill "4.0.0"
