@@ -54,7 +54,7 @@ export const validateUrl = (url: string = DEFAULT_REDIRECT_URL) => {
   }
 };
 
-export const isSafeExternalNavigationUrl = (url: string) => {
+export const isSafeOAuthExternalNavigationUrl = (url: string) => {
   try {
     if (!url) {
       console.warn('Invalid external URL: empty/null');

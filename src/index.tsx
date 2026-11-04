@@ -23,7 +23,7 @@ import {
   CONNECT_SDK_VERSION,
   DEFAULT_REDIRECT_URL
 } from './constants';
-import { isSafeExternalNavigationUrl, validateUrl } from './utils';
+import { isSafeOAuthExternalNavigationUrl, validateUrl } from './utils';
 import { ConnectReactNativeSdk, checkLink } from './nativeModule';
 import type {
   ConnectCancelEvent,
@@ -468,7 +468,7 @@ export class Connect extends Component<ConnectProps, ConnectState> {
 
       case ConnectEvents.URL:
         if (!this.state.browserDisplayed && typeof url === 'string' && url) {
-          const isSafeUrl = isSafeExternalNavigationUrl(url);
+          const isSafeUrl = isSafeOAuthExternalNavigationUrl(url);
 
           if (!isSafeUrl) {
             if (this.isTrackPopupBlockedEventActive) {

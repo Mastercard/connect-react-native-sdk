@@ -1,39 +1,39 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 import { DEFAULT_REDIRECT_URL } from './constants';
-import { isSafeExternalNavigationUrl, validateUrl } from './utils';
+import { isSafeOAuthExternalNavigationUrl, validateUrl } from './utils';
 
 describe('validateUrl', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
 
-  describe('isSafeExternalNavigationUrl', () => {
+  describe('isSafeOAuthExternalNavigationUrl', () => {
     beforeEach(() => {
       jest.restoreAllMocks();
     });
 
     test('allows web URLs by default', () => {
-      expect(isSafeExternalNavigationUrl('https://example.com/path')).toBe(
+      expect(isSafeOAuthExternalNavigationUrl('https://example.com/path')).toBe(
         true
       );
     });
 
     test('allows custom app deep links by default', () => {
-      expect(isSafeExternalNavigationUrl('bankapp://authorize')).toBe(true);
+      expect(isSafeOAuthExternalNavigationUrl('bankapp://authorize')).toBe(true);
     });
 
     test('blocks dangerous schemes', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      expect(isSafeExternalNavigationUrl('intent://malicious')).toBe(false);
+      expect(isSafeOAuthExternalNavigationUrl('intent://malicious')).toBe(false);
       expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
     });
 
     test('blocks malformed URLs', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      expect(isSafeExternalNavigationUrl('https://')).toBe(false);
+      expect(isSafeOAuthExternalNavigationUrl('https://')).toBe(false);
       expect(warn).toHaveBeenCalledWith('Invalid external URL format');
     });
 
@@ -41,14 +41,14 @@ describe('validateUrl', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       expect(
-        isSafeExternalNavigationUrl('bankapp://authorize@evil.example/callback')
+        isSafeOAuthExternalNavigationUrl('bankapp://authorize@evil.example/callback')
       ).toBe(false);
       expect(warn).toHaveBeenCalledWith('Blocked external URL custom auth');
     });
 
     test('allows Mastercard legal privacy URL', () => {
       expect(
-        isSafeExternalNavigationUrl(
+        isSafeOAuthExternalNavigationUrl(
           'https://www.mastercard.com/us/en/mastercard-open-finance-legal-privacy.html'
         )
       ).toBe(true);
