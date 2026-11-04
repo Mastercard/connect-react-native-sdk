@@ -23,8 +23,8 @@ buildscript {
         resolutionStrategy.eachDependency { details ->
             if (details.requested.group == "org.bouncycastle" &&
                     details.requested.name in ["bcprov-jdk18on", "bcpkix-jdk18on", "bcutil-jdk18on"]) {
-                details.useVersion("1.84")
-                details.because("CVE fix: bcprov GOSTCTR issue is fixed in Bouncy Castle 1.84+")
+                details.useVersion("1.86")
+                details.because("Address Checkmarx SCA findings in Android build tooling")
             }
 
             if (details.requested.group == "com.google.protobuf" &&
