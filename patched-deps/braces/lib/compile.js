@@ -6,7 +6,9 @@ const utils = require('./utils');
 const DEFAULT_MAX_DEPTH = 1000;
 
 const compile = (ast, options = {}) => {
-  const maxDepth = Number.isInteger(options.maxDepth) ? options.maxDepth : DEFAULT_MAX_DEPTH;
+  const maxDepth = Number.isInteger(options.maxDepth)
+    ? options.maxDepth
+    : DEFAULT_MAX_DEPTH;
 
   const walk = (node, parent = {}, depth = 0) => {
     if (depth > maxDepth) {
@@ -45,7 +47,12 @@ const compile = (ast, options = {}) => {
 
     if (node.nodes && node.ranges > 0) {
       const args = utils.reduce(node.nodes);
-      const range = fill(...args, { ...options, wrap: false, toRegex: true, strictZeros: true });
+      const range = fill(...args, {
+        ...options,
+        wrap: false,
+        toRegex: true,
+        strictZeros: true
+      });
 
       if (range.length !== 0) {
         return args.length > 1 && range.length > 1 ? `(${range})` : range;

@@ -1,6 +1,6 @@
 {
   "name": "connect-react-native-sdk",
-  "version": "2.2.0",
+  "version": "2.4.0",
   "description": "React Native SDK for Mastercard Open Finance Connect",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -43,7 +43,7 @@
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
     "prebuild": "node scripts/generate-version.js",
     "build": "bob build && npm pack",
-    "prettier-check": "yarn ci:ensure-dev-tools && prettier --check ./src/",
+    "prettier-check": "prettier --check ./src/",
     "prettier-write": "prettier --write .",
     "test:version_bump": "test $npm_package_version != $(npm show $npm_package_name version) || (echo 'Failing... You must bump package.json and package-lock.json' && exit 1)"
   },
@@ -88,20 +88,24 @@
   "overrides": {
     "braces": "$braces",
     "image-size": "2.0.4",
+    "fast-uri": "3.1.9",
     "flatted": "^3.4.2",
     "minimatch": "^3.1.5",
     "shell-quote": "^1.11.0",
     "js-yaml": "^4.1.1",
-    "argparse": "^2.0.1"
+    "argparse": "^2.0.1",
+    "zod": "4.6.6"
   },
   "resolutions": {
     "braces": "file:patched-deps/braces-3.0.4.tgz",
     "image-size": "2.0.4",
+    "fast-uri": "3.1.9",
     "flatted": "^3.4.2",
     "minimatch": "^3.1.5",
     "shell-quote": "^1.11.0",
     "js-yaml": "^4.1.1",
-    "argparse": "^2.0.1"
+    "argparse": "^2.0.1",
+    "zod": "4.6.6"
   },
   "commitlint": {
     "extends": [

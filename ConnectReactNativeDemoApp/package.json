@@ -6,14 +6,15 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
-    "start": "react-native start"
+    "start": "react-native start",
+    "postinstall": "patch-package"
   },
   "dependencies": {
-    "connect-react-native-sdk": "2.2.0",
+    "connect-react-native-sdk": "file:../connect-react-native-sdk-2.4.0.tgz",
     "react": "19.3.0",
     "react-native": "0.87.1",
-    "react-native-url-polyfill": "4.0.0",
     "react-native-safe-area-context": "5.10.1",
+    "react-native-url-polyfill": "4.0.0",
     "react-native-webview": "14.0.1"
   },
   "devDependencies": {
@@ -30,20 +31,33 @@
     "@types/react": "^19.2.14",
     "braces": "file:../patched-deps/braces-3.0.4.tgz",
     "eslint": "8.57.1",
+    "patch-package": "^8.0.1",
     "prettier": "3.9.4",
     "typescript": "^6.0.3"
   },
   "overrides": {
     "braces": "$braces",
     "image-size": "2.0.4",
+    "body-parser": "2.4.0",
+    "fast-uri": "3.1.9",
+    "launch-editor": "2.14.2",
+    "joi": "17.13.9",
+    "qs": "6.17.0",
     "shell-quote": "^1.11.0",
-    "compression": "^1.8.2"
+    "compression": "^1.8.2",
+    "zod": "4.6.6"
   },
   "resolutions": {
     "braces": "file:../patched-deps/braces-3.0.4.tgz",
     "image-size": "2.0.4",
+    "body-parser": "2.4.0",
+    "fast-uri": "3.1.9",
+    "launch-editor": "2.14.2",
+    "joi": "17.13.9",
+    "qs": "6.17.0",
     "shell-quote": "^1.11.0",
-    "compression": "^1.8.2"
+    "compression": "^1.8.2",
+    "zod": "4.6.6"
   },
   "engines": {
     "node": ">= 22.13.0"

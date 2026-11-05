@@ -1,109 +1,73 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 import { DEFAULT_REDIRECT_URL } from './constants';
-import { isSafeExternalNavigationUrl, validateUrl } from './utils';
+import { isSafeOAuthExternalNavigationUrl, validateUrl } from './utils';
 
 describe('validateUrl', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
 
-  describe('isSafeExternalNavigationUrl', () => {
+  describe('isSafeOAuthExternalNavigationUrl', () => {
     beforeEach(() => {
       jest.restoreAllMocks();
     });
 
-    test('blocks web URLs when host allowlist is not configured', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-      expect(isSafeExternalNavigationUrl('https://example.com/path')).toBe(
-        false
+    test('allows HTTPS URLs', () => {
+      expect(isSafeOAuthExternalNavigationUrl('https://example.com/path')).toBe(
+        true
       );
-      expect(warn).toHaveBeenCalledWith('Blocked external URL host policy');
+      expect(isSafeOAuthExternalNavigationUrl('HTTPS://example.com/path')).toBe(
+        true
+      );
     });
 
-    test('allows valid https URLs for trusted hosts', () => {
-      expect(
-        isSafeExternalNavigationUrl('https://example.com/path', {
-          allowedHosts: ['example.com']
-        })
-      ).toBe(true);
+    test('blocks HTTP URLs and custom app deep links', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      expect(isSafeOAuthExternalNavigationUrl('http://example.com/path')).toBe(
+        false
+      );
+      expect(isSafeOAuthExternalNavigationUrl('bankapp://authorize')).toBe(
+        false
+      );
+      expect(isSafeOAuthExternalNavigationUrl('https:example.com')).toBe(false);
+      expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
     });
 
     test('blocks dangerous schemes', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      expect(isSafeExternalNavigationUrl('intent://malicious')).toBe(false);
+      expect(isSafeOAuthExternalNavigationUrl('intent://malicious')).toBe(
+        false
+      );
       expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
     });
 
-    test('enforces allowed hosts when configured', () => {
+    test('blocks malformed URLs', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      expect(
-        isSafeExternalNavigationUrl('https://trusted.example.com/path', {
-          allowedHosts: ['trusted.example.com']
-        })
-      ).toBe(true);
-
-      expect(
-        isSafeExternalNavigationUrl('https://evil.example.com/path', {
-          allowedHosts: ['trusted.example.com']
-        })
-      ).toBe(false);
-      expect(warn).toHaveBeenCalledWith('Blocked external URL host');
+      expect(isSafeOAuthExternalNavigationUrl('https://')).toBe(false);
+      expect(warn).toHaveBeenCalledWith('Invalid external URL format');
     });
 
-    test('allows only trusted custom URL prefixes', () => {
+    test('blocks HTTPS URLs that contain userinfo', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       expect(
-        isSafeExternalNavigationUrl('bankapp://authorize', {
-          allowedCustomUrlPrefixes: ['bankapp://authorize']
-        })
-      ).toBe(true);
-
-      expect(
-        isSafeExternalNavigationUrl('walletapp://authorize', {
-          allowedCustomUrlPrefixes: ['bankapp://authorize']
-        })
-      ).toBe(false);
-      expect(warn).toHaveBeenCalledWith('Blocked external URL custom prefix');
-    });
-
-    test('blocks custom URLs when no trusted prefix policy is configured', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-      expect(isSafeExternalNavigationUrl('bankapp://authorize')).toBe(false);
-      expect(warn).toHaveBeenCalledWith('Blocked external URL custom policy');
-    });
-
-    test('blocks custom URLs that try userinfo authority confusion', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-
-      expect(
-        isSafeExternalNavigationUrl(
-          'bankapp://authorize@evil.example/callback',
-          {
-            allowedCustomUrlPrefixes: ['bankapp://authorize']
-          }
+        isSafeOAuthExternalNavigationUrl(
+          'https://authorize@evil.example/callback'
         )
       ).toBe(false);
       expect(warn).toHaveBeenCalledWith('Blocked external URL custom auth');
     });
 
-    test('allows custom URLs only when host, port, and path boundary match', () => {
+    test('allows Mastercard legal privacy URL', () => {
       expect(
-        isSafeExternalNavigationUrl('bankapp://fi.oauth/launch/callback', {
-          allowedCustomUrlPrefixes: ['bankapp://fi.oauth/launch']
-        })
+        isSafeOAuthExternalNavigationUrl(
+          'https://www.mastercard.com/us/en/mastercard-open-finance-legal-privacy.html'
+        )
       ).toBe(true);
-
-      expect(
-        isSafeExternalNavigationUrl('bankapp://fi.oauth-attacker/launch', {
-          allowedCustomUrlPrefixes: ['bankapp://fi.oauth/launch']
-        })
-      ).toBe(false);
     });
   });
 

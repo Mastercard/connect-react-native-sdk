@@ -8,18 +8,18 @@ const stringify = require('./stringify');
 
 const {
   MAX_LENGTH,
-  CHAR_BACKSLASH, /* \ */
-  CHAR_BACKTICK, /* ` */
-  CHAR_COMMA, /* , */
-  CHAR_DOT, /* . */
-  CHAR_LEFT_PARENTHESES, /* ( */
-  CHAR_RIGHT_PARENTHESES, /* ) */
-  CHAR_LEFT_CURLY_BRACE, /* { */
-  CHAR_RIGHT_CURLY_BRACE, /* } */
-  CHAR_LEFT_SQUARE_BRACKET, /* [ */
-  CHAR_RIGHT_SQUARE_BRACKET, /* ] */
-  CHAR_DOUBLE_QUOTE, /* " */
-  CHAR_SINGLE_QUOTE, /* ' */
+  CHAR_BACKSLASH /* \ */,
+  CHAR_BACKTICK /* ` */,
+  CHAR_COMMA /* , */,
+  CHAR_DOT /* . */,
+  CHAR_LEFT_PARENTHESES /* ( */,
+  CHAR_RIGHT_PARENTHESES /* ) */,
+  CHAR_LEFT_CURLY_BRACE /* { */,
+  CHAR_RIGHT_CURLY_BRACE /* } */,
+  CHAR_LEFT_SQUARE_BRACKET /* [ */,
+  CHAR_RIGHT_SQUARE_BRACKET /* ] */,
+  CHAR_DOUBLE_QUOTE /* " */,
+  CHAR_SINGLE_QUOTE /* ' */,
   CHAR_NO_BREAK_SPACE,
   CHAR_ZERO_WIDTH_NOBREAK_SPACE
 } = require('./constants');
@@ -34,9 +34,14 @@ const parse = (input, options = {}) => {
   }
 
   const opts = options || {};
-  const max = typeof opts.maxLength === 'number' ? Math.min(MAX_LENGTH, opts.maxLength) : MAX_LENGTH;
+  const max =
+    typeof opts.maxLength === 'number'
+      ? Math.min(MAX_LENGTH, opts.maxLength)
+      : MAX_LENGTH;
   if (input.length > max) {
-    throw new SyntaxError(`Input length (${input.length}), exceeds max characters (${max})`);
+    throw new SyntaxError(
+      `Input length (${input.length}), exceeds max characters (${max})`
+    );
   }
 
   const ast = { type: 'root', input, nodes: [] };
@@ -81,7 +86,10 @@ const parse = (input, options = {}) => {
      * Invalid chars
      */
 
-    if (value === CHAR_ZERO_WIDTH_NOBREAK_SPACE || value === CHAR_NO_BREAK_SPACE) {
+    if (
+      value === CHAR_ZERO_WIDTH_NOBREAK_SPACE ||
+      value === CHAR_NO_BREAK_SPACE
+    ) {
       continue;
     }
 
@@ -90,7 +98,10 @@ const parse = (input, options = {}) => {
      */
 
     if (value === CHAR_BACKSLASH) {
-      push({ type: 'text', value: (options.keepEscaping ? value : '') + advance() });
+      push({
+        type: 'text',
+        value: (options.keepEscaping ? value : '') + advance()
+      });
       continue;
     }
 
@@ -164,7 +175,11 @@ const parse = (input, options = {}) => {
      * Quotes: '|"|`
      */
 
-    if (value === CHAR_DOUBLE_QUOTE || value === CHAR_SINGLE_QUOTE || value === CHAR_BACKTICK) {
+    if (
+      value === CHAR_DOUBLE_QUOTE ||
+      value === CHAR_SINGLE_QUOTE ||
+      value === CHAR_BACKTICK
+    ) {
       const open = value;
       let next;
 
@@ -197,7 +212,8 @@ const parse = (input, options = {}) => {
     if (value === CHAR_LEFT_CURLY_BRACE) {
       depth++;
 
-      const dollar = prev.value && prev.value.slice(-1) === '$' || block.dollar === true;
+      const dollar =
+        (prev.value && prev.value.slice(-1) === '$') || block.dollar === true;
       const brace = {
         type: 'brace',
         open: true,

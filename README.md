@@ -45,9 +45,8 @@ The Connect React Native SDK has the following peerDependencies:
 Connect URL events can request opening web links or app deep links. To reduce abuse risk from untrusted WebView content:
 
 - Dangerous schemes such as `intent:`, `javascript:`, `data:` and `file:` are blocked.
-- Custom app URLs are blocked unless they match trusted prefixes configured in `allowedExternalUrlPrefixes` (scheme + host + path boundary).
-- By default, only the `connectUrl` host is trusted for `http/https` links.
-- Use `allowedExternalUrlHosts` to add more trusted web hosts (subdomains are allowed).
+- Valid `http/https` links and custom deep links continue to work by default (same external link behavior as v2.1.0).
+- Redirect URL validation still applies through `redirectUrl` to protect core Connect redirection behavior.
 
 Example:
 
@@ -55,8 +54,6 @@ Example:
 <Connect
   connectUrl={connectUrl}
   redirectUrl="connect://maob/redirect"
-  allowedExternalUrlHosts={['b2b.mastercard.com', 'trusted.fi.example']}
-  allowedExternalUrlPrefixes={['bankapp://authorize', 'bankapp://oauth']}
   eventHandlers={eventHandlers}
 />
 ```

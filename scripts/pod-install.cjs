@@ -26,15 +26,15 @@ module.exports = {
               env: process.env,
               stdio: 'inherit',
               encoding: 'utf-8',
-              shell: true,
+              shell: true
             }
           );
 
           if (result.status !== 0) {
             throw new Error('Failed to run pod-install');
           }
-        },
-      },
+        }
+      }
     };
-  },
+  }
 };

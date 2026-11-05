@@ -5,7 +5,9 @@ const utils = require('./utils');
 const DEFAULT_MAX_DEPTH = 1000;
 
 module.exports = (ast, options = {}) => {
-  const maxDepth = Number.isInteger(options.maxDepth) ? options.maxDepth : DEFAULT_MAX_DEPTH;
+  const maxDepth = Number.isInteger(options.maxDepth)
+    ? options.maxDepth
+    : DEFAULT_MAX_DEPTH;
 
   const stringify = (node, parent = {}, depth = 0) => {
     if (depth > maxDepth) {
@@ -37,4 +39,3 @@ module.exports = (ast, options = {}) => {
 
   return stringify(ast, {}, 0);
 };
-

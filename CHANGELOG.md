@@ -1,5 +1,12 @@
 # Changelog
 
+### Unreleased
+
+### Changes
+
+- Restricted external OAuth navigation to valid `https://` URLs; HTTP, custom deep links and other schemes are blocked.
+- Updated iOS deep-link availability checks to use `universalLinksOnly` only for `http/https` URLs so custom-scheme FI app links can launch.
+
 ### 2.2.0 (October 27, 2026)
 
 ### Changes

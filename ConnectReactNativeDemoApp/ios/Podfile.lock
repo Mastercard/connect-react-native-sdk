@@ -1,7 +1,7 @@
 PODS:
   - boost (1.84.0):
     - ReactNativeDependencies
-  - connect-react-native-sdk (2.2.0):
+  - connect-react-native-sdk (2.4.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1994,13 +1994,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 2a9d6e1d9873337543f08d9dbc007b288f4e113b
-  connect-react-native-sdk: 17ff6a000d4b26c1e0618692ebe9369f56eca1df
+  connect-react-native-sdk: d398cc9a206ce9f5f3c2fc875a1b9b3eca37c53d
   DoubleConversion: e85e4faac763226bfd1cc4c6a98d8355149b27a5
   fast_float: 908e5ee35999f3d91af4b962ac951acac591866c
   FBLazyVector: 1f950f55bf9d0f1130874f80ff0932945b97e2a8
   fmt: c7776a2a4b1d7ce88b809a1e4d1f7add0f2369df
   glog: b4427c3119645da795ff09985ba9da909c940c96
-  hermes-engine: 63c5db7d529c36335fada6582fd293ae2a105d77
+  hermes-engine: aa407566b7e2abb8767c4f6988c8caec8a12e5fb
   RCT-Folly: d173e541eeb78cad5c81011c1bbf62d5b86b9778
   RCTDeprecation: 1dce662386078170e119b89c1600db1b6e3d42f6
   RCTRequired: b5a9168b680baa2cda4f6b4764d10b6e58368b25
