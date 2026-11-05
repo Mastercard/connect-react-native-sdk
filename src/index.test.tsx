@@ -553,24 +553,29 @@ describe('Connect', () => {
     expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com');
   });
 
-  test('URL events allow custom schemes by default', async () => {
+  test('URL events block HTTP and custom schemes', async () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
+    const postMessage = jest.spyOn(instance, 'postMessage');
 
-    mockedCheckLink.mockResolvedValueOnce(false);
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'bankapp://authorize'
-        })
-      }
-    });
+    instance.isTrackPopupBlockedEventActive = true;
+    for (const url of ['http://example.com', 'bankapp://authorize']) {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({ type: ConnectEvents.URL, url })
+        }
+      });
+      expect(postMessage).toHaveBeenCalledWith({
+        type: 'window',
+        blocked: true,
+        url
+      });
+    }
 
     await act(async () => Promise.resolve());
 
-    expect(checkLink).toHaveBeenCalledWith('bankapp://authorize');
-    expect(openBrowser).toHaveBeenCalledWith('bankapp://authorize');
+    expect(checkLink).not.toHaveBeenCalled();
+    expect(openBrowser).not.toHaveBeenCalled();
   });
 
   test('URL events block dangerous URL schemes', async () => {

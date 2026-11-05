@@ -13,16 +13,26 @@ describe('validateUrl', () => {
       jest.restoreAllMocks();
     });
 
-    test('allows web URLs by default', () => {
+    test('allows HTTPS URLs', () => {
       expect(isSafeOAuthExternalNavigationUrl('https://example.com/path')).toBe(
+        true
+      );
+      expect(isSafeOAuthExternalNavigationUrl('HTTPS://example.com/path')).toBe(
         true
       );
     });
 
-    test('allows custom app deep links by default', () => {
-      expect(isSafeOAuthExternalNavigationUrl('bankapp://authorize')).toBe(
-        true
+    test('blocks HTTP URLs and custom app deep links', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      expect(isSafeOAuthExternalNavigationUrl('http://example.com/path')).toBe(
+        false
       );
+      expect(isSafeOAuthExternalNavigationUrl('bankapp://authorize')).toBe(
+        false
+      );
+      expect(isSafeOAuthExternalNavigationUrl('https:example.com')).toBe(false);
+      expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
     });
 
     test('blocks dangerous schemes', () => {
@@ -41,12 +51,12 @@ describe('validateUrl', () => {
       expect(warn).toHaveBeenCalledWith('Invalid external URL format');
     });
 
-    test('blocks custom URLs that try userinfo authority confusion', () => {
+    test('blocks HTTPS URLs that contain userinfo', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       expect(
         isSafeOAuthExternalNavigationUrl(
-          'bankapp://authorize@evil.example/callback'
+          'https://authorize@evil.example/callback'
         )
       ).toBe(false);
       expect(warn).toHaveBeenCalledWith('Blocked external URL custom auth');

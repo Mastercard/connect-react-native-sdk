@@ -2,15 +2,6 @@ import 'react-native-url-polyfill/auto';
 
 import { DEFAULT_REDIRECT_URL } from './constants';
 
-const BLOCKED_EXTERNAL_URL_SCHEMES = new Set([
-  'about',
-  'content',
-  'data',
-  'file',
-  'intent',
-  'javascript'
-]);
-
 export const validateUrl = (url: string = DEFAULT_REDIRECT_URL) => {
   try {
     if (!url) {
@@ -69,8 +60,7 @@ export const isSafeOAuthExternalNavigationUrl = (url: string) => {
       return false;
     }
 
-    const scheme = parsedUrl.protocol.replace(':', '').toLowerCase();
-    if (!scheme || BLOCKED_EXTERNAL_URL_SCHEMES.has(scheme)) {
+    if (!/^https:\/\//i.test(url) || parsedUrl.protocol !== 'https:') {
       console.warn('Blocked external URL scheme');
       return false;
     }

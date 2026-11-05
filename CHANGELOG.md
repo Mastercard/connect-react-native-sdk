@@ -4,8 +4,7 @@
 
 ### Changes
 
-- Restored v2.1.0 external URL behavior for OAuth navigation so valid `http/https` links and custom deep links open without host/prefix allowlist requirements.
-- Kept external URL safety checks for dangerous schemes (for example `intent:`, `javascript:`, `data:` and `file:`) so scanner expectations continue to pass.
+- Restricted external OAuth navigation to valid `https://` URLs; HTTP, custom deep links and other schemes are blocked.
 - Updated iOS deep-link availability checks to use `universalLinksOnly` only for `http/https` URLs so custom-scheme FI app links can launch.
 
 ### 2.2.0 (October 27, 2026)
