@@ -15,9 +15,8 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Connect } from 'connect-react-native-sdk';
 
 type AndroidEdgeToEdgeMode = 'before' | 'after';
-const CONNECT_SDK_VERSION = (
-  require('connect-react-native-sdk/package.json') as { version?: string }
-).version ?? 'unknown';
+const CONNECT_SDK_VERSION =
+  (require('connect-react-native-sdk/package.json') as { version?: string }).version ?? 'unknown';
 
 const App = () => {
   const [url, setUrl] = useState('');
