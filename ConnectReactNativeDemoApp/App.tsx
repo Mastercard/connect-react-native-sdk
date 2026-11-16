@@ -15,6 +15,8 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Connect } from 'connect-react-native-sdk';
 
 type AndroidEdgeToEdgeMode = 'before' | 'after';
+const CONNECT_SDK_VERSION =
+  (require('connect-react-native-sdk/package.json') as { version?: string }).version ?? 'unknown';
 
 const App = () => {
   const [url, setUrl] = useState('');
@@ -82,8 +84,8 @@ const App = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ flex: 1 }}>
+        <TouchableWithoutFeedback accessible={false} onPress={Keyboard.dismiss}>
+          <View style={styles.fullFlex}>
             <SafeAreaView style={styles.safeAreaView}>
               <KeyboardAvoidingView
                 style={styles.container}
@@ -93,8 +95,8 @@ const App = () => {
                 <Text style={styles.textInstructions}>
                   To get started, copy/paste a Generate URL value into the field below.
                 </Text>
-                <Text style={styles.textInstructions}>
-                  Android 16 edge-to-edge demo: this launch flow uses the SDK safe-area fix.
+                <Text testID="sdk-version-label" style={styles.sdkVersionText}>
+                  SDK Version: {CONNECT_SDK_VERSION}
                 </Text>
                 <TextInput
                   ref={urlInputRef}
@@ -138,6 +140,7 @@ const App = () => {
 
 const styles = StyleSheet.create({
   safeAreaView: { flex: 1 },
+  fullFlex: { flex: 1 },
 
   scrollContainer: { flexGrow: 1 },
   background: {
@@ -161,6 +164,12 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     width: '85%'
+  },
+  sdkVersionText: {
+    color: 'black',
+    fontSize: 14,
+    width: '85%',
+    fontWeight: 'bold'
   },
   logoStyle: {
     width: 90,

@@ -6,7 +6,13 @@ const utils = require('./utils');
 
 const DEFAULT_MAX_DEPTH = 1000;
 
-const append = (queue = '', stash = '', enclose = false, depth = 0, maxDepth = DEFAULT_MAX_DEPTH) => {
+const append = (
+  queue = '',
+  stash = '',
+  enclose = false,
+  depth = 0,
+  maxDepth = DEFAULT_MAX_DEPTH
+) => {
   if (depth > maxDepth) {
     throw new RangeError(`Maximum nesting depth exceeded (${maxDepth})`);
   }
@@ -29,9 +35,11 @@ const append = (queue = '', stash = '', enclose = false, depth = 0, maxDepth = D
     } else {
       for (let ele of stash) {
         if (enclose === true && typeof ele === 'string') ele = `{${ele}}`;
-        result.push(Array.isArray(ele)
-          ? append(item, ele, enclose, depth + 1, maxDepth)
-          : item + ele);
+        result.push(
+          Array.isArray(ele)
+            ? append(item, ele, enclose, depth + 1, maxDepth)
+            : item + ele
+        );
       }
     }
   }
@@ -39,8 +47,11 @@ const append = (queue = '', stash = '', enclose = false, depth = 0, maxDepth = D
 };
 
 const expand = (ast, options = {}) => {
-  const rangeLimit = options.rangeLimit === undefined ? 1000 : options.rangeLimit;
-  const maxDepth = Number.isInteger(options.maxDepth) ? options.maxDepth : DEFAULT_MAX_DEPTH;
+  const rangeLimit =
+    options.rangeLimit === undefined ? 1000 : options.rangeLimit;
+  const maxDepth = Number.isInteger(options.maxDepth)
+    ? options.maxDepth
+    : DEFAULT_MAX_DEPTH;
 
   const walk = (node, parent = {}, depth = 0) => {
     if (depth > maxDepth) {
@@ -62,7 +73,11 @@ const expand = (ast, options = {}) => {
       return;
     }
 
-    if (node.type === 'brace' && node.invalid !== true && node.nodes.length === 2) {
+    if (
+      node.type === 'brace' &&
+      node.invalid !== true &&
+      node.nodes.length === 2
+    ) {
       q.push(append(q.pop(), ['{}'], false, 0, maxDepth));
       return;
     }
@@ -71,7 +86,9 @@ const expand = (ast, options = {}) => {
       const args = utils.reduce(node.nodes);
 
       if (utils.exceedsLimit(...args, options.step, rangeLimit)) {
-        throw new RangeError('expanded array length exceeds range limit. Use options.rangeLimit to increase or disable the limit.');
+        throw new RangeError(
+          'expanded array length exceeds range limit. Use options.rangeLimit to increase or disable the limit.'
+        );
       }
 
       let range = fill(...args, options);

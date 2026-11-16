@@ -12,8 +12,6 @@ export interface ConnectProps {
   eventHandlers: ConnectEventHandlers;
   redirectUrl?: string;
   androidEdgeToEdgeMode?: 'before' | 'after';
-  allowedExternalUrlHosts?: string[];
-  allowedExternalUrlPrefixes?: string[];
 }
 
 export interface ConnectCancelEvent {

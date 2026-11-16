@@ -12,6 +12,25 @@ To get started with the project, run `yarn` in the root directory to install the
 yarn
 ```
 
+### Dependency updates and SCA validation
+
+The SDK root and `ConnectReactNativeDemoApp` have separate dependency trees.
+After changing dependencies, `resolutions` (Yarn), or `overrides` (npm), run the
+following in each affected directory with a Node version supported by its
+`package.json`:
+
+```sh
+yarn install --non-interactive
+npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+```
+
+Commit both lockfiles alongside the manifest changes. CI uses Yarn, while npm
+consumers and scanners may also read `package-lock.json`. Verify the resolved
+versions in both lockfiles, run the relevant tests and type checks, and rerun
+Checkmarx SCA against the updated commit. Manifest overrides alone do not prove
+that a finding is fixed; confirm the detected package version and CVE in the
+new scan. Scan exclusions change coverage, not dependency security.
+
 ### Commit message convention
 
 We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:

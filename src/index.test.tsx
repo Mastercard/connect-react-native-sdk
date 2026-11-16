@@ -553,7 +553,32 @@ describe('Connect', () => {
     expect(openBrowser).toHaveBeenCalledWith('https://b2b.mastercard.com');
   });
 
-  test('URL events block untrusted custom schemes by default', async () => {
+  test('URL events block HTTP and custom schemes', async () => {
+    const { instance } = await renderConnect();
+    const openBrowser = jest.spyOn(instance, 'openBrowser');
+    const postMessage = jest.spyOn(instance, 'postMessage');
+
+    instance.isTrackPopupBlockedEventActive = true;
+    for (const url of ['http://example.com', 'bankapp://authorize']) {
+      instance.handleEvent({
+        nativeEvent: {
+          data: JSON.stringify({ type: ConnectEvents.URL, url })
+        }
+      });
+      expect(postMessage).toHaveBeenCalledWith({
+        type: 'window',
+        blocked: true,
+        url
+      });
+    }
+
+    await act(async () => Promise.resolve());
+
+    expect(checkLink).not.toHaveBeenCalled();
+    expect(openBrowser).not.toHaveBeenCalled();
+  });
+
+  test('URL events block dangerous URL schemes', async () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
     const postMessage = jest.spyOn(instance, 'postMessage');
@@ -563,7 +588,7 @@ describe('Connect', () => {
       nativeEvent: {
         data: JSON.stringify({
           type: ConnectEvents.URL,
-          url: 'bankapp://authorize'
+          url: 'intent://malicious'
         })
       }
     });
@@ -575,90 +600,13 @@ describe('Connect', () => {
     expect(postMessage).toHaveBeenCalledWith({
       type: 'window',
       blocked: true,
-      url: 'bankapp://authorize'
+      url: 'intent://malicious'
     });
   });
 
-  test('URL events block custom URLs that do not match trusted redirect prefix', async () => {
+  test('URL events allow web hosts by default', async () => {
     const { instance } = await renderConnect();
     const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
-
-    instance.isTrackPopupBlockedEventActive = true;
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'connect://attacker/redirect'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-
-    expect(checkLink).not.toHaveBeenCalled();
-    expect(openBrowser).not.toHaveBeenCalled();
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'connect://attacker/redirect'
-    });
-  });
-
-  test('URL events allow configured trusted custom URL prefixes', async () => {
-    const { instance } = await renderConnect({
-      allowedExternalUrlPrefixes: ['bankapp://authorize']
-    });
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-
-    mockedCheckLink.mockResolvedValueOnce(false);
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'bankapp://authorize'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-
-    expect(checkLink).toHaveBeenCalledWith('bankapp://authorize');
-    expect(openBrowser).toHaveBeenCalledWith('bankapp://authorize');
-  });
-
-  test('URL events enforce configured trusted hosts for web links', async () => {
-    const { instance } = await renderConnect({
-      allowedExternalUrlHosts: ['trusted.example.com']
-    });
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
-
-    instance.isTrackPopupBlockedEventActive = true;
-    instance.handleEvent({
-      nativeEvent: {
-        data: JSON.stringify({
-          type: ConnectEvents.URL,
-          url: 'https://evil.example.com/oauth'
-        })
-      }
-    });
-
-    await act(async () => Promise.resolve());
-
-    expect(checkLink).not.toHaveBeenCalled();
-    expect(openBrowser).not.toHaveBeenCalled();
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'https://evil.example.com/oauth'
-    });
-  });
-
-  test('URL events allow connect host by default and block other hosts', async () => {
-    const { instance } = await renderConnect();
-    const openBrowser = jest.spyOn(instance, 'openBrowser');
-    const postMessage = jest.spyOn(instance, 'postMessage');
 
     mockedCheckLink.mockResolvedValueOnce(false);
     instance.handleEvent({
@@ -676,7 +624,7 @@ describe('Connect', () => {
       'https://b2b.mastercard.com/oauth'
     );
 
-    instance.isTrackPopupBlockedEventActive = true;
+    mockedCheckLink.mockResolvedValueOnce(false);
     instance.handleEvent({
       nativeEvent: {
         data: JSON.stringify({
@@ -687,11 +635,12 @@ describe('Connect', () => {
     });
 
     await act(async () => Promise.resolve());
-    expect(postMessage).toHaveBeenCalledWith({
-      type: 'window',
-      blocked: true,
-      url: 'https://attacker.example.com/oauth'
-    });
+    expect(checkLink).toHaveBeenCalledWith(
+      'https://attacker.example.com/oauth'
+    );
+    expect(openBrowser).toHaveBeenCalledWith(
+      'https://attacker.example.com/oauth'
+    );
   });
 
   test('track popup blocked events enable popup tracking before URL handling', async () => {

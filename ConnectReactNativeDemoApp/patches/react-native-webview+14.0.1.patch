@@ -1,0 +1,15 @@
+diff --git a/node_modules/react-native-webview/android/build.gradle b/node_modules/react-native-webview/android/build.gradle
+index ae14145..a9f3c0c 100644
+--- a/node_modules/react-native-webview/android/build.gradle
++++ b/node_modules/react-native-webview/android/build.gradle
+@@ -57,7 +57,9 @@ apply plugin: 'com.android.library'
+ if (isNewArchitectureEnabled()) {
+     apply plugin: 'com.facebook.react'
+ }
+-apply plugin: 'kotlin-android'
++if (project.extensions.findByName('kotlin') == null) {
++    apply plugin: 'kotlin-android'
++}
+ 
+ android {
+     if (supportsNamespace()) {

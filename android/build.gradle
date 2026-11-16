@@ -7,6 +7,27 @@ buildscript {
   dependencies {
     classpath "com.android.tools.build:gradle:8.13.2"
   }
+
+  configurations.classpath {
+    resolutionStrategy.eachDependency { details ->
+      if (details.requested.group == "org.bouncycastle" &&
+          details.requested.name in ["bcprov-jdk18on", "bcpkix-jdk18on", "bcutil-jdk18on"]) {
+        details.useVersion "1.86"
+        details.because "Address Checkmarx SCA findings in Android build tooling"
+      }
+
+      if (details.requested.group == "com.google.protobuf" &&
+          details.requested.name in ["protobuf-java", "protobuf-java-util"]) {
+        details.useVersion "3.25.5"
+        details.because "CVE-2024-7254 fix: protobuf-java is patched in 3.25.5+"
+      }
+
+      if (details.requested.group == "io.netty") {
+        details.useVersion "4.1.138.Final"
+        details.because "CVE fix: keep Netty on a patched 4.1.x line for AGP/UTP buildscript dependencies"
+      }
+    }
+  }
 }
 
 def isNewArchitectureEnabled() {
@@ -104,7 +125,7 @@ dependencies {
 // Upgrade vulnerable Netty dependencies introduced via older grpc-netty.
 // grpc-netty transitively brings Netty versions blocked by Black Duck.
 // This updates grpc-netty to a newer version and forces all io.netty modules
-// to 4.2.16.Final as recommended by Black Duck.
+// to 4.2.18.Final as recommended by Checkmarx.
 configurations.configureEach {
   resolutionStrategy.eachDependency { details ->
     if (details.requested.group == "com.android.tools.utp") {
@@ -119,8 +140,8 @@ configurations.configureEach {
     }
 
     if (details.requested.group == "io.netty") {
-      details.useVersion "4.2.16.Final"
-      details.because "Netty 4.2.12.Final is blocked by Black Duck"
+      details.useVersion "4.2.18.Final"
+      details.because "Upgrade Netty to address Checkmarx SCA findings"
     }
   }
 }
