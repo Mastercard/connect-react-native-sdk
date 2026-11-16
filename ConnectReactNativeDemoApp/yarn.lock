@@ -2140,10 +2140,10 @@ concat-map@0.0.1:
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
   integrity sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==
 
-"connect-react-native-sdk@file:../connect-react-native-sdk-2.4.0.tgz":
+connect-react-native-sdk@2.4.0:
   version "2.4.0"
-  resolved "file:../connect-react-native-sdk-2.4.0.tgz"
-  integrity sha512-+AchbSabgj7aMBZyuNzQtROl3ZaxiF9P0pu8B9CiYLRqy0Sdp5Yx66HfSHmUwIKZmUcAhWlkHYWFQbBQv3hU6A==
+  resolved "https://repo.fini.city/artifactory/api/npm/npm-group/connect-react-native-sdk/-/connect-react-native-sdk-2.4.0.tgz"
+  integrity sha512-pleS+HtwftEPvDcxrb5RznlRuIFaGvqOwp975X4WL3/dWVB65sxK7VpQddDrtC/jE3sgtZ8cZO3NPRSelCTmhA==
   dependencies:
     react-native-safe-area-context "5.10.1"
     react-native-url-polyfill "4.0.0"
