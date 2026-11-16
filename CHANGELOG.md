@@ -2,10 +2,22 @@
 
 ### Unreleased
 
-### Changes
+### 2.4.0 (November 16, 2026)
 
+#### Changes
 - Restricted external OAuth navigation to valid `https://` URLs; HTTP, custom deep links and other schemes are blocked.
-- Updated iOS deep-link availability checks to use `universalLinksOnly` only for `http/https` URLs so custom-scheme FI app links can launch.
+- Resolved an Android 16+ layout overlap issue that could cause Connect’s top content to appear beneath the system bars.
+- React Native support for the SDK and demo app has been upgraded to `0.87.1`.
+- The SDK's `package.json` dependencies now include:
+- `react-native-url-polyfill` `4.0.0`
+- `react-native-safe-area-context` `5.10.1`
+- `react-native-webview` `14.0.1`
+- Peer dependency requirements have been updated to:
+- `react-native` `>=0.87.1`
+- `react` `>=19.3.0`
+- `react-native-safe-area-context` `5.10.1`
+- `react-native-webview` `14.0.1`
+
 
 ### 2.2.0 (October 27, 2026)
 

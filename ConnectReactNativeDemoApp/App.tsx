@@ -19,26 +19,12 @@ const CONNECT_SDK_VERSION = (
   require('connect-react-native-sdk/package.json') as { version?: string }
 ).version ?? 'unknown';
 
-const RADIO_OPTIONS: Record<string, string> = {
-  STG: 'https://acme.finicitystg.com',
-  Prod: 'https://acmelending.net',
-  'Enter Redirect URL': ''
-};
-
-const RADIO_TEST_IDS: Record<string, string> = {
-  STG: 'stg',
-  Prod: 'prod',
-  'Enter Redirect URL': 'enter-redirect-url'
-};
-
 const App = () => {
   const [url, setUrl] = useState('');
   const [pressable, setPressable] = useState(false);
   const [show, setShow] = useState(false);
   const [androidEdgeToEdgeMode, setAndroidEdgeToEdgeMode] =
     useState<AndroidEdgeToEdgeMode>('after');
-  const [selectedOption, setSelectedOption] = useState('Prod');
-  const [redirectUrl, setRedirectUrl] = useState(RADIO_OPTIONS.Prod);
   const urlInputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
 
   const handleUrl = (text: string) => {
@@ -92,43 +78,6 @@ const App = () => {
     }
   };
 
-  const renderRadioComponent = () => (
-    <>
-      <View testID="redirect-url-radio-group" style={styles.radioGroup}>
-        {Object.keys(RADIO_OPTIONS).map(option => (
-          <View key={option} style={styles.radioContainer}>
-            <TouchableOpacity
-              testID={`radio-option-${RADIO_TEST_IDS[option]}`}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: selectedOption === option }}
-              style={styles.radioButton}
-              onPress={() => {
-                setSelectedOption(option);
-                setRedirectUrl(RADIO_OPTIONS[option]);
-              }}
-            >
-              <View style={styles.radioOuter}>
-                {selectedOption === option && <View style={styles.radioInner} />}
-              </View>
-            </TouchableOpacity>
-            <Text testID={`radio-label-${RADIO_TEST_IDS[option]}`} style={styles.radioText}>
-              {option}
-            </Text>
-          </View>
-        ))}
-      </View>
-      {selectedOption === 'Enter Redirect URL' && (
-        <TextInput
-          testID="redirect-url-input"
-          style={[styles.textInput, styles.redirectTextInput]}
-          placeholder="Enter Redirect URL"
-          onChangeText={setRedirectUrl}
-          value={redirectUrl}
-        />
-      )}
-    </>
-  );
-
   return (
     <SafeAreaProvider>
       <ScrollView
@@ -147,9 +96,6 @@ const App = () => {
                 <Text style={styles.textInstructions}>
                   To get started, copy/paste a Generate URL value into the field below.
                 </Text>
-                <Text style={styles.textInstructions}>
-                  Android 16 edge-to-edge demo: this launch flow uses the SDK safe-area fix.
-                </Text>
                 <Text testID="sdk-version-label" style={styles.sdkVersionText}>
                   SDK Version: {CONNECT_SDK_VERSION}
                 </Text>
@@ -159,7 +105,6 @@ const App = () => {
                   placeholder="Paste Generate URL here"
                   onChangeText={handleUrl}
                 />
-                {renderRadioComponent()}
                 <View style={styles.buttonRow}>
                   <TouchableOpacity
                     disabled={!pressable}
@@ -182,7 +127,7 @@ const App = () => {
                 <Connect
                   connectUrl={url}
                   eventHandlers={eventHandlers}
-                  redirectUrl={redirectUrl}
+                  redirectUrl={'connect://maob/redirect'}
                   androidEdgeToEdgeMode={androidEdgeToEdgeMode}
                 />
               )}
@@ -244,34 +189,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FEFEFE'
   },
-  radioGroup: { width: '50%' },
-  radioContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-    paddingLeft: 20
-  },
-  radioButton: { marginRight: 10 },
-  radioOuter: {
-    height: 24,
-    width: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#C6CDD4',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  radioInner: {
-    height: 12,
-    width: 12,
-    borderRadius: 6,
-    backgroundColor: '#000'
-  },
-  radioText: {
-    fontSize: 16,
-    color: 'black'
-  },
-  redirectTextInput: { width: '75%' },
   buttonRow: {
     width: '95%',
     gap: 10
