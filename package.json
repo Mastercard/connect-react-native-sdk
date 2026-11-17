@@ -63,7 +63,6 @@
     "@types/jest": "^29.5.14",
     "@types/react": "^19.2.14",
     "@types/react-test-renderer": "^19.1.0",
-    "braces": "file:patched-deps/braces-3.0.4.tgz",
     "commitlint": "^21.2.0",
     "del-cli": "^7.0.0",
     "eslint": "8.57.1",
@@ -86,7 +85,6 @@
     "react-native-webview": "14.0.1"
   },
   "overrides": {
-    "braces": "$braces",
     "image-size": "2.0.4",
     "fast-uri": "3.1.9",
     "flatted": "^3.4.2",
@@ -97,7 +95,6 @@
     "zod": "4.6.6"
   },
   "resolutions": {
-    "braces": "file:patched-deps/braces-3.0.4.tgz",
     "image-size": "2.0.4",
     "fast-uri": "3.1.9",
     "flatted": "^3.4.2",

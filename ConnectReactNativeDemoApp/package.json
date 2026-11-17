@@ -29,14 +29,12 @@
     "@react-native/metro-config": "0.87.1",
     "@react-native/typescript-config": "0.87.1",
     "@types/react": "^19.2.14",
-    "braces": "file:../patched-deps/braces-3.0.4.tgz",
     "eslint": "8.57.1",
     "patch-package": "^8.0.1",
     "prettier": "3.9.4",
     "typescript": "^6.0.3"
   },
   "overrides": {
-    "braces": "$braces",
     "image-size": "2.0.4",
     "body-parser": "2.4.0",
     "fast-uri": "3.1.9",
@@ -48,7 +46,6 @@
     "zod": "4.6.6"
   },
   "resolutions": {
-    "braces": "file:../patched-deps/braces-3.0.4.tgz",
     "image-size": "2.0.4",
     "body-parser": "2.4.0",
     "fast-uri": "3.1.9",
