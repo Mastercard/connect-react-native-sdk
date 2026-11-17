@@ -942,7 +942,26 @@ describe('Connect', () => {
     expect(startPingingConnect).toHaveBeenCalled();
   });
 
-  test('android back request closes connect immediately when exit prompt is disabled', async () => {
+  test('ios close request closes connect without navigating webview history', async () => {
+    const eventHandlers = baseHandlers();
+    const { instance, modal } = await renderConnect({ eventHandlers });
+    const goBack = jest.fn();
+    instance.canGoBackInWebView = true;
+    instance.webViewRef = { postMessage: jest.fn(), goBack } as any;
+
+    await act(async () => {
+      modal.props.onRequestClose();
+    });
+
+    expect(goBack).not.toHaveBeenCalled();
+    expect(eventHandlers.onCancel).toHaveBeenCalledWith({
+      code: 100,
+      reason: 'exit'
+    });
+    expect(instance.state.modalVisible).toBe(false);
+  });
+
+  test('android back request closes connect immediately without webview history', async () => {
     Platform.OS = 'android';
     const { instance, modal } = await renderConnect();
     const close = jest.spyOn(instance, 'close');
@@ -979,7 +998,7 @@ describe('Connect', () => {
     expect(instance.state.modalVisible).toBe(true);
   });
 
-  test('android hardware back press closes connect and consumes the event when prompt is disabled', async () => {
+  test('android hardware back press closes connect and consumes the event', async () => {
     Platform.OS = 'android';
     const remove = jest.fn();
     const addEventListenerSpy = jest
@@ -1049,7 +1068,7 @@ describe('Connect', () => {
     expect(alertSpy).not.toHaveBeenCalled();
   });
 
-  test('android cancel exit event cancels immediately when exit prompt is disabled', async () => {
+  test('android cancel exit event forwards its original payload', async () => {
     Platform.OS = 'android';
     const eventHandlers = baseHandlers();
     const { instance } = await renderConnect({ eventHandlers });
@@ -1074,7 +1093,7 @@ describe('Connect', () => {
     expect(instance.state.modalVisible).toBe(false);
   });
 
-  test('android cancel user-closed event cancels immediately when exit prompt is disabled', async () => {
+  test('android cancel user-closed event forwards its original payload', async () => {
     Platform.OS = 'android';
     const eventHandlers = baseHandlers();
     const { instance } = await renderConnect({ eventHandlers });
@@ -1099,7 +1118,7 @@ describe('Connect', () => {
     expect(instance.state.modalVisible).toBe(false);
   });
 
-  test('android cancel event with non-back reason still cancels immediately when prompt is disabled', async () => {
+  test('android cancel event with non-back reason forwards its original payload', async () => {
     Platform.OS = 'android';
     const eventHandlers = baseHandlers();
     const { instance } = await renderConnect({ eventHandlers });

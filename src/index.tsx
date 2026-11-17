@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  Alert,
   BackHandler,
   Modal,
   NativeEventEmitter,
@@ -52,8 +51,6 @@ const defaultEventHandlers: RequiredConnectEventHandlers = {
   onRoute: noop
 };
 
-const ENABLE_ANDROID_EXIT_PROMPT = false;
-
 type URLOpenedBy = 'secure-container' | 'fi-app';
 type OAuthClosedBy =
   'connect-client-event' | 'partner-redirection' | 'user-closed';
@@ -69,8 +66,6 @@ type ParsedEventData = {
   url?: string | null;
   data?: unknown;
 };
-
-type CancelReason = string | undefined;
 
 type WebViewMessagePayload = {
   nativeEvent: {
@@ -98,7 +93,6 @@ export class Connect extends Component<ConnectProps, ConnectState> {
   navigationEventEmitter: NativeEventEmitter | null = null;
   navigationEventSubscription: EmitterSubscription | null = null;
   backPressSubscription: NativeEventSubscription | null = null;
-  isExitPromptVisible = false;
   isTrackPopupBlockedEventActive = false;
   hasSentWindowOpenedEvent = false;
   canGoBackInWebView = false;
@@ -220,62 +214,11 @@ export class Connect extends Component<ConnectProps, ConnectState> {
   };
 
   handleRequestClose = () => {
-    if (Platform.OS !== 'android') {
-      this.close();
+    if (Platform.OS === 'android' && this.navigateBackInWebViewIfPossible()) {
       return;
     }
 
-    if (this.navigateBackInWebViewIfPossible()) {
-      return;
-    }
-
-    if (!ENABLE_ANDROID_EXIT_PROMPT || this.isExitPromptVisible) {
-      if (!ENABLE_ANDROID_EXIT_PROMPT) {
-        this.close();
-      }
-
-      return;
-    }
-
-    this.isExitPromptVisible = true;
-
-    Alert.alert(
-      'Exit Connect',
-      'Are you sure you want to exit Connect?',
-      [
-        {
-          text: 'Stay',
-          style: 'cancel',
-          onPress: () => {
-            this.isExitPromptVisible = false;
-          }
-        },
-        {
-          text: 'Exit',
-          style: 'destructive',
-          onPress: () => {
-            this.isExitPromptVisible = false;
-            this.close();
-          }
-        }
-      ],
-      {
-        cancelable: true,
-        onDismiss: () => {
-          this.isExitPromptVisible = false;
-        }
-      }
-    );
-  };
-
-  shouldConfirmAndroidExit = (reason: CancelReason) => {
-    void reason;
-
-    if (Platform.OS !== 'android' || !this.state.modalVisible) {
-      return false;
-    }
-
-    return ENABLE_ANDROID_EXIT_PROMPT;
+    this.close();
   };
 
   setupBrowserEventListener = () => {
@@ -510,15 +453,6 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         break;
 
       case ConnectEvents.CANCEL:
-        if (
-          this.shouldConfirmAndroidExit(
-            (eventData.data as ConnectCancelEvent | undefined)?.reason
-          )
-        ) {
-          this.handleRequestClose();
-          break;
-        }
-
         this.dismissModal();
         eventHandlers.onCancel(eventData.data as ConnectCancelEvent);
         break;
