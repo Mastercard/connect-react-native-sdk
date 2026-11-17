@@ -6,8 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint .",
-    "start": "react-native start",
-    "postinstall": "patch-package"
+    "start": "react-native start"
   },
   "dependencies": {
     "connect-react-native-sdk": "2.4.0",
@@ -33,7 +32,6 @@
     "eslint": "^9.39.4",
     "eslint-plugin-ft-flow": "^3.0.11",
     "hermes-eslint": "^0.37.0",
-    "patch-package": "^8.0.1",
     "prettier": "3.9.4",
     "typescript": "^6.0.3"
   },
