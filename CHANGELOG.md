@@ -17,6 +17,8 @@
 - `react-native-safe-area-context` `5.10.1`
 - `react-native-webview` `14.0.1`
 
+### 2.3.0 (October 27, 2026)
+
 
 ### 2.2.0 (October 27, 2026)
 
