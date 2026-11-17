@@ -1,11 +1,6 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
-def nodeBinary = providers.gradleProperty("NODE_BINARY").orNull ?: System.getenv("NODE_BINARY") ?: "node"
-def reactNativeCli = file("../node_modules/react-native/cli.js")
-
-extensions.configure(com.facebook.react.ReactSettingsExtension){ ex ->
-	ex.autolinkLibrariesFromCommand([nodeBinary, reactNativeCli.absolutePath, "config"])
-}
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = 'ConnectReactNativeDemoApp'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
