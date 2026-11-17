@@ -42,11 +42,10 @@ The Connect React Native SDK has the following peerDependencies:
 
 ## Security configuration for external URL handling
 
-Connect URL events can request opening web links or app deep links. To reduce abuse risk from untrusted WebView content:
+Connect URL events can request external OAuth navigation. To reduce abuse risk from untrusted WebView content:
 
-- Dangerous schemes such as `intent:`, `javascript:`, `data:` and `file:` are blocked.
-- Valid `http/https` links and custom deep links continue to work by default (same external link behavior as v2.1.0).
-- Redirect URL validation still applies through `redirectUrl` to protect core Connect redirection behavior.
+- Only valid `https://` URLs are allowed for external OAuth navigation. HTTP, custom deep links and other schemes are blocked.
+- The `redirectUrl` is validated separately and can use a custom scheme, as shown below.
 
 Example:
 
