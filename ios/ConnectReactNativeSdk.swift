@@ -24,20 +24,15 @@ class ConnectReactNativeSdk: RCTEventEmitter, SFSafariViewControllerDelegate {
       return
     }
 
-    if #available(iOS 10.0, *) {
-      let scheme = (urlLink.scheme ?? "").lowercased()
-      let options: [UIApplication.OpenExternalURLOptionsKey: Any] =
-        (scheme == "http" || scheme == "https")
-        ? [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: true]
-        : [:]
+    let scheme = (urlLink.scheme ?? "").lowercased()
+    let options: [UIApplication.OpenExternalURLOptionsKey: Any] =
+      (scheme == "http" || scheme == "https")
+      ? [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: true]
+      : [:]
 
-      UIApplication.shared.open(urlLink, options: options) { success in
-        resolve(success)
-      }
-    } else {
-      resolve(false)
+    UIApplication.shared.open(urlLink, options: options) { success in
+      resolve(success)
     }
-
   }
 
   @objc(open:withResolver:withRejecter:)
