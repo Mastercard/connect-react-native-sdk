@@ -1,6 +1,5 @@
 # Changelog
 
-### Unreleased
 
 ### 2.4.0 (November 17, 2026)
 
