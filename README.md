@@ -37,6 +37,10 @@ The Connect React Native SDK has the following peerDependencies:
 * [react](https://www.npmjs.com/package/react) >=19.3.0
 * [react-native](https://www.npmjs.com/package/react-native) >=0.87.1
 
+## Safe-area setup
+
+Connect provides its own `SafeAreaProvider` inside its modal; the partner app does not need to add one specifically for Connect. On Android, setting `androidEdgeToEdgeMode` to `before` disables the SDK's safe-area edge padding.
+
 ## Sample App
 [Github](https://github.com/Mastercard/connect-react-native-sdk/tree/master/ConnectReactNativeDemoApp) contains a sample React Native project that is integrated with the Connect React Native SDK. This sample project is named ConnectReactNativeDemoApp. Ensure that you have the necessary setup for React Native version 0.87.1 to successfully run and explore this demo application.
 

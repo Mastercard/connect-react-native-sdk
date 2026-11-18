@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {
   SafeAreaInsetsContext,
+  SafeAreaProvider,
   SafeAreaView
 } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
@@ -506,51 +507,58 @@ export class Connect extends Component<ConnectProps, ConnectState> {
         testID="test-modal"
         onRequestClose={this.handleRequestClose}
       >
-        <SafeAreaInsetsContext.Consumer>
-          {insets => {
-            const fallbackTopInset =
-              Platform.OS === 'android' &&
-              useSafeAreaInsets &&
-              (insets?.top ?? 0) === 0
-                ? (StatusBar.currentHeight ?? 0)
-                : 0;
+        <SafeAreaProvider style={styles.safeAreaProvider}>
+          <SafeAreaInsetsContext.Consumer>
+            {insets => {
+              const fallbackTopInset =
+                Platform.OS === 'android' &&
+                useSafeAreaInsets &&
+                (insets?.top ?? 0) === 0
+                  ? (StatusBar.currentHeight ?? 0)
+                  : 0;
 
-            return (
-              <SafeAreaView
-                testID="test-safe-area-view"
-                style={[
-                  styles.safeAreaView,
-                  fallbackTopInset > 0 ? { paddingTop: fallbackTopInset } : null
-                ]}
-                edges={useSafeAreaInsets ? ['top', 'bottom'] : []}
-              >
-                <WebView
-                  ref={ref => {
-                    this.webViewRef = ref;
-                  }}
-                  style={styles.webView}
-                  source={{ uri: this.state.connectUrl }}
-                  javaScriptEnabled
-                  injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
-                  testID="test-webview"
-                  onNavigationStateChange={
-                    this.handleWebViewNavigationStateChange
-                  }
-                  onMessage={event =>
-                    this.handleEvent(event as WebViewMessagePayload)
-                  }
-                  onLoad={() => this.startPingingConnect()}
-                />
-              </SafeAreaView>
-            );
-          }}
-        </SafeAreaInsetsContext.Consumer>
+              return (
+                <SafeAreaView
+                  testID="test-safe-area-view"
+                  style={[
+                    styles.safeAreaView,
+                    fallbackTopInset > 0
+                      ? { paddingTop: fallbackTopInset }
+                      : null
+                  ]}
+                  edges={useSafeAreaInsets ? ['top', 'bottom'] : []}
+                >
+                  <WebView
+                    ref={ref => {
+                      this.webViewRef = ref;
+                    }}
+                    style={styles.webView}
+                    source={{ uri: this.state.connectUrl }}
+                    javaScriptEnabled
+                    injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
+                    testID="test-webview"
+                    onNavigationStateChange={
+                      this.handleWebViewNavigationStateChange
+                    }
+                    onMessage={event =>
+                      this.handleEvent(event as WebViewMessagePayload)
+                    }
+                    onLoad={() => this.startPingingConnect()}
+                  />
+                </SafeAreaView>
+              );
+            }}
+          </SafeAreaInsetsContext.Consumer>
+        </SafeAreaProvider>
       </Modal>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  safeAreaProvider: {
+    flex: 1
+  },
   safeAreaView: {
     flex: 1
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react-native';
+import { act, render, screen, within } from '@testing-library/react-native';
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { Alert, BackHandler, DeviceEventEmitter, Platform } from 'react-native';
 
@@ -92,6 +92,15 @@ describe('Connect', () => {
     const { modal } = await renderConnect();
 
     expect(modal.props.presentationStyle).toBe('fullScreen');
+  });
+
+  test('provides safe-area context inside the Connect modal', async () => {
+    await renderConnect();
+
+    const provider = within(screen.getByTestId('test-modal')).getByTestId(
+      'mock-safe-area-provider'
+    );
+    expect(within(provider).getByTestId('test-webview')).toBeTruthy();
   });
 
   test('android uses safe-area edges by default for edge-to-edge support', async () => {

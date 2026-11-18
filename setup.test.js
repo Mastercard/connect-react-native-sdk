@@ -37,7 +37,11 @@ jest.mock('react-native-safe-area-context', () => {
     left: 0
   });
   const SafeAreaProvider = React.forwardRef(({ children, ...props }, ref) =>
-    React.createElement(View, { ...props, ref }, children)
+    React.createElement(
+      View,
+      { ...props, ref, testID: 'mock-safe-area-provider' },
+      children
+    )
   );
   const SafeAreaView = React.forwardRef(({ children, ...props }, ref) =>
     React.createElement(View, { ...props, ref }, children)
