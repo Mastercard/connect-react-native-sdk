@@ -19,7 +19,7 @@
 
 ### 2.3.0 (October 27, 2026)
 ### Changes
-- 2.2.0 release was reverted.
+- Reverted the SDK upgrade due to an identified issue. This release retains the functionality and behaviour of 2.1.0. No consumer action is required.
 
 
 ### 2.2.0 (October 27, 2026)
