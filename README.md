@@ -30,6 +30,8 @@ The Connect React Native SDK supports following Android and iOS versions.
 
 React Native 0.87.1 requires Node.js 22.13.0 or later and Xcode 16.1 or later for iOS builds.
 
+The SDK's Android build uses Gradle 9.4.1 and Android Gradle Plugin 9.2.1. Partner apps use their own Gradle wrapper.
+
 The Connect React Native SDK has the following peerDependencies:
 
 * [react-native-webview](https://www.npmjs.com/package/react-native-webview) 14.0.1
