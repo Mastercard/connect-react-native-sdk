@@ -1,7 +1,7 @@
 # Changelog
 
 
-### 2.4.0 (November 17, 2026)
+### 2.4.0 (November 19, 2026)
 
 #### Changes
 - Restricted external OAuth navigation to valid `https://` URLs; HTTP, custom deep links and other schemes are blocked.
