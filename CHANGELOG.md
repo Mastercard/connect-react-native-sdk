@@ -18,6 +18,8 @@
 - `react-native-webview` `14.0.1`
 
 ### 2.3.0 (October 27, 2026)
+### Changes
+- 2.2.0 release was reverted.
 
 
 ### 2.2.0 (October 27, 2026)
