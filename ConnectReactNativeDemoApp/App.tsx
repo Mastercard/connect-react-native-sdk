@@ -14,28 +14,38 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Connect } from 'connect-react-native-sdk';
 
+type AndroidEdgeToEdgeMode = 'before' | 'after';
+const CONNECT_SDK_VERSION =
+  (require('connect-react-native-sdk/package.json') as { version?: string }).version ?? 'unknown';
+
 const App = () => {
   const [url, setUrl] = useState('');
   const [pressable, setPressable] = useState(false);
   const [show, setShow] = useState(false);
-  const urlInputRef = useRef<TextInput>(null);
+  const [androidEdgeToEdgeMode, setAndroidEdgeToEdgeMode] =
+    useState<AndroidEdgeToEdgeMode>('after');
+  const urlInputRef = useRef<React.ComponentRef<typeof TextInput>>(null);
 
   const handleUrl = (text: string) => {
     setUrl(text);
     setPressable(text.length > 0);
   };
 
-  const onConnectWithUrl = () => {
-    if (Platform.OS === 'android' && url.includes('localhost')) {
-      let testurl = url.replace('localhost', '10.0.2.2');
-      setUrl(testurl);
+  const onConnectWithUrl = (mode: AndroidEdgeToEdgeMode) => {
+    let nextUrl = url;
+
+    if (Platform.OS === 'android' && nextUrl.includes('localhost')) {
+      nextUrl = nextUrl.replace('localhost', '10.0.2.2');
     }
+
+    setUrl(nextUrl);
+    setAndroidEdgeToEdgeMode(mode);
     setShow(true);
   };
 
-  const onPressHandler = () => {
+  const onPressHandler = (mode: AndroidEdgeToEdgeMode) => {
     if (pressable) {
-      onConnectWithUrl();
+      onConnectWithUrl(mode);
     }
     urlInputRef.current?.clear();
   };
@@ -74,8 +84,8 @@ const App = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ flex: 1 }}>
+        <TouchableWithoutFeedback accessible={false} onPress={Keyboard.dismiss}>
+          <View style={styles.fullFlex}>
             <SafeAreaView style={styles.safeAreaView}>
               <KeyboardAvoidingView
                 style={styles.container}
@@ -85,30 +95,40 @@ const App = () => {
                 <Text style={styles.textInstructions}>
                   To get started, copy/paste a Generate URL value into the field below.
                 </Text>
+                <Text testID="sdk-version-label" style={styles.sdkVersionText}>
+                  SDK Version: {CONNECT_SDK_VERSION}
+                </Text>
                 <TextInput
                   ref={urlInputRef}
                   style={styles.textInput}
                   placeholder="Paste Generate URL here"
                   onChangeText={handleUrl}
                 />
-                <TouchableOpacity
-                  disabled={!pressable}
-                  style={
-                    pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled
-                  }
-                  onPress={onPressHandler}
-                >
-                  <Text
+                <View style={styles.buttonRow}>
+                  <TouchableOpacity
+                    disabled={!pressable}
                     style={
-                      pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled
+                      pressable ? styles.buttonFrameStyleEnabled : styles.buttonFrameStyleDisabled
                     }
+                    onPress={() => onPressHandler('after')}
                   >
-                    Launch Connect
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={
+                        pressable ? styles.buttonTextStyleEnabled : styles.buttonTextStyleDisabled
+                      }
+                    >
+                      Launch Connect
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </KeyboardAvoidingView>
               {show === true && (
-                <Connect connectUrl={url} eventHandlers={eventHandlers} redirectUrl="xyz" />
+                <Connect
+                  connectUrl={url}
+                  eventHandlers={eventHandlers}
+                  redirectUrl={'connect://maob/redirect'}
+                  androidEdgeToEdgeMode={androidEdgeToEdgeMode}
+                />
               )}
             </SafeAreaView>
           </View>
@@ -120,6 +140,7 @@ const App = () => {
 
 const styles = StyleSheet.create({
   safeAreaView: { flex: 1 },
+  fullFlex: { flex: 1 },
 
   scrollContainer: { flexGrow: 1 },
   background: {
@@ -144,6 +165,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: '85%'
   },
+  sdkVersionText: {
+    color: 'black',
+    fontSize: 14,
+    width: '85%',
+    fontWeight: 'bold'
+  },
   logoStyle: {
     width: 90,
     height: 70,
@@ -161,9 +188,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FEFEFE'
   },
+  buttonRow: {
+    width: '95%',
+    gap: 10
+  },
   buttonFrameStyleDisabled: {
     height: 48,
-    width: '95%',
+    width: '100%',
     borderRadius: 24,
     marginTop: 12,
     backgroundColor: '#bdc3c7',
@@ -171,7 +202,7 @@ const styles = StyleSheet.create({
   },
   buttonFrameStyleEnabled: {
     height: 48,
-    width: '95%',
+    width: '100%',
     borderRadius: 24,
     marginTop: 12,
     backgroundColor: '#d35400',

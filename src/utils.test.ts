@@ -1,9 +1,74 @@
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+
 import { DEFAULT_REDIRECT_URL } from './constants';
-import { validateUrl } from './utils';
+import { isSafeOAuthExternalNavigationUrl, validateUrl } from './utils';
 
 describe('validateUrl', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+  });
+
+  describe('isSafeOAuthExternalNavigationUrl', () => {
+    beforeEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    test('allows HTTPS URLs', () => {
+      expect(isSafeOAuthExternalNavigationUrl('https://example.com/path')).toBe(
+        true
+      );
+      expect(isSafeOAuthExternalNavigationUrl('HTTPS://example.com/path')).toBe(
+        true
+      );
+    });
+
+    test('blocks HTTP URLs and custom app deep links', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      expect(isSafeOAuthExternalNavigationUrl('http://example.com/path')).toBe(
+        false
+      );
+      expect(isSafeOAuthExternalNavigationUrl('bankapp://authorize')).toBe(
+        false
+      );
+      expect(isSafeOAuthExternalNavigationUrl('https:example.com')).toBe(false);
+      expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
+    });
+
+    test('blocks dangerous schemes', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      expect(isSafeOAuthExternalNavigationUrl('intent://malicious')).toBe(
+        false
+      );
+      expect(warn).toHaveBeenCalledWith('Blocked external URL scheme');
+    });
+
+    test('blocks malformed URLs', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      expect(isSafeOAuthExternalNavigationUrl('https://')).toBe(false);
+      expect(warn).toHaveBeenCalledWith('Invalid external URL format');
+    });
+
+    test('blocks HTTPS URLs that contain userinfo', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      expect(
+        isSafeOAuthExternalNavigationUrl(
+          'https://authorize@evil.example/callback'
+        )
+      ).toBe(false);
+      expect(warn).toHaveBeenCalledWith('Blocked external URL custom auth');
+    });
+
+    test('allows Mastercard legal privacy URL', () => {
+      expect(
+        isSafeOAuthExternalNavigationUrl(
+          'https://www.mastercard.com/us/en/mastercard-open-finance-legal-privacy.html'
+        )
+      ).toBe(true);
+    });
   });
 
   test('returns the default redirect URL for empty values', () => {

@@ -5,14 +5,15 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "lint": "eslint .",
+    "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint .",
     "start": "react-native start"
   },
   "dependencies": {
-    "connect-react-native-sdk": "2.3.0",
-    "react": "19.2.7",
-    "react-native": "0.86.0",
-    "react-native-safe-area-context": "5.8.0",
+    "connect-react-native-sdk": "2.4.0",
+    "react": "19.3.0",
+    "react-native": "0.87.1",
+    "react-native-safe-area-context": "5.10.1",
+    "react-native-url-polyfill": "4.0.0",
     "react-native-webview": "14.0.1"
   },
   "devDependencies": {
@@ -22,14 +23,41 @@
     "@react-native-community/cli": "20.2.0",
     "@react-native-community/cli-platform-android": "20.2.0",
     "@react-native-community/cli-platform-ios": "20.2.0",
-    "@react-native/babel-preset": "0.86.0",
-    "@react-native/eslint-config": "0.86.0",
-    "@react-native/metro-config": "0.86.0",
-    "@react-native/typescript-config": "0.86.0",
+    "@react-native/babel-preset": "0.87.1",
+    "@react-native/eslint-config": "0.87.1",
+    "@react-native/metro-config": "0.87.1",
+    "@react-native/typescript-config": "0.87.1",
     "@types/react": "^19.2.14",
+    "cross-env": "^7.0.3",
     "eslint": "^9.39.4",
+    "eslint-plugin-ft-flow": "^3.0.11",
+    "hermes-eslint": "^0.37.0",
     "prettier": "3.9.4",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "eslint-plugin-ft-flow": "$eslint-plugin-ft-flow",
+    "image-size": "2.0.4",
+    "body-parser": "2.4.0",
+    "fast-uri": "3.1.9",
+    "launch-editor": "2.14.2",
+    "joi": "17.13.9",
+    "qs": "6.17.0",
+    "shell-quote": "^1.11.0",
+    "compression": "^1.8.2",
+    "zod": "4.6.6"
+  },
+  "resolutions": {
+    "eslint-plugin-ft-flow": "^3.0.11",
+    "image-size": "2.0.4",
+    "body-parser": "2.4.0",
+    "fast-uri": "3.1.9",
+    "launch-editor": "2.14.2",
+    "joi": "17.13.9",
+    "qs": "6.17.0",
+    "shell-quote": "^1.11.0",
+    "compression": "^1.8.2",
+    "zod": "4.6.6"
   },
   "engines": {
     "node": ">= 22.13.0"

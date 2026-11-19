@@ -72,6 +72,23 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+configurations.configureEach {
+    if (name == "androidLintTool" || name.startsWith("unified-test-platform-")) {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == "io.netty") {
+                details.useVersion "4.1.138.Final"
+                details.because "Address Checkmarx SCA findings in Android test tooling"
+            }
+
+            if (details.requested.group == "org.bouncycastle" &&
+                    details.requested.name in ["bcprov-jdk18on", "bcpkix-jdk18on", "bcutil-jdk18on"]) {
+                details.useVersion "1.86"
+                details.because "Address Checkmarx SCA findings in Android tooling"
+            }
+        }
+    }
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -103,7 +120,7 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 }

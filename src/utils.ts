@@ -44,3 +44,34 @@ export const validateUrl = (url: string = DEFAULT_REDIRECT_URL) => {
     return DEFAULT_REDIRECT_URL;
   }
 };
+
+export const isSafeOAuthExternalNavigationUrl = (url: string) => {
+  try {
+    if (!url) {
+      console.warn('Invalid external URL: empty/null');
+      return false;
+    }
+
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      console.warn('Invalid external URL format');
+      return false;
+    }
+
+    if (!/^https:\/\//i.test(url) || parsedUrl.protocol !== 'https:') {
+      console.warn('Blocked external URL scheme');
+      return false;
+    }
+
+    if (parsedUrl.username || parsedUrl.password) {
+      console.warn('Blocked external URL custom auth');
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.warn('External URL validation error:', error);
+    return false;
+  }
+};

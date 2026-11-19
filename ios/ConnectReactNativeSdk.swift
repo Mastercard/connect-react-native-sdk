@@ -19,24 +19,24 @@ class ConnectReactNativeSdk: RCTEventEmitter, SFSafariViewControllerDelegate {
 
   @objc(checklink:withResolver:withRejecter:)
   func checklink(url: String, resolve:  @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
-    let urlLink = URL(string: url)
-    if #available(iOS 10.0, *) {
-      UIApplication.shared.open(urlLink!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : true]) { (success) in
-          if success {
-              resolve(true)
-          } else {
-              resolve(false)
-          }
-      }
-    } else {
+    guard let urlLink = ConnectExternalURL.validated(url) else {
+      NSLog("[ConnectReactNativeSdk][iOS] Blocked invalid external URL")
       resolve(false)
+      return
     }
 
+    UIApplication.shared.open(
+      urlLink,
+      options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: true]
+    ) { success in
+      resolve(success)
+    }
   }
 
   @objc(open:withResolver:withRejecter:)
   func open(options: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-    guard let urlString = options["url"] as? String, let url = URL(string: urlString) else {
+    guard let urlString = options["url"] as? String,
+          let url = ConnectExternalURL.validated(urlString) else {
       NSLog("[ConnectReactNativeSdk][iOS] Invalid URL supplied to secure container")
       reject("InAppBrowser", "Invalid URL", nil)
       return
@@ -63,6 +63,7 @@ class ConnectReactNativeSdk: RCTEventEmitter, SFSafariViewControllerDelegate {
 
       let safariViewController = SFSafariViewController(url: url)
       safariViewController.delegate = self
+      safariViewController.modalPresentationStyle = .overFullScreen
       self.safariViewController = safariViewController
       self.openPromiseResolve = resolve
       NSLog("[ConnectReactNativeSdk][iOS] Launching secure container for URL: %@", url.absoluteString)
